@@ -26,4 +26,4 @@ xorriso -as mkisofs -b boot/limine/limine-bios-cd.bin \
 
 ./limine/limine bios-install potatos.iso
 
-qemu-system-x86_64 potatos.iso
+qemu-system-x86_64 potatos.iso -serial stdio
