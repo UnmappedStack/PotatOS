@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "include/serial.h"
+#include "../utils/include/string.h"
 
 #define PORT 0x3f8          // COM1
 
@@ -46,16 +47,7 @@ void write_serial_char(char a) {
    outb(PORT,a);
 }
 
-int strlen(char *str) {
-    size_t i = 0;
-    while (1) {
-        if (str[i] == 0) break;
-        i++;
-    }
-    return i;
-}
-
 void write_serial(char *str) {
-    int len = strlen(str);
+    int len = ku_strlen(str);
     for (int i = 0; i < len; i++) write_serial_char(str[i]);
 }
