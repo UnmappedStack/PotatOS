@@ -6,6 +6,7 @@
 #include "kernel.h"
 #include "../drivers/include/serial.h"
 #include "../utils/include/printf.h"
+#include "../mem/include/pmm.h"
 
 /* Get info from Qemu */
 static volatile struct limine_memmap_request memmap_request = {
@@ -23,11 +24,13 @@ void init_kernel_data() {
     kernel.hhdm = (hhdm_request.response)->offset;
 }
 
+Kernel kernel = {};
+
 void _start() {
     init_kernel_data();
     init_serial();
-    write_serial("\nThis is PotatOS, the start of a new kernel to replace SpecOS and be far, far better!\nIt also has new lines :D\n");
     printf("Higher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
+    init_PMM();
     write_serial("\nAll tasks halted, nothing left to do.\n");
     for(;;);
 }
