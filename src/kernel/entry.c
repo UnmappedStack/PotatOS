@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../cpu/include/idt.h"
 #include "../cpu/include/gdt.h"
 #include "../limine.h"
 #include "kernel.h"
@@ -33,6 +34,7 @@ void _start() {
     printf("\nHigher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
     init_PMM();
     init_GDT();
+    init_IDT();
     write_serial("\nAll tasks halted, nothing left to do.\n");
     for(;;);
 }

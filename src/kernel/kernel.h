@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "../limine.h"
 #include "../cpu/include/gdt.h"
+#include "../cpu/include/idt.h"
 
 typedef struct {
     struct      limine_memmap_response memmap;
@@ -11,6 +12,7 @@ typedef struct {
     long        last_freed_section;
     uint64_t    last_freed_num_pages;
     struct GDTR gdtr;
+    struct IDTR idtr;
 } Kernel;
 
 extern Kernel kernel;
