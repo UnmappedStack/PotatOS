@@ -44,7 +44,7 @@ void init_PMM() {
         init_single_bitmap(memmap_entries[entry]);
     kernel.last_freed_section = -1;
     kernel.last_freed_page    = -1;
-    printf(BGRN " Ok!" WHT);
+    printf(BGRN " Ok!\n" WHT);
 }
 
 void allocate_page(uint64_t section_index, uint64_t page_frame_number) {

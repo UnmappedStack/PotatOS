@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../cpu/include/gdt.h"
 #include "../limine.h"
 #include "kernel.h"
 #include "../drivers/include/serial.h"
@@ -29,8 +30,9 @@ Kernel kernel = {};
 void _start() {
     init_kernel_data();
     init_serial();
-    printf("Higher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
+    printf("\nHigher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
     init_PMM();
+    init_GDT();
     write_serial("\nAll tasks halted, nothing left to do.\n");
     for(;;);
 }
