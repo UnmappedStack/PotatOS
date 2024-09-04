@@ -90,6 +90,7 @@ void* kmalloc(uint32_t num_pages) {
     }
     for (size_t entry = 0; entry < kernel.memmap.entry_count; entry++) {
         // look through this entry for avaliable pages
+        if (memmap_entries[entry].type != LIMINE_MEMMAP_USABLE) continue;
         uint64_t bitmap_reserved = get_bitmap_reserved(memmap_entries[entry]);
         for (size_t bitmap_byte = 0; bitmap_byte < bitmap_reserved * 4096; bitmap_byte++) {
             for (uint8_t bitmap_bit = 0; bitmap_bit < 8; bitmap_bit++) {
