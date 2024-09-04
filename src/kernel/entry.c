@@ -39,14 +39,15 @@ Kernel kernel = {0};
 void _start() {
     init_kernel_data();
     init_serial();
-    printf("\nHigher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
-    printf("\nMemory map recieved from bootloader:");
+    kstatusf("Serial output initialised.");
+    kdebugf("Higher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
+    kdebugf("Memory map recieved from bootloader:");
     print_memory();
     printf("\n");
     init_PMM();
     init_GDT();
     init_IDT();
-    init_paging();
-    write_serial("\nAll tasks halted, nothing left to do.\n");
+    //init_paging();
+    kstatusf("All tasks halted, nothing left to do.\n");
     for(;;);
 }

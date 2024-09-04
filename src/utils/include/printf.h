@@ -23,3 +23,7 @@
 #define BWHT "\e[1;37m"
 
 void printf(char* format, ...);
+void kdebugf(char* format, ...);
+void ktestf(char* format, ...);
+void kstatusf(char* format, ...);
+void kfailf(char* format, ...);

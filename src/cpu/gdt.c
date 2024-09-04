@@ -25,7 +25,7 @@ uint64_t create_gdt_entry(uint64_t base, uint64_t limit, uint64_t access, uint64
 
 __attribute__((noinline))
 void init_GDT() {
-    printf(BYEL "[STATUS] " WHT "Initiating GDT... ");
+    kstatusf("Initiating GDT... ");
     uint64_t *GDT = (uint64_t*) ((uint64_t)kmalloc(1) + ((uint64_t) kernel.hhdm));
     GDT[0] = create_gdt_entry(0, 0, 0, 0); // null
     GDT[1] = create_gdt_entry(0, 0, 0x9A, 0xA); // kernel code

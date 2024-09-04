@@ -37,7 +37,7 @@ void init_single_bitmap(struct limine_memmap_entry memmap_entry) {
 }
 
 void init_PMM() {
-    printf(BYEL "[STATUS] " WHT "Initiating physical memory allocator...");
+    kstatusf("Initiating physical memory allocator...");
     struct limine_memmap_entry *memmap_entries = *kernel.memmap.entries;
     uint64_t num_memmap_entries = kernel.memmap.entry_count;
     for (size_t entry = 0; entry < num_memmap_entries; entry++)
@@ -51,8 +51,8 @@ void allocate_page(uint64_t section_index, uint64_t page_frame_number) {
     uint8_t  *bitmap_start = (uint8_t*) (*kernel.memmap.entries)[section_index].base + kernel.hhdm;
     uint64_t byte          = page_frame_number / 8;
     uint64_t bit           = page_frame_number % 8;
-    uint8_t  or_value      = 1 << bit;
-    uint8_t  *current_byte = (uint8_t*) (((uint64_t) bitmap_start) + (uint64_t)((byte * 8)));
+    uint8_t  or_value      = (bit) ? (1 << bit) : 1;
+    uint8_t  *current_byte = (uint8_t*) (((uint64_t) bitmap_start) + (uint64_t)(byte));
     *current_byte = *current_byte | or_value;
 }
 
@@ -79,7 +79,7 @@ bool check_pages_avaliable(uint64_t section_index, uint64_t page_frame_number, u
 
 void* kmalloc(uint32_t num_pages) {
     if (num_pages < 1) {
-        printf(BRED "\n[ FAIL ] " WHT "Cannot allocate less than 1 page! Halting device.\n");
+        kfailf("Cannot allocate less than 1 page! Halting device.\n");
         asm("cli; hlt");
     }
     struct limine_memmap_entry *memmap_entries = *kernel.memmap.entries;
@@ -102,7 +102,7 @@ void* kmalloc(uint32_t num_pages) {
         }
     }
     // no avaliable space! panic.
-    printf(BRED "\n[ FAIL ] " WHT "No more avaliable space in RAM to allocate! Trying to allocate %i pages. Halting device.\n",
+    kfailf("No more avaliable space in RAM to allocate! Trying to allocate %i pages. Halting device.\n",
            num_pages);
     asm("cli; hlt");
     return 0; // random val to please the compiler

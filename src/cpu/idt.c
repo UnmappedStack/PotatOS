@@ -14,12 +14,6 @@ void set_IDT_entry(uint32_t vector, void *isr, uint8_t flags, struct IDTEntry *I
     IDT[vector].segment_selector = 0x08;
 }
 
-__attribute__((interrupt))
-void exceptionISR(void*) {
-    printf("\nthere was an exception.\n");
-    asm("cli; hlt");
-}
-
 extern void divideException();
 extern void debugException();
 extern void breakpointException();
@@ -41,7 +35,7 @@ extern void simdFloatingPointException();
 extern void virtualisationException();
 
 void init_IDT() {
-    printf(BYEL "[STATUS] " WHT "Initiating IDT... ");
+    kstatusf("Initiating IDT... ");
     struct IDTEntry *IDT = (struct IDTEntry*) ((uint64_t)kmalloc(1) + ((uint64_t) kernel.hhdm));
     set_IDT_entry(0, &divideException, 0x8F, IDT);
     set_IDT_entry(1, &debugException, 0x8F, IDT);
