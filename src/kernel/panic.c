@@ -35,11 +35,9 @@ struct stackFrame {
 
 void stack_trace(uint64_t rbp, uint64_t rip) {
     printf("\nStack Trace (Most recent call last): \n");
-    // first the faulting address
     printf(" 0x%x\n", rip);
-    // and now for the rest of it
     struct stackFrame *stack = (struct stackFrame*)rbp;
-    while (stack) {
+    while (stack && stack->rip) {
         printf(" 0x%x\n", stack->rip);
         stack = stack->rbp;
     }

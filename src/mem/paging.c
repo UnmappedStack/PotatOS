@@ -1,0 +1,133 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "include/map.h"
+#include "include/pmm.h"
+#include "../drivers/include/serial.h"
+#include "../utils/include/string.h"
+#include "../utils/include/printf.h"
+#include "include/paging.h"
+#include "../kernel/kernel.h"
+
+
+#define PAGE_ALIGN_DOWN(addr) ((addr / 4096) * 4096)
+#define PAGE_ALIGN_UP(x) ((((x) + 4095) / 4096) * 4096)
+
+#define TOPBITS 0xFFFF000000000000
+
+void map_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t phys_addr, uint64_t num_pages, uint64_t flags) {
+    virt_addr &= ~TOPBITS;
+    uint64_t pml1 = (virt_addr >> 12) & 511;
+    uint64_t pml2 = (virt_addr >> (12 + 9)) & 511;
+    uint64_t pml3 = (virt_addr >> (12 + 18)) & 511;
+    uint64_t pml4 = (virt_addr >> (12 + 27)) & 511;
+    for (; pml4 < 512; pml4++) {
+        uint64_t *pml3_addr = NULL;
+        if (pml4_addr[pml4] == 0) {
+            pml4_addr[pml4] = (uint64_t)kmalloc(1);
+            pml3_addr = (uint64_t*)(pml4_addr[pml4] + kernel.hhdm);
+            ku_memset((uint8_t*)pml3_addr, 0, 4096);
+            pml4_addr[pml4] |= flags | KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE;
+        } else {
+            pml3_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml4_addr[pml4]) + kernel.hhdm);
+        }
+        
+        for (; pml3 < 512; pml3++) {
+            uint64_t *pml2_addr = NULL;
+            if (pml3_addr[pml3] == 0) {
+                pml3_addr[pml3] = (uint64_t)kmalloc(1);
+                pml2_addr = (uint64_t*)(pml3_addr[pml3] + kernel.hhdm);
+                ku_memset((uint8_t*)pml2_addr, 0, 4096);
+                pml3_addr[pml3] |= flags | KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE;
+            } else {
+                pml2_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml3_addr[pml3]) + kernel.hhdm);
+            }
+
+            for (; pml2 < 512; pml2++) {
+                uint64_t *pml1_addr = NULL;
+                if (pml2_addr[pml2] == 0) {
+                    pml2_addr[pml2] = (uint64_t)kmalloc(1);
+                    pml1_addr = (uint64_t*)(pml2_addr[pml2] + kernel.hhdm);
+                    ku_memset((uint8_t*)pml1_addr, 0, 4096);
+                    pml2_addr[pml2] |= flags | KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE;
+                } else {
+                    pml1_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml2_addr[pml2]) + kernel.hhdm);
+                }
+                
+                for (; pml1 < 512; pml1++) {
+                    pml1_addr[pml1] = phys_addr | flags;
+                    num_pages--;
+                    phys_addr += 4096;
+                    if (num_pages == 0) return;
+                }
+                pml1 = 0;
+            }
+            pml2 = 0;
+        }
+        pml3 = 0;
+    }
+    printf(BRED "\n[KPANIC] " WHT "Failed to allocate pages: No more avaliable virtual memory. Halting.\n");
+    asm("cli; hlt");
+} 
+
+void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages, uint64_t flags) {
+    virt_addr &= ~TOPBITS;
+    uint64_t pml1 = (virt_addr >> 12) & 511;
+    uint64_t pml2 = (virt_addr >> (12 + 9)) & 511;
+    uint64_t pml3 = (virt_addr >> (12 + 18)) & 511;
+    uint64_t pml4 = (virt_addr >> (12 + 27)) & 511;
+    for (; pml4 < 512; pml4++) {
+        uint64_t *pml3_addr = NULL;
+        if (pml4_addr[pml4] == 0) {
+            pml4_addr[pml4] = (uint64_t)kmalloc(1);
+            pml3_addr = (uint64_t*)(pml4_addr[pml4] + kernel.hhdm);
+            ku_memset((uint8_t*)pml3_addr, 0, 4096);
+            pml4_addr[pml4] |= flags | KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE;
+        } else {
+            pml3_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml4_addr[pml4]) + kernel.hhdm);
+        }
+        for (; pml3 < 512; pml3++) {
+            uint64_t *pml2_addr = NULL;
+            if (pml3_addr[pml3] == 0) {
+                pml3_addr[pml3] = (uint64_t)kmalloc(1);
+                pml2_addr = (uint64_t*)(pml3_addr[pml3] + kernel.hhdm);
+                ku_memset((uint8_t*)pml2_addr, 0, 4096);
+                pml3_addr[pml3] |= flags | KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE;
+            } else {
+                pml2_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml3_addr[pml3]) + kernel.hhdm);
+            }
+
+            for (; pml2 < 512; pml2++) {
+                uint64_t *pml1_addr = NULL;
+                if (pml2_addr[pml2] == 0) {
+                    pml2_addr[pml2] = (uint64_t)kmalloc(1);
+                    pml1_addr = (uint64_t*)(pml2_addr[pml2] + kernel.hhdm);
+                    ku_memset((uint8_t*)pml1_addr, 0, 4096);
+                    pml2_addr[pml2] |= flags | KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE;
+                } else {
+                    pml1_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml2_addr[pml2]) + kernel.hhdm);
+                }
+                
+                for (; pml1 < 512; pml1++) {
+                    uint64_t phys = (uint64_t)kmalloc(1);
+                    pml1_addr[pml1] = phys | flags;
+                    num_pages--;
+                    if (num_pages == 0) return;
+                }
+                pml1 = 0;
+            }
+            pml2 = 0;
+        }
+        pml3 = 0;
+    }
+    printf(BRED "\n[KPANIC] " WHT "Failed to allocate pages: No more avaliable virtual memory. Halting.\n");
+    asm("cli; hlt");
+}
+
+void init_paging() {
+    printf(BYEL "[STATUS] " WHT "Creating page tree... ");
+    uint64_t pml4_virt = (((uint64_t) kmalloc(1)) + kernel.hhdm);
+    map_all((uint64_t*) pml4_virt);
+    kernel.cr3 = pml4_virt - kernel.hhdm;
+    printf(BGRN " Ok!\n" WHT);
+}
