@@ -36,6 +36,16 @@ void init_kernel_data() {
 
 Kernel kernel = {0};
 
+
+#define KERNEL_SWITCH_STACK() \
+    __asm__ volatile (\
+       "movq %0, %%rsp\n"\
+       "movq $0, %%rbp\n"\
+       "push $0"\
+       :\
+       :  "r" (KERNEL_STACK_PTR)\
+    )
+
 void _start() {
     init_kernel_data();
     init_serial();
@@ -47,7 +57,9 @@ void _start() {
     init_PMM();
     init_GDT();
     init_IDT();
-    //init_paging();
+    init_paging();
+    KERNEL_SWITCH_PAGE_TREE(kernel.cr3);
+    KERNEL_SWITCH_STACK();
     kstatusf("All tasks halted, nothing left to do.\n");
     for(;;);
 }

@@ -14,7 +14,6 @@ uint64_t writeallowed_start = (uint64_t) p_writeallowed_start;
 uint64_t kernel_end         = (uint64_t) p_kernel_end;
 
 void map_sections(uint64_t pml4[]) {
-    kdebugf("\npml4 (sections): 0x%x\n", pml4);
     uint64_t num_memmap_entries                = kernel.memmap.entry_count;
     struct limine_memmap_entry *memmap_entries = *kernel.memmap.entries;
     for (size_t entry = 0; entry < num_memmap_entries; entry++) {
@@ -29,7 +28,6 @@ void map_sections(uint64_t pml4[]) {
 }
 
 void map_kernel(uint64_t pml4[]) {
-    kdebugf("pml4 (krnl): 0x%x\n", pml4);
     uint64_t length_buffer = 0;
     uint64_t phys_buffer = 0;
     /* map from kernel_start to writeallowed_start with only the present flag */
@@ -41,12 +39,10 @@ void map_kernel(uint64_t pml4[]) {
     phys_buffer = kernel.kernel_addr.physical_base + (writeallowed_start - kernel.kernel_addr.virtual_base);
     map_pages(pml4, PAGE_ALIGN_DOWN(writeallowed_start), phys_buffer, length_buffer / 4096, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE); 
     // map the kernel's stack
-    alloc_pages(pml4, KERNEL_STACK_ADDR, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE, KERNEL_STACK_PAGES);
+    alloc_pages(pml4, KERNEL_STACK_ADDR, KERNEL_STACK_PAGES, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE);
 }
 
 void map_all(uint64_t pml4[]) {
-    kstatusf("\nMapping sections...\n");
-    map_sections(pml4);
-    kstatusf("\nMapping kernel...\n");
     map_kernel(pml4);
+    map_sections(pml4);
 }
