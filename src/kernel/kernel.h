@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "../limine.h"
 #include "../cpu/include/gdt.h"
+#include "../cpu/include/tss.h"
 #include "../cpu/include/idt.h"
 
 typedef struct {
@@ -14,6 +15,7 @@ typedef struct {
     uint64_t    last_freed_num_pages;
     struct GDTR gdtr;
     struct IDTR idtr;
+    struct TSS  tss;
     uint64_t    cr3;
 } Kernel;
 

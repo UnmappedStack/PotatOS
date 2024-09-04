@@ -49,17 +49,21 @@ Kernel kernel = {0};
 void _start() {
     init_kernel_data();
     init_serial();
-    kstatusf("Serial output initialised.");
+    printf("\n");
+    kstatusf("Serial output initialised.\n");
     kdebugf("Higher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
     kdebugf("Memory map recieved from bootloader:");
     print_memory();
     printf("\n");
     init_PMM();
     init_GDT();
+    init_TSS();
     init_IDT();
     init_paging();
+    kstatusf("Switching CR3 & kernel stack...");
     KERNEL_SWITCH_PAGE_TREE(kernel.cr3);
     KERNEL_SWITCH_STACK();
-    kstatusf("All tasks halted, nothing left to do.\n");
+    printf(BGRN " Ok!\n" WHT);
+    kstatusf("All tasks halted, nothing left to do.\n\n");
     for(;;);
 }

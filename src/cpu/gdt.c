@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include "include/tss.h"
 #include "../kernel/kernel.h"
 #include "../utils/include/printf.h"
 #include "include/gdt.h"
@@ -32,7 +33,8 @@ void init_GDT() {
     GDT[2] = create_gdt_entry(0, 0, 0x92, 0xC); // kernel data
     GDT[3] = create_gdt_entry(0, 0, 0xFA, 0xA); // user code
     GDT[4] = create_gdt_entry(0, 0, 0xF2, 0xC); // user data
-    kernel.gdtr.size   = (sizeof(GDT[0]) * 5) - 1;
+    GDT[5] = create_gdt_entry((uint64_t) &kernel.tss, sizeof(struct TSS) - 1, 0x89, 0); // TSS
+    kernel.gdtr.size   = (sizeof(GDT[0]) * 6) - 1;
     kernel.gdtr.offset = (uint64_t) GDT;
     asm("lgdt (%0)" : : "r" (&kernel.gdtr));  
     asm volatile("push $0x08; \
