@@ -57,7 +57,6 @@ void _start() {
     print_memory();
     printf("\n");
     init_PMM();
-    kdebugf("kmalloc test addr: 0x%x\n", kmalloc(1));
     init_kheap();
     init_GDT();
     init_TSS();
@@ -67,7 +66,6 @@ void _start() {
     KERNEL_SWITCH_PAGE_TREE(kernel.cr3);
     KERNEL_SWITCH_STACK();
     printf(BGRN " Ok!\n" WHT);
-    kdebugf("Test kmalloc address: 0x%x\n", kmalloc(1));
     kstatusf("All tasks halted, nothing left to do.\n\n");
     for(;;);
 }
