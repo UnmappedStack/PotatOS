@@ -92,11 +92,13 @@ void* kmalloc(uint32_t num_pages) {
         // look through this entry for avaliable pages
         if (memmap_entries[entry].type != LIMINE_MEMMAP_USABLE) continue;
         uint64_t bitmap_reserved = get_bitmap_reserved(memmap_entries[entry]);
-        for (size_t bitmap_byte = 0; bitmap_byte < bitmap_reserved * 4096; bitmap_byte++) {
+        uint64_t max_bitmap_bytes = ((memmap_entries[entry].length - bitmap_reserved) / 4096) / 8;
+        for (size_t bitmap_byte = 0; bitmap_byte < max_bitmap_bytes; bitmap_byte++) {
             for (uint8_t bitmap_bit = 0; bitmap_bit < 8; bitmap_bit++) {
                 if (check_pages_avaliable(entry, bitmap_bit + (bitmap_byte * 8), num_pages, bitmap_reserved)) {
                     allocate_pages(entry, bitmap_bit + (bitmap_byte * 8), num_pages);
-                    return (void*) memmap_entries[entry].base + ((bitmap_bit + (bitmap_byte * 8)) * 4096) + bitmap_reserved;
+                    uintptr_t to_return = (uintptr_t)(memmap_entries[entry].base + ((bitmap_bit + (bitmap_byte * 8)) * 4096) + bitmap_reserved);
+                    return (void*) to_return;
                 }
             }
         }
