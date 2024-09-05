@@ -58,13 +58,6 @@ void _start() {
     printf("\n");
     init_PMM();
     init_kheap();
-    ktestf("Testing kernel heap...\n");
-    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
-    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
-    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
-    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
-    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
-    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
     init_GDT();
     init_TSS();
     init_IDT();

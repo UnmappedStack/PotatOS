@@ -4,8 +4,9 @@
 #include <stdarg.h>
 
 void printf_template(char* format, va_list args) {
-    size_t i = 0;
-    while (i < ku_strlen(format)) {
+    size_t i   = 0;
+    size_t len = ku_strlen(format);
+    while (i < len) {
         if (format[i] == '%') {
             i++;
             char buffer[10];
