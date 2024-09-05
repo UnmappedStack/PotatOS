@@ -13,6 +13,7 @@ typedef struct {
     long        last_freed_page;
     long        last_freed_section;
     uint64_t    last_freed_num_pages;
+    uintptr_t   kheap_start;
     struct GDTR gdtr;
     struct IDTR idtr;
     struct TSS  tss;

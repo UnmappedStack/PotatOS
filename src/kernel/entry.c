@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../mem/include/kheap.h"
 #include "../mem/include/print_mem.h"
 #include "../mem/include/paging.h"
 #include "../cpu/include/idt.h"
@@ -56,6 +57,14 @@ void _start() {
     print_memory();
     printf("\n");
     init_PMM();
+    init_kheap();
+    ktestf("Testing kernel heap...\n");
+    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
+    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
+    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
+    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
+    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
+    kdebugf("1 byte allocation: 0x%x\n", malloc(1));
     init_GDT();
     init_TSS();
     init_IDT();
