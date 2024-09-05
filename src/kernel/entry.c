@@ -47,15 +47,16 @@ Kernel kernel = {0};
        :  "r" (KERNEL_STACK_PTR)\
     )
 
-void _start() {
-    init_kernel_data();
-    init_serial();
-    printf("\n");
-    kstatusf("Serial output initialised.\n");
+void show_boot_info() {
     kdebugf("Higher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
     kdebugf("Memory map recieved from bootloader:");
     print_memory();
     printf("\n");
+}
+
+void _start() {
+    init_kernel_data();
+    init_serial();
     init_PMM();
     init_kheap();
     init_GDT();
