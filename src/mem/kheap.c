@@ -61,7 +61,7 @@ void* malloc(uint64_t size) {
 }
 
 void free(void* addr) {
-    Pool *this_pool          = (Pool*) addr;
+    Pool *this_pool          = (Pool*) (((uint64_t)addr) - sizeof(Pool));
     ku_memset(this_pool->data, 0, this_pool->size - sizeof(Pool));
     this_pool->free          = true;
     this_pool->required_size = sizeof(Pool);
