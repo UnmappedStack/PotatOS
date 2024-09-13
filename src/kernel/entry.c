@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../drivers/include/framebuffer.h"
 #include "../fs/include/vfs.h"
 #include "../fs/include/tempfs.h"
 #include "../mem/include/kheap.h"
@@ -31,10 +32,16 @@ static volatile struct limine_kernel_address_request kernel_address_request = {
     .revision = 2
 };
 
+static volatile struct limine_framebuffer_request framebuffer_request = {
+    .id = LIMINE_FRAMEBUFFER_REQUEST,
+    .revision = 0
+};
+
 void init_kernel_data() {
-    kernel.memmap      = *memmap_request.response;
-    kernel.hhdm        = (hhdm_request.response)->offset;
-    kernel.kernel_addr = *(kernel_address_request.response);
+    kernel.memmap       = *memmap_request.response;
+    kernel.hhdm         = (hhdm_request.response)->offset;
+    kernel.kernel_addr  = *(kernel_address_request.response);
+    kernel.framebuffers = (framebuffer_request.response)->framebuffers;
 }
 
 Kernel kernel = {0};
@@ -75,6 +82,7 @@ void setup_initrd() {
 
 void _start() {
     init_kernel_data();
+    fill_screen(0x0000FF);
     init_serial();
     show_boot_info();
     init_PMM();
@@ -87,5 +95,6 @@ void _start() {
     init_vfs();
     setup_initrd();
     kstatusf("All tasks halted, nothing left to do.\n\n");
+    fill_screen(0x00FF00);
     for(;;);
 }

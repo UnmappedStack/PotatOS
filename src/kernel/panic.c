@@ -1,3 +1,4 @@
+#include "../drivers/include/framebuffer.h"
 #include "../utils/include/printf.h"
 #include "../utils/include/string.h"
 #include <stdint.h>
@@ -59,6 +60,7 @@ void register_dump() {
 }
 
 void kpanic(char* message, struct IDTEFrame registers) {
+    fill_screen(0xFF0000);
     printf(BRED "\n[KPANIC] " WHT "The potato has gone rotten!\n");
     printf("Exception:  %s\n"
            "Error code: 0b%b\n",

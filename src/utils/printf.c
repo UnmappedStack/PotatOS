@@ -1,3 +1,4 @@
+#include "../drivers/include/framebuffer.h"
 #include "../drivers/include/serial.h"
 #include "include/string.h"
 #include "include/printf.h"
@@ -71,6 +72,7 @@ void kdebugf(char* format, ...) {
 }
 
 void kfailf(char* format, ...) {
+    fill_screen(0xFF0000);
     write_serial(BRED "[ FAIL ] " WHT);
     va_list args;
     va_start(args, format);
