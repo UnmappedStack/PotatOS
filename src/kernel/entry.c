@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../fs/include/vfs.h"
+#include "../fs/include/tempfs.h"
 #include "../mem/include/kheap.h"
 #include "../mem/include/print_mem.h"
 #include "../mem/include/paging.h"
@@ -54,19 +56,36 @@ void show_boot_info() {
     printf("\n");
 }
 
+static void switch_page_structures() {
+    kstatusf("Switching CR3 & kernel stack...");
+    KERNEL_SWITCH_PAGE_TREE(kernel.cr3);
+    KERNEL_SWITCH_STACK();
+    printf(BGRN " Ok!\n" WHT);
+}
+
+// TODO: move to a seperate file
+void setup_initrd() {
+    kstatusf("Creating new TempFS...");
+    Inode *new_tempfs = tempfs_new();
+    printf(BGRN " Ok!\n" WHT);
+    kstatusf("Mounting TempFS onto VFS drive `R:/`...");
+    mount('R', FS_TEMPFS, true, (uintptr_t) new_tempfs, 0, 0);
+    printf(BGRN " Ok!\n" WHT);
+}
+
 void _start() {
     init_kernel_data();
     init_serial();
+    show_boot_info();
     init_PMM();
     init_kheap();
     init_GDT();
     init_TSS();
     init_IDT();
     init_paging();
-    kstatusf("Switching CR3 & kernel stack...");
-    KERNEL_SWITCH_PAGE_TREE(kernel.cr3);
-    KERNEL_SWITCH_STACK();
-    printf(BGRN " Ok!\n" WHT);
+    switch_page_structures();
+    init_vfs();
+    setup_initrd();
     kstatusf("All tasks halted, nothing left to do.\n\n");
     for(;;);
 }

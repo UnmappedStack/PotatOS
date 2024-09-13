@@ -5,6 +5,7 @@
 #include "../cpu/include/gdt.h"
 #include "../cpu/include/tss.h"
 #include "../cpu/include/idt.h"
+#include "../fs/include/vfs.h"
 
 typedef struct {
     struct      limine_memmap_response memmap;
@@ -18,6 +19,7 @@ typedef struct {
     struct IDTR idtr;
     struct TSS  tss;
     uint64_t    cr3;
+    Drive drives[26];
 } Kernel;
 
 extern Kernel kernel;
