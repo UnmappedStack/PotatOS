@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../fs/include/ustar.h"
 #include "../drivers/include/framebuffer.h"
 #include "../fs/include/vfs.h"
 #include "../fs/include/tempfs.h"
@@ -37,11 +38,27 @@ static volatile struct limine_framebuffer_request framebuffer_request = {
     .revision = 0
 };
 
+static volatile struct limine_internal_module initrd = {
+    .path = "initrd",
+    .flags = LIMINE_INTERNAL_MODULE_REQUIRED
+};
+
+struct limine_internal_module *module_list = &initrd;
+
+__attribute__((used, section(".requests")))
+static volatile struct limine_module_request initrd_request = {
+    .id = LIMINE_MODULE_REQUEST,
+    .revision = 0,
+    .internal_modules = &module_list,
+    .internal_module_count = 1
+};
+
 void init_kernel_data() {
-    kernel.memmap       = *memmap_request.response;
-    kernel.hhdm         = (hhdm_request.response)->offset;
-    kernel.kernel_addr  = *(kernel_address_request.response);
-    kernel.framebuffers = (framebuffer_request.response)->framebuffers;
+    kernel.memmap          = *memmap_request.response;
+    kernel.hhdm            = (hhdm_request.response)->offset;
+    kernel.kernel_addr     = *(kernel_address_request.response);
+    kernel.framebuffers    = (framebuffer_request.response)->framebuffers;
+    kernel.initial_ramdisk = *((initrd_request.response)->modules);
 }
 
 Kernel kernel = {0};
@@ -78,6 +95,8 @@ void setup_initrd() {
     kstatusf("Mounting TempFS onto VFS drive `R:/`...");
     mount('R', FS_TEMPFS, true, (uintptr_t) new_tempfs, 0, 0);
     printf(BGRN " Ok!\n" WHT);
+    kstatusf("Unpacking initial ramdisk onto the TempFS...\n");
+    unpack_ustar('R', (char*) kernel.initial_ramdisk->address);
 }
 
 void _start() {

@@ -10,7 +10,8 @@
 typedef struct {
     struct      limine_memmap_response memmap;
     struct      limine_kernel_address_response kernel_addr;
-    struct      limine_framebuffer **framebuffers;;
+    struct      limine_framebuffer **framebuffers;
+    struct      limine_file *initial_ramdisk;
     uint64_t    hhdm;
     long        last_freed_page;
     long        last_freed_section;

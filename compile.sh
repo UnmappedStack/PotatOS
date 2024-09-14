@@ -2,13 +2,22 @@ if [ ! -d "limine" ]; then
     git clone https://github.com/limine-bootloader/limine.git --branch=v8.x-binary --depth=1
 fi
 
+# compile the bootloader & the kernel
+
 make -C limine
 
 make
 
+# set up the initial ramdisk
+
+tar --create --format=ustar --file=initrd ramdiskroot
+
+# set up the sysroot
+
 mkdir -p sysroot
 
 mkdir -p sysroot/boot
+mv initrd sysroot/boot
 cp -v bin/potatos sysroot/boot/
 mkdir -p sysroot/boot/limine
 cp -v src/limine.conf limine/limine-bios.sys limine/limine-bios-cd.bin \
@@ -25,5 +34,7 @@ xorriso -as mkisofs -b boot/limine/limine-bios-cd.bin \
         sysroot -o potatos.iso
 
 ./limine/limine bios-install potatos.iso
+
+# run in qemu
 
 qemu-system-x86_64 potatos.iso -serial stdio --no-reboot --no-shutdown
