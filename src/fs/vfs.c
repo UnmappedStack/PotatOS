@@ -47,7 +47,7 @@ void close(File *f) {
     (kernel.drives[drive_num].fs.close_function)(f->private);
 }
 
-File* open(char *path, int flags) {
+File* open(char *path, int flags, uint8_t mode) {
     char drive = path[0];
     if (drive >= 'a' && drive <= 'z') drive -= 32;
     if (drive < 'A' || drive > 'Z') return NULL;
@@ -100,6 +100,7 @@ File* open(char *path, int flags) {
     }
     free((void*)(((uint64_t)new_path) - i));
     File *new_file = (File*) malloc(sizeof(File));
+    new_file->mode       = mode;
     new_file->drive_char = drive;
     new_file->private    = current_obj;
     return new_file;
@@ -136,15 +137,23 @@ int mkdir(char *path) {
 }
 
 int mkfile(char *path) {
-    close(open(path, O_CREATALL));
+    close(open(path, O_CREATALL, MODE_WRITEONLY));
 }
 
 int write(File *f, char *buffer, size_t size) {
+    if (f->mode == MODE_READONLY) {
+        kfailf("File opened as read-only, cannot write.\n");
+        return 1;
+    }
     uint8_t drive_num = f->drive_char - 'A';
     return (kernel.drives[drive_num].fs.write_function)(f->private, buffer, size);
 }
 
 int read(File *f, char *buffer, size_t max_len) {
+    if (f->mode == MODE_WRITEONLY) {
+        kfailf("File opened as write-only, cannot read.\n");
+        return 1;
+    }
     uint8_t drive_num = f->drive_char - 'A';
     return (kernel.drives[drive_num].fs.read_function)(f->private, buffer, max_len);
 }

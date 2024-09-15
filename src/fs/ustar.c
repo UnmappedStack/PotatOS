@@ -18,7 +18,7 @@ void unpack_ustar(char drive_char, char *archive_addr) {
             new_name[2] = '/';
             ku_memcpy(new_name + 3, archive_addr, ku_strlen(archive_addr));
             new_name[ku_strlen(archive_addr) + 4] = 0; // just to be safe
-            File *f = open(new_name, O_CREATALL);
+            File *f = open(new_name, O_CREATALL, MODE_WRITEONLY);
             if (f == NULL) {
                 kfailf("Failed to create file (in unpack_ustar). Halting device, as this is a vital step in the boot process.\n");
                 asm("cli; hlt");

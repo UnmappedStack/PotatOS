@@ -6,6 +6,10 @@
 #define O_CREAT    0b001
 #define O_CREATALL 0b010
 
+#define MODE_READONLY  0b01
+#define MODE_WRITEONLY 0b10
+#define MODE_READWRITE 0b11
+
 typedef struct {
     uint8_t fs_id;
     void* (*find_function     )(void *current_dir, char *dirname);
@@ -34,6 +38,7 @@ typedef struct {
 
 typedef struct {
     char drive_char;
+    uint8_t mode;
     void *private;
 } File;
 
@@ -42,7 +47,7 @@ extern FileSystem filesystems[];
 void  init_vfs();
 int  mount(char drive, uint16_t filesystem, bool memory_based, uintptr_t mem_offset, uint64_t disk, uint64_t partition);
 int unmount(char drive);
-File* open(char *path, int flags);
+File* open(char *path, int flags, uint8_t mode);
 void  close(File *f);
 int   mkdir(char *path);
 int   write(File *f, char *buffer, size_t size);
