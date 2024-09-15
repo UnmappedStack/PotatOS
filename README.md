@@ -40,6 +40,7 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 ### File Systems
 - [X] TempFS
 - [X] VFS
+- [X] Initial ramdisk (USTAR archive)
 - [ ] ext2
 - [ ] FAT32
 
