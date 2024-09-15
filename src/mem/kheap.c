@@ -54,8 +54,8 @@ void* malloc(uint64_t size) {
             Pool *new_pool = (Pool*) split_pool(this_pool, size);
             return (void*) new_pool->data;
         } else if (this_pool->next_pool == 0) {
-            uint64_t new_pool_size = size + sizeof(Pool);
-            this_pool->next_pool = ((uintptr_t) kmalloc(new_pool_size)) + ((uintptr_t) kernel.hhdm);
+            uint64_t new_pool_size = PAGE_ALIGN_UP(size + sizeof(Pool));
+            this_pool->next_pool = ((uintptr_t) kmalloc(new_pool_size / 4096) + kernel.hhdm);
             *((Pool*) this_pool->next_pool) = create_pool(new_pool_size, size + sizeof(Pool), 0, false);
             return (void*) ((Pool*) this_pool->next_pool)->data;
         }

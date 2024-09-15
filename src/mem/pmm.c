@@ -98,7 +98,7 @@ void* kmalloc(uint32_t num_pages) {
                 if (check_pages_avaliable(entry, bitmap_bit + (bitmap_byte * 8), num_pages, bitmap_reserved)) {
                     allocate_pages(entry, bitmap_bit + (bitmap_byte * 8), num_pages);
                     uintptr_t addr = (memmap_entries[entry].base + ((bitmap_bit + (bitmap_byte * 8)) * 4096) + bitmap_reserved);
-                    ku_memset((uint8_t*) addr, 0, num_pages * 4096);
+                    ku_memset((uint8_t*) (addr + kernel.hhdm), 0, num_pages * 4096);
                     return (void*) addr;
                 }
             }
