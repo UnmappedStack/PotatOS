@@ -98,8 +98,8 @@ File* open(char *path, int flags) {
             break;
         }
     }
-    free(new_path - i);
-    File *new_file = (File*) malloc(sizeof(File)); 
+    free((void*)(((uint64_t)new_path) - i));
+    File *new_file = (File*) malloc(sizeof(File));
     new_file->drive_char = drive;
     new_file->private    = current_obj;
     return new_file;

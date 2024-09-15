@@ -1,3 +1,4 @@
+#include "../utils/include/printf.h"
 #include "include/vfs.h"
 #include "include/tempfs.h"
 #include <stdbool.h>
@@ -58,7 +59,7 @@ void* tempfs_find(void *current_dir, char *dirname) {
     DirEntryNode *this_entry = ((Inode*)current_dir)->dir_first_node;
     Inode        *this_inode = (Inode*) this_entry->inode;
     while (this_entry != NULL) {
-        if (ku_strcmp(this_inode->filename, dirname) == 0) {
+        if (ku_strcmp(this_inode->filename, dirname)) {
             return (Inode*) this_entry->inode;
         }
         this_entry  = (DirEntryNode*) this_entry->next_node;

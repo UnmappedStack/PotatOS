@@ -1,3 +1,4 @@
+#include "kernel.h"
 #include "../drivers/include/framebuffer.h"
 #include "../utils/include/printf.h"
 #include "../utils/include/string.h"
@@ -72,6 +73,9 @@ void kpanic(char* message, struct IDTEFrame registers) {
 }
 
 void exception_handler(struct IDTEFrame registers) {
+    if (kernel.in_exception_handler)
+        asm("cli; hlt");
+    kernel.in_exception_handler = true;
     static char label_designate[30];
     char *label = (char*) label_designate;
     if (registers.type == 14)

@@ -9,15 +9,17 @@
 #include "../utils/include/printf.h"
 
 typedef struct {
+    uint8_t   verify;
     uint64_t  size;
     uint64_t  required_size;
     uintptr_t next_pool;
     bool      free;
     uint8_t   data[0];
-} Pool;
+} __attribute__((packed)) Pool;
 
 Pool create_pool(uint64_t size, uint64_t required_size, uintptr_t next_pool, bool free) {
     Pool pool;
+    pool.verify        = 69;
     pool.size          = size;
     pool.required_size = required_size;
     pool.next_pool     = next_pool;
@@ -44,17 +46,18 @@ void* split_pool(Pool *pool_addr, uint64_t size) {
 void* malloc(uint64_t size) {
     Pool *this_pool = (Pool*) kernel.kheap_start;
     for (;;) {
-        if (this_pool->free) {
+        if (this_pool->free && this_pool->size > size + sizeof(Pool)) {
             this_pool->free = false;
             this_pool->required_size = size + sizeof(Pool);
-            return (void*) this_pool;
+            return (void*) this_pool->data;
         } else if (this_pool->size > this_pool->required_size + size) {
-            return split_pool(this_pool, size);
+            Pool *new_pool = (Pool*) split_pool(this_pool, size);
+            return (void*) new_pool->data;
         } else if (this_pool->next_pool == 0) {
-            uint64_t new_pool_size = PAGE_ALIGN_UP(size);
+            uint64_t new_pool_size = size + sizeof(Pool);
             this_pool->next_pool = ((uintptr_t) kmalloc(new_pool_size)) + ((uintptr_t) kernel.hhdm);
             *((Pool*) this_pool->next_pool) = create_pool(new_pool_size, size + sizeof(Pool), 0, false);
-            return (void*) this_pool->next_pool;
+            return (void*) ((Pool*) this_pool->next_pool)->data;
         }
         this_pool = (Pool*) this_pool->next_pool;
     }

@@ -95,8 +95,9 @@ void setup_initrd() {
     kstatusf("Mounting TempFS onto VFS drive `R:/`...");
     mount('R', FS_TEMPFS, true, (uintptr_t) new_tempfs, 0, 0);
     printf(BGRN " Ok!\n" WHT);
-    kstatusf("Unpacking initial ramdisk onto the TempFS...\n");
+    kstatusf("Unpacking initial ramdisk onto the TempFS...");
     unpack_ustar('R', (char*) kernel.initial_ramdisk->address);
+    printf(BGRN " Ok!\n" WHT);
 }
 
 void _start() {
