@@ -80,7 +80,7 @@ void show_boot_info() {
     printf("\n");
 }
 
-static void switch_page_structures() {
+inline static void switch_page_structures() {
     kstatusf("Switching CR3 & kernel stack...");
     KERNEL_SWITCH_PAGE_TREE(kernel.cr3);
     KERNEL_SWITCH_STACK();
