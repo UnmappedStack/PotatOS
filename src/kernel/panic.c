@@ -38,8 +38,8 @@ struct stackFrame {
 void stack_trace(uint64_t rbp, uint64_t rip) {
     printf("\nStack Trace (Most recent call last): \n");
     printf(" 0x%x\n", rip);
-    struct stackFrame *stack = (struct stackFrame*)rbp;
-    while (stack && stack->rip) {
+    struct stackFrame *stack = (struct stackFrame*) rbp;
+    while (stack) {
         printf(" 0x%x\n", stack->rip);
         stack = stack->rbp;
     }
