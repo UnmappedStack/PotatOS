@@ -45,7 +45,7 @@ void stack_trace(uint64_t rbp, uint64_t rip) {
     }
 }
 
-void register_dump() {
+void register_dump(struct IDTEFrame registers) {
     uint64_t idtr;
     uint64_t gdtr;
     uint64_t cr2;
@@ -55,7 +55,14 @@ void register_dump() {
     asm("mov %%cr3, %0" : "=r"(cr3));
     asm("mov %%cr2, %0" : "=r"(cr2));
     printf("\nRegisters: \n");
-    printf("GDTR: 0x%x\nIDTR: 0x%x\n"
+    // gen purpose
+    printf(" r8: 0x%x     r9: 0x%x     rax: 0x%x\n"
+           "r10: 0x%x    r11: 0x%x     rbx: 0x%x\n"
+           "r12: 0x%x    r13: 0x%x     rcx: 0x%x\n"
+           "r14: 0x%x    r15: 0x%x     rdx: 0x%x\n",
+           registers.r8, registers.r9, registers.rax, registers.r10, registers.r11, registers.rbx, registers.r12, registers.r13, registers.rcx, registers.r14, registers.r15, registers.rdx);
+    // specifics
+    printf("GDTR: 0x%x   IDTR: 0x%x\n"
            " CR3: 0x%x\n CR2: 0x%x\n",
             gdtr, idtr, cr3, cr2);
 }
@@ -66,7 +73,7 @@ void kpanic(char* message, struct IDTEFrame registers) {
     printf("Exception:  %s\n"
            "Error code: 0b%b\n",
             message, registers.ss);
-    register_dump();
+    register_dump(registers);
     stack_trace(registers.rbp, registers.rip);
     printf("\n");
     asm("cli; hlt");

@@ -90,6 +90,7 @@ void _start() {
     switch_page_structures();
     init_vfs();
     setup_initrd();
+    printf("The val at addr 0x1 is: 0x%x\n", *((uint64_t*)1));
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
     asm("sti");
