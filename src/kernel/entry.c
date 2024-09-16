@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../drivers/include/pit.h"
 #include "../drivers/include/irq.h"
 #include "../mem/include/vector.h"
 #include "../fs/include/ustar.h"
@@ -73,6 +74,7 @@ void show_boot_info() {
 }
 
 void _start() {
+    asm("cli");
     init_kernel_data();
     fill_screen(0x0000FF);
     init_serial();
@@ -83,6 +85,7 @@ void _start() {
     init_TSS();
     init_IDT();
     init_irq();
+    init_PIT();
     init_paging();
     switch_page_structures();
     init_vfs();

@@ -16,3 +16,4 @@ struct IDTR {
 } __attribute__((packed));
 
 void init_IDT();
+void set_IDT_entry(uint32_t vector, void *isr, uint8_t flags, struct IDTEntry *IDT);

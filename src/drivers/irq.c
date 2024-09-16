@@ -32,3 +32,6 @@ void mask_irq(int IRQ) {
         outb(0xA1, (1 << (IRQ % 8)));
 }
 
+void end_of_interrupt() {
+    outb(0x20, 0x20);
+}
