@@ -3,7 +3,7 @@ My 64 bit hobby toy kernel.
 
 PotatOS is a project I have been working on after I ended my previous project, [SpecOS](https://github.com/jakeSteinburger/SpecOS), due to the project being quite broken and having code left from when I knew literally nothing about kernel development. PotatOS is a rework now that I understand more, and while it's still not perfect, I can confidently say that it's already a lot better.
 
-This is an x86_64 higher half monolithic (perhaps modular in the future) kernel written in C, with a lettered Windows-style VFS (C:/, D:/ etc.) but using Linux style devices. It does *not attempt* to be binary compatible with other operating systems, and is neither UNIX-like nor DOS-like, but rather a blend of design aspects which I personally like. For this reason, a lot of it's userspace components will be completely written from scratch rather than ported.
+This is an x86_64 higher half monolithic (perhaps modular in the future) kernel written in C, with a lettered Windows-style VFS (C:/, D:/ etc.) but using Linux style devices. It uses `spawn()` rather than `fork()`/`exec()`. It does *not attempt* to be binary compatible with other operating systems, and is neither UNIX-like nor DOS-like, but rather a blend of design aspects which I personally like. For this reason, a lot of it's userspace components will be completely written from scratch rather than ported.
 
 I have a Discord server for PotatOS where I will share most updates, and you can also get help with your own OSDev project. You can join [here](https://discord.gg/hPg9S2F2nD).
 
@@ -35,7 +35,7 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 - [X] Kernelspace heap
 - [X] Paging
 - [ ] Better buddy allocator
-- [ ] Copy-On-Write paging
+- [ ] On-demand paging
 
 ### File Systems
 - [X] TempFS
