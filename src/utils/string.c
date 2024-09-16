@@ -180,9 +180,16 @@ void ku_uint64_to_hex_string(uint64_t num, char *str) {
             num >>= 4;
         }
     }
-    buffer[index] = '\0';
-    ku_reverse(buffer, index);
-    ku_memcpy(str, buffer, 17);
+
+    // Pad the buffer with 0s to make sure it's 16 digits
+    while (index < 16) {
+        buffer[index++] = '0';
+    }
+
+    buffer[index] = '\0'; // Null-terminate the string
+
+    ku_reverse(buffer, index); // Reverse the string
+    ku_memcpy(str, buffer, 17); // Copy the final result to the destination
 }
 
 

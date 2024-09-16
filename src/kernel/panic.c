@@ -56,10 +56,10 @@ void register_dump(struct IDTEFrame registers) {
     asm("mov %%cr2, %0" : "=r"(cr2));
     printf("\nRegisters: \n");
     // gen purpose
-    printf(" r8: 0x%x     r9: 0x%x     rax: 0x%x\n"
-           "r10: 0x%x    r11: 0x%x     rbx: 0x%x\n"
-           "r12: 0x%x    r13: 0x%x     rcx: 0x%x\n"
-           "r14: 0x%x    r15: 0x%x     rdx: 0x%x\n",
+    printf("  r8: 0x%x     r9: 0x%x     rax: 0x%x\n"
+           " r10: 0x%x    r11: 0x%x     rbx: 0x%x\n"
+           " r12: 0x%x    r13: 0x%x     rcx: 0x%x\n"
+           " r14: 0x%x    r15: 0x%x     rdx: 0x%x\n",
            registers.r8, registers.r9, registers.rax, registers.r10, registers.r11, registers.rbx, registers.r12, registers.r13, registers.rcx, registers.r14, registers.r15, registers.rdx);
     // specifics
     printf("GDTR: 0x%x   IDTR: 0x%x\n"
