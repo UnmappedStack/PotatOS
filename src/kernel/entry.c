@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../mem/include/vector.h"
 #include "../fs/include/ustar.h"
 #include "../drivers/include/framebuffer.h"
 #include "../fs/include/vfs.h"
