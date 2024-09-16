@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../drivers/include/irq.h"
 #include "../mem/include/vector.h"
 #include "../fs/include/ustar.h"
 #include "../drivers/include/framebuffer.h"
@@ -81,11 +82,13 @@ void _start() {
     init_GDT();
     init_TSS();
     init_IDT();
+    init_irq();
     init_paging();
     switch_page_structures();
     init_vfs();
     setup_initrd();
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
+    asm("sti");
     for(;;);
 }
