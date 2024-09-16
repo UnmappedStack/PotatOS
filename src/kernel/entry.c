@@ -63,41 +63,11 @@ void init_kernel_data() {
 
 Kernel kernel = {0};
 
-
-#define KERNEL_SWITCH_STACK() \
-    __asm__ volatile (\
-       "movq %0, %%rsp\n"\
-       "movq $0, %%rbp\n"\
-       "push $0"\
-       :\
-       :  "r" (KERNEL_STACK_PTR)\
-    )
-
 void show_boot_info() {
     kdebugf("Higher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
     kdebugf("Memory map recieved from bootloader:");
     print_memory();
     printf("\n");
-}
-
-inline static void switch_page_structures() {
-    kstatusf("Switching CR3 & kernel stack...");
-    KERNEL_SWITCH_PAGE_TREE(kernel.cr3);
-    KERNEL_SWITCH_STACK();
-    printf(BGRN " Ok!\n" WHT);
-}
-
-// TODO: move to a seperate file
-void setup_initrd() {
-    kstatusf("Creating new TempFS...");
-    Inode *new_tempfs = tempfs_new();
-    printf(BGRN " Ok!\n" WHT);
-    kstatusf("Mounting TempFS onto VFS drive `R:/`...");
-    mount('R', FS_TEMPFS, true, (uintptr_t) new_tempfs, 0, 0);
-    printf(BGRN " Ok!\n" WHT);
-    kstatusf("Unpacking initial ramdisk onto the TempFS...");
-    unpack_ustar('R', (char*) kernel.initial_ramdisk->address);
-    printf(BGRN " Ok!\n" WHT);
 }
 
 void _start() {

@@ -28,8 +28,23 @@
        :  "r" (TREE_ADDRESS)\
     )
 
+#define KERNEL_SWITCH_STACK() \
+    __asm__ volatile (\
+       "movq %0, %%rsp\n"\
+       "movq $0, %%rbp\n"\
+       "push $0"\
+       :\
+       :  "r" (KERNEL_STACK_PTR)\
+    )
+
 void map_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t phys_addr, uint64_t num_pages, uint64_t flags);
 
 void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages, uint64_t flags);
 
 void init_paging();
+
+#define switch_page_structures() \
+    kstatusf("Switching CR3 & kernel stack..."); \
+    KERNEL_SWITCH_PAGE_TREE(kernel.cr3); \
+    KERNEL_SWITCH_STACK(); \
+    printf(BGRN " Ok!\n" WHT);
