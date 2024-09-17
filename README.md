@@ -28,7 +28,7 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 - [X] Exception handler
 - [ ] Userspace support
 - [ ] Dynamic ELF linking
-- [ ] SMP
+- [X] SMP
 
 ### Memory
 - [X] Physical memory allocator (bitmap)
