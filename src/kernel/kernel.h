@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "../limine.h"
+#include "../mem/include/vector.h"
 #include "../cpu/include/gdt.h"
 #include "../cpu/include/tss.h"
 #include "../cpu/include/idt.h"
@@ -19,6 +20,7 @@ typedef struct {
     long        last_freed_section;
     uint64_t    last_freed_num_pages;
     uintptr_t   kheap_start;
+    Vector      *tasklist;
     struct GDTR gdtr;
     struct IDTR idtr;
     struct TSS  tss;
@@ -27,3 +29,5 @@ typedef struct {
 } Kernel;
 
 extern Kernel kernel;
+
+void _start(); // This is just needed so that the task list can get the address of the kernel entry point.

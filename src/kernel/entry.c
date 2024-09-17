@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../tasks/include/tasklist.h"
 #include "../utils/include/io.h"
 #include "../processors/include/smp.h"
 #include "../drivers/include/pit.h"
@@ -99,6 +100,7 @@ void _start() {
     switch_page_structures();
     init_vfs();
     setup_initrd();
+    init_tasklist();
     init_smp();
     for (uint64_t i = 0; i < 999999; i++)
         outb(0x80, 0);
