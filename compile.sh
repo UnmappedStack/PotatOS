@@ -37,4 +37,4 @@ xorriso -as mkisofs -b boot/limine/limine-bios-cd.bin \
 
 # run in qemu
 
-qemu-system-x86_64 potatos.iso -serial stdio --no-reboot --no-shutdown
+qemu-system-x86_64 potatos.iso -serial stdio --no-reboot --no-shutdown -smp 5

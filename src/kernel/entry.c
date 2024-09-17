@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../utils/include/io.h"
+#include "../processors/include/smp.h"
 #include "../drivers/include/pit.h"
 #include "../drivers/include/irq.h"
 #include "../mem/include/vector.h"
@@ -41,6 +43,11 @@ static volatile struct limine_framebuffer_request framebuffer_request = {
     .revision = 0
 };
 
+static volatile struct limine_smp_request smp_request = {
+    .id = LIMINE_SMP_REQUEST,
+    .revision = 0
+};
+
 static volatile struct limine_internal_module initrd = {
     .path = "initrd",
     .flags = LIMINE_INTERNAL_MODULE_REQUIRED
@@ -62,12 +69,14 @@ void init_kernel_data() {
     kernel.kernel_addr     = *(kernel_address_request.response);
     kernel.framebuffers    = (framebuffer_request.response)->framebuffers;
     kernel.initial_ramdisk = *((initrd_request.response)->modules);
+    kernel.smp_response    = smp_request.response;
 }
 
 Kernel kernel = {0};
 
 void show_boot_info() {
     kdebugf("Higher Half Direct Mapping (HHDM): 0x%x\n", kernel.hhdm);
+    kdebugf("Number of processors detected: %i\n", kernel.smp_response->cpu_count);
     kdebugf("Memory map recieved from bootloader:");
     print_memory();
     printf("\n");
@@ -90,6 +99,9 @@ void _start() {
     switch_page_structures();
     init_vfs();
     setup_initrd();
+    init_smp();
+    for (uint64_t i = 0; i < 999999; i++)
+        outb(0x80, 0);
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
     asm("sti");
