@@ -2,9 +2,13 @@
 #include "../drivers/include/serial.h"
 #include "include/string.h"
 #include "include/printf.h"
+#include "../processors/include/spinlock.h"
 #include <stdarg.h>
 
+Spinlock serial_lock;
+
 void printf_template(char* format, va_list args) {
+    spinlock_aquire(&serial_lock);
     size_t i   = 0;
     size_t len = ku_strlen(format);
     while (i < len) {
@@ -36,6 +40,7 @@ void printf_template(char* format, va_list args) {
         }
         i++;
     }
+    spinlock_release(&serial_lock);
 }
 
 void printf(char* format, ...) {
