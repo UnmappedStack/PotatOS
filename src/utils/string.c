@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include "include/printf.h"
 #include "include/string.h"
 
 int oct2bin(unsigned char *str, int size) {
@@ -27,8 +28,9 @@ size_t ku_strlen(const char* str)
 }
 
 void ku_memcpy(char* dest, char* from, size_t n) {
-    for (uint8_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++) {
         dest[i] = from[i];
+    }
 }
 
 bool ku_memcmp(const char* str1, const char* str2, uint64_t size) {

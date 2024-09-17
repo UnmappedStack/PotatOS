@@ -8,7 +8,12 @@ make -C limine
 
 make
 
+# compile/assemble userspace components
+
+nasm -f elf userspace/test/main.asm -o ramdiskroot/testuser
+
 # set up the initial ramdisk
+
 
 tar --create --format=ustar --file=initrd ramdiskroot
 
