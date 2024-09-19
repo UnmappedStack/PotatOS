@@ -31,7 +31,7 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 - [ ] Userspace support
 - [ ] SMP
     - [X] Initialisation
-    - [ ] Spinlocks
+    - [X] Spinlocks
     - [ ] Use with scheduler
     - [ ] Mutexes + Semaphores
 - [ ] Dynamic ELF linking
