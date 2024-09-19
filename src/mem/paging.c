@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "../utils/include/cpu_utils.h"
 #include "include/map.h"
 #include "include/pmm.h"
 #include "../drivers/include/serial.h"
@@ -66,7 +67,7 @@ void map_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t phys_addr, uin
         pml3 = 0;
     }
     printf(BRED "\n[KPANIC] " WHT "Failed to allocate pages: No more avaliable virtual memory. Halting.\n");
-    asm("cli; hlt");
+    halt();
 } 
 
 void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages, uint64_t flags) {
@@ -120,7 +121,7 @@ void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages, u
         pml3 = 0;
     }
     kfailf("Failed to allocate pages: No more avaliable virtual memory. Halting.\n");
-    asm("cli; hlt");
+    halt();
 }
 
 void init_paging() {

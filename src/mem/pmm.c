@@ -2,6 +2,7 @@
  * Please open an issue if you have any specific ideas.
  */
 
+#include "../utils/include/cpu_utils.h"
 #include "../utils/include/string.h"
 #include "../kernel/kernel.h"
 #include "include/pmm.h"
@@ -72,7 +73,7 @@ bool check_pages_avaliable(uint64_t section_index, uint64_t page_frame_number, u
 void* kmalloc(uint32_t num_pages) {
     if (num_pages < 1) {
         kfailf("Cannot allocate less than 1 page! Halting device.\n");
-        asm("cli; hlt");
+        halt();
     }
     struct limine_memmap_entry *memmap_entries = *kernel.memmap.entries;
     if (kernel.last_freed_page != -1 && num_pages < kernel.last_freed_num_pages) {
@@ -99,7 +100,7 @@ void* kmalloc(uint32_t num_pages) {
     // no avaliable space! panic.
     kfailf("No more avaliable space in RAM to allocate! Trying to allocate %i pages. Halting device.\n",
            num_pages);
-    asm("cli; hlt");
+    halt();
     return 0; // random val to please the compiler
 }
 

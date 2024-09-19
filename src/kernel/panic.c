@@ -1,3 +1,4 @@
+#include "../utils/include/cpu_utils.h"
 #include "kernel.h"
 #include "../drivers/include/framebuffer.h"
 #include "../utils/include/printf.h"
@@ -76,12 +77,11 @@ void kpanic(char* message, struct IDTEFrame registers) {
     register_dump(registers);
     stack_trace(registers.rbp, registers.rip);
     printf("\n");
-    asm("cli; hlt");
+    halt();
 }
 
 void exception_handler(struct IDTEFrame registers) {
-    if (kernel.in_exception_handler)
-        asm("cli; hlt");
+    if (kernel.in_exception_handler) halt();
     kernel.in_exception_handler = true;
     static char label_designate[30];
     char *label = (char*) label_designate;

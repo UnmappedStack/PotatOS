@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include "../utils/include/cpu_utils.h"
 #include "include/smp.h"
 #include "../kernel/kernel.h"
 #include "../utils/include/printf.h"
@@ -7,7 +8,7 @@
 
 void smp_test(struct limine_smp_info *smp_info) {
     printf("This message was printed from an AP (Processor ID: %i). Freezing this core. :D\n", smp_info->processor_id);
-    for (;;);
+    halt();
 }
 
 void init_smp() {

@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../utils/include/cpu_utils.h"
 #include "../tasks/include/spawn.h"
 #include "../tasks/include/tasklist.h"
 #include "../utils/include/io.h"
@@ -85,7 +86,7 @@ void show_boot_info() {
 }
 
 void _start() {
-    asm("cli");
+    disable_interrupts();
     init_kernel_data();
     fill_screen(0x0000FF);
     init_serial();
@@ -109,6 +110,5 @@ void _start() {
     printf("\n");
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
-    asm("sti");
-    for(;;);
+    halt();
 }
