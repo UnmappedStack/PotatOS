@@ -13,7 +13,7 @@ I have a Discord server for PotatOS where I will share most updates, and you can
 The OS development community is a particularly helpful one, and there are a few people from my server who have been particularly helpful who I'd like to point out. I'm glad that they are all much smarter than me and I learn from them all the time! (This list is in no particular order.)
 
 - [Dcraftbg](https://github.com/Dcraftbg) is an awesome guy who has helped me with a ton, especially when it comes to paging. He also works on [MinOS](https://github.com/Dcraftbg/MinOS), so definitely check that out :D
-- [Bananymous](https://github.com/Bananymous) helped me especially in the early stages of OSDev when I was working on SpecOS, and from that I've been able to make PotatOS so much better earlier on, so thank you! He also wrote an amazing (mostly) POSIX compatible kernel, [Banan-OS](https://github.com/Bananymous/banan-os).
+- [Bananymous](https://github.com/Bananymous) helped me especially in the early stages of OSDev when I was working on SpecOS, and from that I've been able to make PotatOS so much better earlier on, so thank you! He also wrote an amazing kernel which is mostly POSIX compatible, [Banan-OS](https://github.com/Bananymous/banan-os).
 - [AProgrammablePhoenex](https://github.com/AProgrammablePhoenix) (aka. Alex) has just been generally very supportive of my project, and has left many a 🌳 emoji as I rant about updates on PotatOS. He also is writing an OS named after everybody's fav fruit, [Cocos](https://github.com/AProgrammablePhoenix/Cocos) :)
 
 ## Usage
