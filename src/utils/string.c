@@ -19,8 +19,7 @@ int oct2bin(char *str, int size) {
     return n;
 }
 
-size_t ku_strlen(const char* str) 
-{
+size_t ku_strlen(const char* str) {
     size_t len = 0;
     while (str[len])
         len++;

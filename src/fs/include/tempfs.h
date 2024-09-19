@@ -32,6 +32,7 @@ typedef struct {
     };
 } Inode;
 
+void tempfs_debug(Inode *fs, uint64_t level);
 Inode* tempfs_new();
 void* tempfs_find_root(void *fs);
 void* tempfs_find(void *current_dir, const char *dirname);

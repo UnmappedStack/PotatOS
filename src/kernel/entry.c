@@ -106,6 +106,7 @@ void _start() {
     for (uint64_t i = 0; i < 999999; i++)
         outb(0x80, 0);
     spawn("R:/ramdiskroot/testuser");
+    printf("\n");
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
     asm("sti");

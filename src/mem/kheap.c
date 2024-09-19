@@ -30,12 +30,12 @@ Pool create_pool(uint64_t size, uint64_t required_size, uintptr_t next_pool, boo
 void init_kheap() {
     kstatusf("Initiating kheap...");
     kernel.kheap_start = ((uintptr_t) kmalloc(2)) + ((uintptr_t) kernel.hhdm);
-    *((Pool*) kernel.kheap_start) = create_pool(4096, sizeof(Pool), 0, true);
+    *((Pool*) kernel.kheap_start) = create_pool(8192, sizeof(Pool), 0, true);
     printf(BGRN " Ok!\n" WHT);
 }
 
 void* split_pool(Pool *pool_addr, uint64_t size) {
-    Pool *new_pool         = (Pool*) (((uint64_t) pool_addr) + pool_addr->required_size);
+    Pool *new_pool         = (Pool*) (((uint64_t) pool_addr) + pool_addr->required_size + 1);
     uint64_t new_pool_size = sizeof(Pool) + size;
     *new_pool = create_pool(pool_addr->size - pool_addr->required_size, new_pool_size, pool_addr->next_pool, false);
     pool_addr->size      = pool_addr->required_size;

@@ -32,6 +32,8 @@ Inode* tempfs_addentry(Inode *current_dir, const char *dirname, bool is_dir) {
     DirEntryNode *this_entry = current_dir->dir_first_node;
     uintptr_t inode_new = (uintptr_t) malloc(sizeof(Inode));
     DirEntryNode *new_entry = (DirEntryNode*) malloc(sizeof(DirEntryNode));
+    ku_memset((void*) new_entry, 0, sizeof(DirEntryNode));
+    ku_memset((void*) inode_new, 0, sizeof(Inode));
     if (this_entry != NULL) {
         for (size_t e = 0; e < current_dir->num_entries; e++)
             this_entry = (DirEntryNode*) this_entry->next_node;
@@ -42,6 +44,7 @@ Inode* tempfs_addentry(Inode *current_dir, const char *dirname, bool is_dir) {
     ku_memcpy(((Inode*)inode_new)->filename, dirname, ku_strlen(dirname));
     ((Inode*)inode_new)->is_dir = is_dir;
     new_entry->inode = inode_new;
+    current_dir->num_entries++;
     return (Inode*) new_entry->inode;
 }
 
@@ -79,15 +82,15 @@ int tempfs_write(void *filev, char *data, size_t len) {
         file->file_first_node = (FileNode*) malloc(sizeof(FileNode));
     FileNode *this_fnode = file->file_first_node;
     uint64_t len_left = len;
-    for (size_t i = 0; i < len; i += 4096) { 
+    for (size_t i = 0; i < len; i += FILENODE_DATA_SIZE) { 
         if (this_fnode->next_node == 0) {
             this_fnode->next_node = (uintptr_t) malloc(sizeof(FileNode));
             ((FileNode*)this_fnode->next_node)->next_node = 0;
         }
-        uint64_t amount_to_copy = (len_left > 4096) ? FILENODE_DATA_SIZE : len_left;
-        ku_memcpy(this_fnode->data, data + (i * FILENODE_DATA_SIZE), amount_to_copy);
+        uint64_t amount_to_copy = (len_left > FILENODE_DATA_SIZE) ? FILENODE_DATA_SIZE : len_left;
+        ku_memcpy(this_fnode->data, data + i, amount_to_copy);
         this_fnode = (FileNode*) this_fnode->next_node;
-        len_left += FILENODE_DATA_SIZE;
+        len_left -= FILENODE_DATA_SIZE;
     }
     return 0;
 }
@@ -96,11 +99,11 @@ int tempfs_read(void *filev, char *buffer, size_t max_len) {
     Inode *file = (Inode*) filev;
     FileNode *this_fnode = file->file_first_node;
     uint64_t len_left = max_len;
-    for (size_t i = 0; i < max_len && this_fnode != NULL; i += 4096) {
-        uint64_t amount_to_copy = (len_left > 4096) ? FILENODE_DATA_SIZE : len_left;
-        ku_memcpy(buffer + (i * FILENODE_DATA_SIZE), this_fnode->data, amount_to_copy);
+    for (size_t i = 0; i < max_len && this_fnode != NULL; i += FILENODE_DATA_SIZE) {
+        uint64_t amount_to_copy = (len_left > FILENODE_DATA_SIZE) ? FILENODE_DATA_SIZE : len_left;
+        ku_memcpy(buffer + i, this_fnode->data, amount_to_copy);
         this_fnode = (FileNode*) this_fnode->next_node;
-        len_left += FILENODE_DATA_SIZE;
+        len_left -= FILENODE_DATA_SIZE;
     }
     return 0; 
 }
