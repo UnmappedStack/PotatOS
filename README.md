@@ -1,6 +1,10 @@
 # PotatOS
 My 64 bit hobby toy kernel.
 
+![Commit activity badge](https://img.shields.io/github/commit-activity/m/jakeSteinburger/PotatOS/main?style=plastic)
+![Top language badge](https://img.shields.io/github/languages/top/jakeSteinburger/PotatOS?style=plastic&label=C)
+![Lines of code badge](https://tokei.rs/b1/github/jakeSteinburger/PotatOS)
+
 ![Screenshot of PotatOS](https://raw.githubusercontent.com/jakeSteinburger/PotatOS/refs/heads/main/screenshots/screenshot1.png)
 
 PotatOS is a project I have been working on after I ended my previous project, [SpecOS](https://github.com/jakeSteinburger/SpecOS), due to the project being quite broken and having code left from when I knew literally nothing about kernel development. PotatOS is a rework now that I understand more, and while it's still not perfect, I can confidently say that it's already a lot better.
