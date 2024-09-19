@@ -8,9 +8,9 @@
 #include "include/printf.h"
 #include "include/string.h"
 
-int oct2bin(unsigned char *str, int size) {
+int oct2bin(char *str, int size) {
     int n = 0;
-    unsigned char *c = str;
+    char *c = str;
     while (size-- > 0) {
         n *= 8;
         n += *c - '0';
@@ -34,10 +34,10 @@ void ku_memcpy(char* dest, char* from, size_t n) {
 }
 
 bool ku_memcmp(const char* str1, const char* str2, uint64_t size) {
-    int str1len = ku_strlen(str1);
-    int str2len = ku_strlen(str2);
+    uint64_t str1len = ku_strlen(str1);
+    uint64_t str2len = ku_strlen(str2);
     if (str1len != str2len) return false;
-    for (int c = 0; c < size; c++) {
+    for (uint64_t c = 0; c < size; c++) {
         if (str1[c] != str2[c]) return false;
     }
     return true;

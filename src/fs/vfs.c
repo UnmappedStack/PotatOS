@@ -138,6 +138,7 @@ int mkdir(char *path) {
 
 int mkfile(char *path) {
     close(open(path, O_CREATALL, MODE_WRITEONLY));
+    return 0;
 }
 
 int write(File *f, char *buffer, size_t size) {

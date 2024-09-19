@@ -11,7 +11,7 @@
 void ku_memcpy(char* dest, char* from, size_t n);
 void ku_uint64_to_binary_string(uint64_t num, char *buf);
 size_t ku_strlen(const char* str);
-int oct2bin(unsigned char *str, int size);
+int oct2bin(char *str, int size);
 void ku_add_char_to_string(char *str, char c);
 void ku_remove_last_char(char *str);
 void ku_reverse(char str[], int length);

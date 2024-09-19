@@ -49,7 +49,7 @@ static volatile struct limine_smp_request smp_request = {
     .revision = 0
 };
 
-static volatile struct limine_internal_module initrd = {
+static struct limine_internal_module initrd = {
     .path = "initrd",
     .flags = LIMINE_INTERNAL_MODULE_REQUIRED
 };
