@@ -1,7 +1,7 @@
 # PotatOS
 My 64 bit hobby toy kernel.
 
-![Screenshot of PotatOS](https://github.com/jakeSteinburger/PotatOS/tree/main/screenshots/screenshot1.png)
+![Screenshot of PotatOS](https://github.com/jakeSteinburger/PotatOS/tree/main/screenshots/screenshot1.png?raw=true)
 
 PotatOS is a project I have been working on after I ended my previous project, [SpecOS](https://github.com/jakeSteinburger/SpecOS), due to the project being quite broken and having code left from when I knew literally nothing about kernel development. PotatOS is a rework now that I understand more, and while it's still not perfect, I can confidently say that it's already a lot better.
 
