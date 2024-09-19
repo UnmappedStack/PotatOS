@@ -1,6 +1,8 @@
 # PotatOS
 My 64 bit hobby toy kernel.
 
+![Screenshot of PotatOS](https://github.com/jakeSteinburger/PotatOS/tree/main/screenshots/screenshot1.png)
+
 PotatOS is a project I have been working on after I ended my previous project, [SpecOS](https://github.com/jakeSteinburger/SpecOS), due to the project being quite broken and having code left from when I knew literally nothing about kernel development. PotatOS is a rework now that I understand more, and while it's still not perfect, I can confidently say that it's already a lot better.
 
 This is an x86_64, SMP-aware, higher-half, monolithic (perhaps modular in the future) kernel written in C, with a lettered Windows-style VFS (C:/, D:/ etc.) but using Linux style devices. It uses `spawn()` rather than `fork()`/`exec()`. It does *not attempt* to be binary compatible with other operating systems, and is neither UNIX-like nor DOS-like, but rather a blend of design aspects which I personally like. For this reason, a lot of it's userspace components will be completely written from scratch rather than ported.
@@ -27,8 +29,12 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 - [X] IDT
 - [X] Exception handler
 - [ ] Userspace support
+- [ ] SMP
+    - [X] Initialisation
+    - [ ] Spinlocks
+    - [ ] Use with scheduler
+    - [ ] Mutexes + Semaphores
 - [ ] Dynamic ELF linking
-- [X] SMP
 
 ### Memory
 - [X] Physical memory allocator (bitmap)
