@@ -64,7 +64,7 @@ override KLDFLAGS += \
     -nostdlib \
     -static \
     -z max-page-size=0x1000 \
-    -T src/linker.ld
+    -T linker.ld
 
 # Use "find" to glob all *.c, *.S, and *.asm files in the tree and obtain the
 # object and header dependency file names.
@@ -79,7 +79,7 @@ override HEADER_DEPS := $(addprefix obj/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 all: bin/$(OUTPUT)
 
 # Link rules for the final executable.
-bin/$(OUTPUT): src/linker.ld $(OBJ)
+bin/$(OUTPUT): linker.ld $(OBJ)
 	mkdir -p "$$(dirname $@)"
 	$(KLD) $(OBJ) $(KLDFLAGS) -o $@
 
