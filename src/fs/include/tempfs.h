@@ -34,12 +34,12 @@ typedef struct {
 
 Inode* tempfs_new();
 void* tempfs_find_root(void *fs);
-void* tempfs_find(void *current_dir, char *dirname);
+void* tempfs_find(void *current_dir, const char *dirname);
 void* tempfs_open_dir(void *dir);
 void* tempfs_open_file(void *file);
 void  tempfs_close(void *file);
-void tempfs_mkdir(void *current_dir, char *dirname);
-void tempfs_mkfile(void *current_dir, char *filename);
+void tempfs_mkdir(void *current_dir, const char *dirname);
+void tempfs_mkfile(void *current_dir, const char *filename);
 int tempfs_write(void *filev, char *data, size_t len);
 int tempfs_read(void *filev, char *buffer, size_t max_len);
 

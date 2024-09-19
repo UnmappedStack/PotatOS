@@ -28,7 +28,7 @@ Inode* tempfs_new() {
     return root_inode;
 }
 
-Inode* tempfs_addentry(Inode *current_dir, char *dirname, bool is_dir) {
+Inode* tempfs_addentry(Inode *current_dir, const char *dirname, bool is_dir) {
     DirEntryNode *this_entry = current_dir->dir_first_node;
     uintptr_t inode_new = (uintptr_t) malloc(sizeof(Inode));
     DirEntryNode *new_entry = (DirEntryNode*) malloc(sizeof(DirEntryNode));
@@ -45,17 +45,17 @@ Inode* tempfs_addentry(Inode *current_dir, char *dirname, bool is_dir) {
     return (Inode*) new_entry->inode;
 }
 
-void tempfs_mkdir(void *current_dir, char *dirname) {
+void tempfs_mkdir(void *current_dir, const char *dirname) {
     Inode *new_inode = tempfs_addentry((Inode*)current_dir, dirname, true);
     new_inode->dir_first_node = (DirEntryNode*) malloc(sizeof(DirEntryNode));
     ((DirEntryNode*)new_inode->dir_first_node)->inode = (uintptr_t) malloc(sizeof(Inode));
 }
 
-void tempfs_mkfile(void *current_dir, char *filename) {
+void tempfs_mkfile(void *current_dir, const char *filename) {
     tempfs_addentry((Inode*)current_dir, filename, false);
 }
 
-void* tempfs_find(void *current_dir, char *dirname) {
+void* tempfs_find(void *current_dir, const char *dirname) {
     DirEntryNode *this_entry = ((Inode*)current_dir)->dir_first_node;
     Inode        *this_inode = (Inode*) this_entry->inode;
     while (this_entry != NULL) {

@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../tasks/include/spawn.h"
 #include "../tasks/include/tasklist.h"
 #include "../utils/include/io.h"
 #include "../processors/include/smp.h"
@@ -104,6 +105,7 @@ void _start() {
     init_smp();
     for (uint64_t i = 0; i < 999999; i++)
         outb(0x80, 0);
+    spawn("R:/ramdiskroot/testuser");
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
     asm("sti");

@@ -27,7 +27,7 @@ size_t ku_strlen(const char* str)
     return len;
 }
 
-void ku_memcpy(char* dest, char* from, size_t n) {
+void ku_memcpy(char* dest, const char* from, size_t n) {
     for (size_t i = 0; i < n; i++) {
         dest[i] = from[i];
     }

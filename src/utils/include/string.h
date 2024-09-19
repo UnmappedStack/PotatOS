@@ -8,7 +8,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void ku_memcpy(char* dest, char* from, size_t n);
+void ku_memcpy(char* dest, const char* from, size_t n);
 void ku_uint64_to_binary_string(uint64_t num, char *buf);
 size_t ku_strlen(const char* str);
 int oct2bin(char *str, int size);

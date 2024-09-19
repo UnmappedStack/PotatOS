@@ -12,12 +12,12 @@
 
 typedef struct {
     uint8_t fs_id;
-    void* (*find_function     )(void *current_dir, char *dirname);
+    void* (*find_function     )(void *current_dir, const char *dirname);
     void* (*find_root_function)(void *fs  );
     void* (*open_dir_function )(void *dir );
     void* (*open_file_function)(void *file);
-    void  (*mkdir_function    )(void *current_dir, char *dirname);
-    void  (*mkfile_function   )(void *current_dir, char *filename);
+    void  (*mkdir_function    )(void *current_dir, const char *dirname);
+    void  (*mkfile_function   )(void *current_dir, const char *filename);
     void  (*close_function    )(void *file);
     int   (*write_function    )(void *file, char *buffer, size_t len);
     int   (*read_function     )(void *file, char *buffer, size_t max_len);
