@@ -13,7 +13,7 @@ void init_tasklist() {
         .pml4_addr   = kernel.cr3,
         .kernel_rsp  = KERNEL_STACK_PTR,
         .entry_point = (uintptr_t) &_start,
-        .flags       = TASK_PRESENT | TASK_RUNNING
+        .flags       = 0
     };
     vector_push(kernel.tasklist.list, (uintptr_t) first_task);
     kernel.tasklist.current_task = 0;
@@ -41,5 +41,9 @@ Task* task_select() {
         kernel.tasklist.current_task = 0;
     else
         kernel.tasklist.current_task++;
-    return (Task*) vector_at(kernel.tasklist.list, kernel.tasklist.current_task);
+    Task *new_task = (Task*) vector_at(kernel.tasklist.list, kernel.tasklist.current_task);
+    if (new_task->flags & TASK_PRESENT)
+        return new_task;
+    else
+        return task_select(); // switch to the next one again
 }
