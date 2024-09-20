@@ -1,4 +1,5 @@
 #include "../utils/include/string.h"
+#include "../utils/include/cpu_utils.h"
 #include "include/paging.h"
 #include <stdint.h>
 #include <stddef.h>
@@ -65,7 +66,10 @@ void* malloc(uint64_t size) {
 
 void free(void* addr) {
     Pool *this_pool          = (Pool*) (((uint64_t)addr) - sizeof(Pool));
-    ku_memset(this_pool->data, 0, this_pool->size - sizeof(Pool));
+    if (this_pool->verify != 69) {
+        kfailf("Invalid address to free (KHeap), incorrect verify value. Halting.\n");
+        halt();
+    }
     this_pool->free          = true;
     this_pool->required_size = sizeof(Pool);
 }

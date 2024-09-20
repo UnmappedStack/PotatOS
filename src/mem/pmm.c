@@ -70,7 +70,7 @@ bool check_pages_avaliable(uint64_t section_index, uint64_t page_frame_number, u
     return true;
 }
 
-void* kmalloc(uint32_t num_pages) {
+void* kmalloc(uint64_t num_pages) {
     if (num_pages < 1) {
         kfailf("Cannot allocate less than 1 page! Halting device.\n");
         halt();

@@ -93,7 +93,7 @@ size_t last_loadable_segment(elf_program_header *program_header_entries, size_t 
 
 int spawn(char *path) {
     File *f = open(path, 0, MODE_READONLY);
-    size_t flength = file_length(f);
+    size_t flength = file_length(f); 
     char *buffer = (char*) malloc(flength);
     if (f == NULL) {
         return 2;
@@ -104,7 +104,6 @@ int spawn(char *path) {
         return 1;
     }
     close(f);
-
     elf_file_header    *file_header     = (elf_file_header*) buffer;
     elf_program_header *program_headers = (elf_program_header*)(buffer + file_header->program_header_offset);
     size_t num_program_header_entries   = file_header->program_header_entry_count;

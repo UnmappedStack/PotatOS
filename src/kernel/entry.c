@@ -65,11 +65,13 @@ void _start() {
     init_tasklist();
     init_smp();
     for (uint64_t i = 0; i < 999999; i++)
-        outb(0x80, 0);
+        outb(0x80, 0); 
     kstatusf("Trying to run init process...");
     spawn("R:/ramdiskroot/testuser");
     printf(BGRN " Ok!\n" WHT);
+    enable_interrupts();
+//    unlock_pit();
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
-    halt();
+    for(;;);
 }

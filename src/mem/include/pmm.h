@@ -4,4 +4,4 @@
 
 void init_PMM();
 
-void* kmalloc(uint32_t num_pages);
+void* kmalloc(uint64_t num_pages);
