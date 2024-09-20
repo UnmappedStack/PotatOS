@@ -33,9 +33,6 @@ void ku_memcpy(char* dest, const char* from, size_t n) {
 }
 
 bool ku_memcmp(const char* str1, const char* str2, uint64_t size) {
-    uint64_t str1len = ku_strlen(str1);
-    uint64_t str2len = ku_strlen(str2);
-    if (str1len != str2len) return false;
     for (uint64_t c = 0; c < size; c++) {
         if (str1[c] != str2[c]) return false;
     }
