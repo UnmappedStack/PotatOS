@@ -13,6 +13,12 @@ typedef struct {
     uint8_t   flags;
 } Task;
 
+typedef struct {
+    Vector   *list;
+    uint64_t current_task;
+} Tasklist;
+
 void init_tasklist();
 void create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack, uint8_t flags);
 Task get_task(size_t pid);
+Task* task_select();

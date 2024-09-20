@@ -7,6 +7,7 @@
 #include "../cpu/include/tss.h"
 #include "../cpu/include/idt.h"
 #include "../fs/include/vfs.h"
+#include "../tasks/include/tasklist.h"
 
 typedef struct {
     struct      limine_memmap_response memmap;
@@ -20,7 +21,7 @@ typedef struct {
     long        last_freed_section;
     uint64_t    last_freed_num_pages;
     uintptr_t   kheap_start;
-    Vector      *tasklist;
+    Tasklist    tasklist;
     struct GDTR gdtr;
     struct IDTR idtr;
     struct TSS  tss;
