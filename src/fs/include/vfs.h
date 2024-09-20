@@ -12,15 +12,16 @@
 
 typedef struct {
     uint8_t fs_id;
-    void* (*find_function     )(void *current_dir, const char *dirname);
-    void* (*find_root_function)(void *fs  );
-    void* (*open_dir_function )(void *dir );
-    void* (*open_file_function)(void *file);
-    void  (*mkdir_function    )(void *current_dir, const char *dirname);
-    void  (*mkfile_function   )(void *current_dir, const char *filename);
-    void  (*close_function    )(void *file);
-    int   (*write_function    )(void *file, char *buffer, size_t len);
-    int   (*read_function     )(void *file, char *buffer, size_t max_len);
+    void*  (*find_function     )(void *current_dir, const char *dirname);
+    void*  (*find_root_function)(void *fs  );
+    void*  (*open_dir_function )(void *dir );
+    void*  (*open_file_function)(void *file);
+    void   (*mkdir_function    )(void *current_dir, const char *dirname);
+    void   (*mkfile_function   )(void *current_dir, const char *filename);
+    void   (*close_function    )(void *file);
+    int    (*write_function    )(void *file, char *buffer, size_t len);
+    int    (*read_function     )(void *file, char *buffer, size_t max_len);
+    size_t (*length_function   )(void *file);
 } FileSystem;
 
 typedef struct {
@@ -37,6 +38,7 @@ typedef struct {
 } Drive;
 
 typedef struct {
+    size_t length; // (bytes)
     char drive_char;
     uint8_t mode;
     void *private;
@@ -52,3 +54,4 @@ void  close(File *f);
 int   mkdir(char *path);
 int   write(File *f, char *buffer, size_t size);
 int   read(File *f, char *buffer, size_t max_len);
+size_t file_length(File *f);

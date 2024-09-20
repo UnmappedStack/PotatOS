@@ -17,7 +17,8 @@ FileSystem TempFS = {
     .mkfile_function    = &tempfs_mkfile,
     .close_function     = &tempfs_close,
     .write_function     = &tempfs_write,
-    .read_function      = &tempfs_read
+    .read_function      = &tempfs_read,
+    .length_function    = &tempfs_length
 };
 
 Inode* tempfs_new() {
@@ -76,8 +77,13 @@ void* tempfs_find_root(void *fs) {
     return fs;
 }
 
+size_t tempfs_length(void *filev) {
+    return ((Inode*) filev)->length;
+}
+
 int tempfs_write(void *filev, char *data, size_t len) {
     Inode *file = (Inode*) filev;
+    file->length = len;
     if (file->file_first_node == NULL)
         file->file_first_node = (FileNode*) malloc(sizeof(FileNode));
     FileNode *this_fnode = file->file_first_node;

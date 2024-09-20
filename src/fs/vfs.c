@@ -141,6 +141,10 @@ int mkfile(char *path) {
     return 0;
 }
 
+size_t file_length(File *f) {
+    return (kernel.drives[f->drive_char - 'A'].fs.length_function)(f->private);
+}
+
 int write(File *f, char *buffer, size_t size) {
     if (f->mode == MODE_READONLY) {
         kfailf("File opened as read-only, cannot write.\n");
