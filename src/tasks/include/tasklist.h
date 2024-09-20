@@ -13,3 +13,5 @@ typedef struct {
 } Task;
 
 void init_tasklist();
+void create_task(uint64_t pml4_addr, uintptr_t entry_point, uint8_t flags);
+Task get_task(size_t pid);

@@ -124,9 +124,16 @@ void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages, u
     halt();
 }
 
+uint64_t* init_paging_task() {
+    uint64_t pml4_virt = ((uint64_t) kmalloc(1)) + kernel.hhdm;
+    ku_memset((uint8_t*) pml4_virt, 0, 4096);
+    map_all((uint64_t*) pml4_virt);
+    return (uint64_t*) pml4_virt;
+}
+
 void init_paging() {
     kstatusf("Creating page tree... ");
-    uint64_t pml4_virt = (((uint64_t) kmalloc(1)) + kernel.hhdm);
+    uint64_t pml4_virt = ((uint64_t) kmalloc(1)) + kernel.hhdm;
     ku_memset((uint8_t*) pml4_virt, 0, 4096);
     map_all((uint64_t*) pml4_virt);
     kernel.cr3 = pml4_virt - kernel.hhdm;

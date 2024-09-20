@@ -28,7 +28,11 @@ void vector_push(Vector *vec, uintptr_t val_addr) {
     }
 
     VectorNode *this_node = (VectorNode*) vec->first_node;
-    while (this_node != NULL) this_node = (VectorNode*) this_node->next_node;
+    while (true)
+        if (this_node->next_node != NULL)
+            this_node = (VectorNode*) this_node->next_node;
+        else
+            break;
     this_node->next_node = (uintptr_t) malloc(sizeof(VectorNode));
     *((VectorNode*) this_node->next_node) = (VectorNode) {
         .index     = this_node->index,

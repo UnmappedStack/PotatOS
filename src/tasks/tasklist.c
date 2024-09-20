@@ -27,7 +27,7 @@ void create_task(uint64_t pml4_addr, uintptr_t entry_point, uint8_t flags) {
         .entry_point = entry_point,
         .flags       = flags
     };
-    vector_push(kernel.tasklist, (uintptr_t) &new_task);
+    vector_push(kernel.tasklist, (uintptr_t) new_task);
 }
 
 Task get_task(size_t pid) {
