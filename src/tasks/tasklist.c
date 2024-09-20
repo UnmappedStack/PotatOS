@@ -37,8 +37,10 @@ Task get_task(size_t pid) {
 }
 
 Task* task_select() {
+    if ((kernel.tasklist.list)->length == 1)
+        return (Task*) vector_at(kernel.tasklist.list, 0);
     if ((kernel.tasklist.list)->length >= kernel.tasklist.current_task)
-        kernel.tasklist.current_task = 0;
+        kernel.tasklist.current_task = 1;
     else
         kernel.tasklist.current_task++;
     Task *new_task = (Task*) vector_at(kernel.tasklist.list, kernel.tasklist.current_task);
