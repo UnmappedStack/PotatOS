@@ -124,6 +124,7 @@ int spawn(char *path) {
     free(buffer);
     uint64_t *new_pml4 = init_paging_task();
     map_pages(new_pml4, first_segment.virtual_address, (uint64_t) copyto_pages, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE | KERNEL_PFLAG_USER, pages_to_map);
-    create_task((uint64_t)(new_pml4) - kernel.hhdm, file_header->entry, TASK_PRESENT | TASK_FIRST_EXEC);
+    alloc_pages(new_pml4, USER_STACK_ADDR, KERNEL_STACK_PAGES, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE); // alloc the user stack
+    create_task((uint64_t)(new_pml4) - kernel.hhdm, file_header->entry, USER_STACK_ADDR, TASK_PRESENT | TASK_FIRST_EXEC);
     return 0;
 }

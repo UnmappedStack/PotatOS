@@ -19,12 +19,13 @@ void init_tasklist() {
     printf(BGRN " Ok!\n" WHT);
 }
 
-void create_task(uint64_t pml4_addr, uintptr_t entry_point, uint8_t flags) {
+void create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack, uint8_t flags) {
     Task *new_task = (Task*) malloc(sizeof(Task));
     *new_task = (Task) {
         .pml4_addr   = pml4_addr,
         .kernel_rsp  = KERNEL_STACK_PTR,
         .entry_point = entry_point,
+        .user_rsp    = user_stack,
         .flags       = flags
     };
     vector_push(kernel.tasklist, (uintptr_t) new_task);
