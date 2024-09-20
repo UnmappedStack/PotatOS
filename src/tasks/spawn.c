@@ -53,6 +53,10 @@ bool validate_elf(elf_file_header *header_addr) {
         kfailf("File appears to be 32 bit, but it must be 64 bit. Invalid ELF file.\n");
         return false;
     }
+    if (header_addr->machine_type != 0x3E) {
+        kfailf("File appears to be for invalid instruction set, must be for x86_64. Invalid ELF file.\n");
+        return false;
+    }
     return true;
 }
 
