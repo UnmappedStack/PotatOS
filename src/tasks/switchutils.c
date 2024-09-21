@@ -13,3 +13,7 @@ uint64_t task_get_entry_point(Task *task) {
 uint64_t task_get_flags(Task *task) {
     return task->flags;
 }
+
+uint64_t task_get_rsp(Task *task) {
+    return task->current_rsp;
+}

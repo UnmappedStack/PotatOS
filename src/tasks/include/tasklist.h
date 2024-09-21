@@ -7,7 +7,6 @@
 typedef struct {
     uint64_t  pml4_addr;
     uint64_t  kernel_rsp;
-    uint64_t  user_rsp;
     uint64_t  current_rsp;
     uintptr_t entry_point;
     uint8_t   flags;

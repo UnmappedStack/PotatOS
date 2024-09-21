@@ -2,6 +2,7 @@
 
 global pit_isr
 
+extern task_get_rsp
 extern printf
 extern task_select
 extern task_get_cr3
@@ -52,8 +53,11 @@ task_switch:
     jmp task_switch_previously_executed ; otherwise jump to task_switch_previously_executed
 
 task_switch_first_exec:
-    ;; push the interrupt stack
     mov rdi, r15 ; get Task* back from r15 and put it into rdi to pass into task_get_entry_point
+    ;; set the new stack
+    call task_get_rsp
+    mov rsp, rdi
+    ;; push the interrupt stack
     ; ss = 0x20 | 3
     mov rbx, 0x20
     or rbx, 3
