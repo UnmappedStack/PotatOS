@@ -100,6 +100,9 @@ task_switch_first_exec:
 
 ;; I wasn't sure what to name this label so it's kinda dumbly named lmao
 task_switch_previously_executed:
+    ;; switch stacks
+    call task_get_rsp
+    mov rsp, rdi
     ;; pop general purpose registers from the stack, leaving only the interrupt frame registers
     pop r15
     pop r14
