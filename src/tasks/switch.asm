@@ -21,6 +21,9 @@ pit_isr:
 ;    ret
 
 task_switch:
+    ; yes ik this is required, it's just temporary
+    ;mov al, 0x20
+    ;out 0x20, al
     ;; push the registers of the current context
     push rax
     push rbx
@@ -88,8 +91,6 @@ task_switch_first_exec:
     xor r13, r13
     xor r14, r14
     xor r15, r15
-    mov ax, 0x20
-    out 0x20, ax
     iretq
     jmp $
 
@@ -112,7 +113,12 @@ task_switch_previously_executed:
     pop rbx
     pop rax
     ;; jump to the entry point
-    mov ax, 0x20
-    out ax
     iretq
     jmp $
+
+print_message:
+    mov rdi, msg
+    call printf
+    ret
+
+msg: db "Doing task switch.", 10, 0
