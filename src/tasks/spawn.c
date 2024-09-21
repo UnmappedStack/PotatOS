@@ -114,16 +114,18 @@ int spawn(char *path) {
 
     size_t pages_to_map  = PAGE_ALIGN_UP((last_segment.virtual_address + last_segment.size_in_memory) - first_segment.virtual_address) / 4096;
     char   *copyto_pages = kmalloc(pages_to_map);
-
+    
     for (size_t s = 0; s < num_program_header_entries; s++) {
         char *copy_from = (char*)((program_headers[s].offset) + (uint64_t) buffer);
         char *copy_to   = (char*) ((copyto_pages + kernel.hhdm) + (program_headers[s].virtual_address - first_segment.virtual_address));
         ku_memcpy(copy_to, copy_from, program_headers[s].size_in_file);
     }
     uint64_t *new_pml4 = init_paging_task();
-    map_pages(new_pml4, first_segment.virtual_address, (uint64_t) copyto_pages, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE | KERNEL_PFLAG_USER, pages_to_map);
+    
+    map_pages(new_pml4, first_segment.virtual_address, (uint64_t) copyto_pages, pages_to_map, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE | KERNEL_PFLAG_USER);
     alloc_pages(new_pml4, USER_STACK_ADDR, KERNEL_STACK_PAGES, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_USER | KERNEL_PFLAG_WRITE); // alloc the user stack
-    create_task((uint64_t)(new_pml4) - kernel.hhdm, (uintptr_t) file_header->entry, USER_STACK_ADDR, TASK_PRESENT | TASK_FIRST_EXEC);
+    uint64_t new_pml4_phys = (uint64_t)new_pml4 - kernel.hhdm;
+    create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_ADDR, TASK_PRESENT | TASK_FIRST_EXEC);
     free(buffer);
     return 0;
 }
