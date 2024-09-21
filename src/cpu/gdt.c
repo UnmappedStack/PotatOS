@@ -47,10 +47,10 @@ void init_GDT() {
     kstatusf("Initiating GDT... ");
     uint64_t *GDT = (uint64_t*) ((uint64_t)kmalloc(1) + ((uint64_t) kernel.hhdm));
     GDT[0] = create_gdt_entry(0, 0, 0, 0); // null
-    GDT[1] = create_gdt_entry(0, 0, 0x9A, 0xA); // kernel code
-    GDT[2] = create_gdt_entry(0, 0, 0x92, 0xC); // kernel data
-    GDT[3] = create_gdt_entry(0, 0xFFFFF, 0xFA, 0xA); // user code
-    GDT[4] = create_gdt_entry(0, 0xFFFFF, 0xF2, 0xC); // user data
+    GDT[1] = create_gdt_entry(0, 0, 0x9A, 0x2); // kernel code
+    GDT[2] = create_gdt_entry(0, 0, 0x92, 0); // kernel data
+    GDT[3] = create_gdt_entry(0, 0, 0xFA, 0x2); // user code
+    GDT[4] = create_gdt_entry(0, 0, 0xF2, 0); // user data
     create_system_segment_descriptor(GDT, 5, (uint64_t) &kernel.tss, sizeof(struct TSS) - 1, 0x89, 0);
     kernel.gdtr.size   = (sizeof(GDT[0]) * 7) - 1;
     kernel.gdtr.offset = (uint64_t) GDT;

@@ -51,18 +51,18 @@ task_switch:
 task_switch_first_exec:
     ;; push the interrupt stack
     mov rdi, r15 ; get Task* back from r15 and put it into rdi to pass into task_get_entry_point
-    ; ss = 0x28 | 3
-    mov rbx, 0x28
+    ; ss = 0x20 | 3
+    mov rbx, 0x20
     or rbx, 3
     push rbx
     xor rbx, rbx
     ; rsp = 0x700000000000
     mov rbx, 0x700000000000
     push rbx
-    ; rflags = 0b10
-    push 0b10
-    ; cs = 0x20 | 3
-    mov rbx, 0x20
+    ; rflags = 0x200
+    push 0x200
+    ; cs = 0x18 | 3
+    mov rbx, 0x18
     or rbx, 3
     push rbx
     xor rbx, rbx
@@ -88,18 +88,10 @@ task_switch_first_exec:
     xor r13, r13
     xor r14, r14
     xor r15, r15
-    mov rdi, msg
-    pop rsi
-    pop rdx
-    pop rcx
-    pop r8
-    pop r9
-    call printf
-;   call switch_gdt_selectors
+    mov ax, 0x20
+    out 0x20, ax
     iretq
     jmp $
-    
-msg: db "Testing stack. rip = 0x%x, cs = %i, rflags = %i, rsp = 0x%x, ss = %i", 10, 0
 
 ;; I wasn't sure what to name this label so it's kinda dumbly named lmao
 task_switch_previously_executed:
@@ -120,5 +112,7 @@ task_switch_previously_executed:
     pop rbx
     pop rax
     ;; jump to the entry point
+    mov ax, 0x20
+    out ax
     iretq
     jmp $
