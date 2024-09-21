@@ -18,7 +18,7 @@ The OS development community is a particularly helpful one, and there are a few 
 
 - [Dcraftbg](https://github.com/Dcraftbg) is an awesome guy who has helped me with a ton, especially when it comes to paging. He also works on [MinOS](https://github.com/Dcraftbg/MinOS), so definitely check that out :D
 - [Bananymous](https://github.com/Bananymous) helped me especially in the early stages of OSDev when I was working on SpecOS, and from that I've been able to make PotatOS so much better earlier on, so thank you! He also wrote an amazing kernel which is mostly POSIX compatible, [Banan-OS](https://github.com/Bananymous/banan-os).
-- [AProgrammablePhoenex](https://github.com/AProgrammablePhoenix) (aka. Alex) has just been generally very supportive of my project, and has left many a 🌳 emoji as I rant about updates on PotatOS. He also is writing an OS named after everybody's fav fruit, [Cocos](https://github.com/AProgrammablePhoenix/Cocos) :)
+- [AProgrammablePhoenex](https://github.com/AProgrammablePhoenix) (aka. Alex) has just been generally very supportive of my project, and has left many a 🌳 emoji as I rant about updates on PotatOS. Not to mention he was amazingly helpful when I was doing context switch, and his bug finds were the final steps to userspace support for me! He also is writing an OS named after everybody's fav fruit, [Cocos](https://github.com/AProgrammablePhoenix/Cocos) :)
 
 ## Usage
 Clone the repository, make the `compile.sh` file executable, and run the compilation script. It will automatically run in the Qemu emulator.
