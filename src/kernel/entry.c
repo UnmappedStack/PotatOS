@@ -70,7 +70,7 @@ void _start() {
     spawn("R:/ramdiskroot/testuser");
     printf(BGRN " Ok!\n" WHT);
     enable_interrupts();
-//    unlock_pit();
+    unlock_pit();
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
     for(;;);

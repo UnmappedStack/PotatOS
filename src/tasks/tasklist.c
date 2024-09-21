@@ -6,12 +6,13 @@
 #include "../utils/include/printf.h"
 
 void init_tasklist() {
-    kstatusf("Initiating task list...");
+    kstatusf("Initiating tasks...");
     kernel.tasklist.list = new_vector(sizeof(Task));
     Task *first_task = (Task*) malloc(sizeof(Task));
     *first_task = (Task) {
         .pml4_addr   = kernel.cr3,
         .kernel_rsp  = KERNEL_STACK_PTR,
+        .current_rsp = KERNEL_STACK_PTR,
         .entry_point = (uintptr_t) &_start,
         .flags       = 0
     };
@@ -27,6 +28,7 @@ void create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack
         .kernel_rsp  = KERNEL_STACK_PTR,
         .entry_point = entry_point,
         .user_rsp    = user_stack,
+        .current_rsp = user_stack,
         .flags       = flags
     };
     vector_push(kernel.tasklist.list, (uintptr_t) new_task);

@@ -1,3 +1,5 @@
-[BITS 64]
+section .text
+    global _start
 
-jmp $
+_start:
+    jmp $
