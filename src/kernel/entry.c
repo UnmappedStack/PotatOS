@@ -53,8 +53,8 @@ void _start() {
     show_boot_info();
     init_PMM();
     init_kheap();
-    init_GDT();
     init_TSS();
+    init_GDT();
     init_IDT();
     init_irq();
     init_PIT();
@@ -70,7 +70,7 @@ void _start() {
     spawn("R:/ramdiskroot/testuser");
     printf(BGRN " Ok!\n" WHT);
     enable_interrupts();
-    unlock_pit();
+    //unlock_pit();
     kstatusf("All tasks halted, nothing left to do.\n\n");
     fill_screen(0x00FF00);
     for(;;);

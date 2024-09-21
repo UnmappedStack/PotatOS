@@ -4,7 +4,6 @@
 #include "../cpu/include/idt.h"
 #include "../drivers/include/irq.h"
 #include "../kernel/kernel.h"
-#include "../tasks/include/switch.h"
 
 #define HERTZ_DIVIDER 1190 // this would be about 1 ms
 
