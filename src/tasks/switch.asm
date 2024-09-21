@@ -95,7 +95,7 @@ task_switch_first_exec:
     pop r8
     pop r9
     call printf
-;    call switch_gdt_selectors
+;   call switch_gdt_selectors
     iretq
     jmp $
     
