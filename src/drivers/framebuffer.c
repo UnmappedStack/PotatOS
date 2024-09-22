@@ -6,11 +6,12 @@
 #include "../utils/include/string.h"
 
 void init_framebuffer() {
+    kstatusf("Initiating framebuffers...");
     struct limine_framebuffer *framebuffer = kernel.framebuffers[0];
     kernel.framebuffer_size = framebuffer->width * (framebuffer->bpp / 8) * framebuffer->height;
     kernel.back_buffer = kmalloc(PAGE_ALIGN_UP(kernel.framebuffer_size) / 4096);
-    printf("Allocate framebuffer of size 0x%x bytes at 0x%x (roof: 0x%x)\n", kernel.framebuffer_size, kernel.back_buffer, kernel.back_buffer + kernel.framebuffer_size);
     ku_memset((uint8_t*) kernel.back_buffer, 0, kernel.framebuffer_size);
+    printf(BGRN " Ok!\n" WHT);
 }
 
 void swap_framebuffers() {
@@ -37,6 +38,5 @@ void fill_screen(int colour) {
             draw_pixel(x, y, colour);
         }
     }
-    printf("swap");
     swap_framebuffers();
 }

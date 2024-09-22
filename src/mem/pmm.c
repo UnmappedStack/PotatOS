@@ -56,7 +56,9 @@ void allocate_pages(uint64_t section_index, uint64_t page_frame_number, size_t n
 
 bool check_pages_avaliable(uint64_t section_index, uint64_t page_frame_number, uint64_t num_pages, uint64_t bitmap_reserved) {
     // check if `num_pages` pages are avaliable
-    uint64_t pages_in_section = bitmap_reserved * 8;
+    struct limine_memmap_entry *memmap_entries = *kernel.memmap.entries;
+    uint64_t max_bitmap_bytes = ((memmap_entries[section_index].length - bitmap_reserved) / 4096) / 8;
+    uint64_t pages_in_section = max_bitmap_bytes * 8;
     uint64_t top_page = page_frame_number + num_pages;
     if (top_page > pages_in_section) return false;
     uint8_t *bitmap_start = (uint8_t*) (*kernel.memmap.entries)[section_index].base + kernel.hhdm;
