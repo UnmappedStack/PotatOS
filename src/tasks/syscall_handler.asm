@@ -7,13 +7,13 @@ extern lock_pit
 extern unlock_pit
 
 extern syscall_write
-extern syscall_msg2
+extern syscall_read
 extern syscall_msg3
 extern syscall_invalid
 
 syscall_lookup:
+    dq syscall_read
     dq syscall_write
-    dq syscall_msg2
     dq syscall_msg3
 syscall_lookup_end:
 

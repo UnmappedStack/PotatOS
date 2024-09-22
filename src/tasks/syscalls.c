@@ -25,8 +25,23 @@ int syscall_write(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
     return 0;
 }
 
-void syscall_msg2() {
-    printf("Message from syscall #2 :(\n");
+/* Read syscall handler
+ * rdi = File descriptor
+ * rsi = Buffer
+ * rdx = length
+ */
+int syscall_read(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+    printf(BLK "Got read() syscall (rax = 0). Arguments given:\n"
+               "rdi = %i, rsi = 0x%x, rdx = %i\n" WHT, rdi, rsi, rdx);
+    Task current_task = get_task(kernel.tasklist.current_task); 
+    File *f = current_task.resources[rdi];
+    if (!f->present) {
+        printf("File could not be read from, has not been opened.\n");
+        return 1;
+    }
+    int read_status = read(f, (char*) rsi, rdx);
+    if (read_status != 0) return read_status;
+    return 0;
 }
 
 void syscall_msg3() {

@@ -4,10 +4,10 @@ section .text
     global _start
 
 _start:
-    mov rdi, 1
-    mov rsi, msg
-    mov rdx, len
-    mov rax, 0
+    mov rdi, 1    ; stdout file selector
+    mov rsi, msg  ; give it the message
+    mov rdx, len  ; give it the length
+    mov rax, 1    ; write() syscall
     int 0x80
     jmp $
 
