@@ -10,6 +10,11 @@
 #define MODE_WRITEONLY 0b10
 #define MODE_READWRITE 0b11
 
+#define FTYPE_REGULAR  0b001
+#define FTYPE_STDOUT   0b010
+#define FTYPE_STDIN    0b011
+#define FTYPE_STDERR   0b100
+
 typedef struct {
     uint8_t fs_id;
     void*  (*find_function     )(void *current_dir, const char *dirname);
@@ -38,6 +43,8 @@ typedef struct {
 } Drive;
 
 typedef struct {
+    bool present;
+    uint8_t ftype;
     size_t length; // (bytes)
     char drive_char;
     uint8_t mode;

@@ -29,7 +29,7 @@ void vector_push(Vector *vec, uintptr_t val_addr) {
 
     VectorNode *this_node = (VectorNode*) vec->first_node;
     while (true)
-        if (this_node->next_node != NULL)
+        if (this_node->next_node != 0)
             this_node = (VectorNode*) this_node->next_node;
         else
             break;

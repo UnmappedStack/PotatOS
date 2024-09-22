@@ -127,7 +127,13 @@ int spawn(char *path) {
     map_pages(new_pml4, first_segment.virtual_address, (uint64_t) copyto_pages, pages_to_map, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE | KERNEL_PFLAG_USER);
     alloc_pages(new_pml4, USER_STACK_ADDR, KERNEL_STACK_PAGES, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_USER | KERNEL_PFLAG_WRITE); // alloc the user stack
     uint64_t new_pml4_phys = (uint64_t)new_pml4 - kernel.hhdm;
-    create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_ADDR, TASK_PRESENT | TASK_FIRST_EXEC);
+    Task *new_task = create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_ADDR, TASK_PRESENT | TASK_FIRST_EXEC);
     free(buffer);
+
+    // open standard resource streams
+    new_task->resources[0] = open("D:/stdin",  O_CREATALL, MODE_READWRITE);
+    new_task->resources[1] = open("D:/stdout", O_CREATALL, MODE_READWRITE);
+    new_task->resources[2] = open("D:/stderr", O_CREATALL, MODE_READWRITE);
+
     return 0;
 }

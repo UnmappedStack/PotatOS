@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../fs/include/devices.h"
 #include "../tasks/include/syscalls.h"
 #include "../utils/include/cpu_utils.h"
 #include "../tasks/include/spawn.h"
@@ -62,6 +63,7 @@ void _start() {
     init_paging();
     switch_page_structures();
     init_vfs();
+    init_devices();
     setup_initrd();
     init_tasklist();
     init_syscalls();
@@ -70,7 +72,7 @@ void _start() {
         outb(0x80, 0); 
     kstatusf("Trying to run init process...");
     spawn("R:/ramdiskroot/testuser");
-    printf(BGRN " Ok!\n" WHT);
+    printf(BGRN " Ok!\n\n" WHT);
     enable_interrupts();
     unlock_pit();
     kstatusf("All tasks halted, nothing left to do.\n\n");

@@ -6,13 +6,13 @@ PTR_SIZE equ 8
 extern lock_pit
 extern unlock_pit
 
-extern syscall_msg1
+extern syscall_write
 extern syscall_msg2
 extern syscall_msg3
 extern syscall_invalid
 
 syscall_lookup:
-    dq syscall_msg1
+    dq syscall_write
     dq syscall_msg2
     dq syscall_msg3
 syscall_lookup_end:
@@ -20,16 +20,19 @@ syscall_lookup_end:
 global syscall_isr
 
 syscall_isr:
+    push rax
+    push rdi
+    push rsi
+    push rdx
+    call lock_pit
+    pop rdx
+    pop rsi
+    pop rdi
+    pop rax
     cmp rax, (syscall_lookup_end-syscall_lookup) / 8
     jge invalid_syscall
-    push rax
-    call lock_pit
-    pop rax
     push rbx
     push rcx
-    push rdx
-    push rsi
-    push rdi
     push rbp
     push r8
     push r9
@@ -49,9 +52,6 @@ syscall_isr:
     pop r9
     pop r8
     pop rbp
-    pop rdi
-    pop rsi
-    pop rdx
     pop rcx
     pop rbx
     call unlock_pit
@@ -59,4 +59,5 @@ syscall_isr:
 
 invalid_syscall:
     call syscall_invalid
+    call unlock_pit
     ret

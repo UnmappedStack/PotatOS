@@ -21,7 +21,7 @@ void init_tasklist() {
     printf(BGRN " Ok!\n" WHT);
 }
 
-void create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack, uint8_t flags) {
+Task* create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack, uint8_t flags) {
     Task *new_task = (Task*) malloc(sizeof(Task));
     *new_task = (Task) {
         .pml4_addr   = pml4_addr,
@@ -31,6 +31,7 @@ void create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack
         .flags       = flags
     };
     vector_push(kernel.tasklist.list, (uintptr_t) new_task);
+    return new_task;
 }
 
 Task get_task(size_t pid) {

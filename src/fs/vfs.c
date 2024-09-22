@@ -47,6 +47,17 @@ void close(File *f) {
     (kernel.drives[drive_num].fs.close_function)(f->private);
 }
 
+uint8_t check_file_type(char *fname) {
+    if (ku_strcmp(fname, "stdout"))
+        return FTYPE_STDOUT;
+    else if (ku_strcmp(fname, "stdin"))
+        return FTYPE_STDIN;
+    else if (ku_strcmp(fname, "stderr"))
+        return FTYPE_STDERR;
+    else
+        return FTYPE_REGULAR;
+}
+
 File* open(char *path, int flags, uint8_t mode) {
     char drive = path[0];
     if (drive >= 'a' && drive <= 'z') drive -= 32;
@@ -54,6 +65,7 @@ File* open(char *path, int flags, uint8_t mode) {
     if (path[1] != ':' || path[2] != '/') return NULL;
     char *new_path = (char*) malloc(ku_strlen(path));
     ku_memcpy(new_path, path, ku_strlen(path));
+    new_path[ku_strlen(path)] = 0;
     new_path += 3;
     uint8_t drive_num = drive - 'A';
     if (!kernel.drives[drive_num].present) {
@@ -62,8 +74,8 @@ File* open(char *path, int flags, uint8_t mode) {
         return NULL;
     }
     uint64_t i = 3;
-    void *root = (kernel.drives[drive_num].fs.find_root_function)((void*)kernel.drives[drive_num].mem_offset);
-    void *current_obj = (kernel.drives[drive_num].fs.open_dir_function       )(root);
+    void *root = (kernel.drives[drive_num].fs.find_root_function      )((void*)kernel.drives[drive_num].mem_offset);
+    void *current_obj = (kernel.drives[drive_num].fs.open_dir_function)(root);
     while (path[i]) {
         size_t this_len = 0;
         for (; new_path[this_len] != '/' && new_path[this_len] != 0; this_len++);
@@ -100,9 +112,11 @@ File* open(char *path, int flags, uint8_t mode) {
     }
     free((void*)(((uint64_t)new_path) - i));
     File *new_file = (File*) malloc(sizeof(File));
+    new_file->present    = true;
     new_file->mode       = mode;
     new_file->drive_char = drive;
     new_file->private    = current_obj;
+    new_file->ftype      = check_file_type(new_path);
     return new_file;
 }
 
@@ -150,6 +164,8 @@ int write(File *f, char *buffer, size_t size) {
         kfailf("File opened as read-only, cannot write.\n");
         return 1;
     }
+    if (f->ftype == FTYPE_STDOUT)
+        printf(buffer);
     uint8_t drive_num = f->drive_char - 'A';
     return (kernel.drives[drive_num].fs.write_function)(f->private, buffer, size);
 }

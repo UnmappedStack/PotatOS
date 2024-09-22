@@ -1,11 +1,28 @@
 #include "include/syscalls.h"
+#include "../tasks/include/tasklist.h"
 #include "../utils/include/printf.h"
 #include "../kernel/kernel.h"
 #include "../cpu/include/idt.h"
 #include "../drivers/include/pit.h"
+#include "../fs/include/vfs.h"
 
-void syscall_msg1() {
-    printf("Message from syscall #1 :D\n");
+/* Write syscall handler
+ * rdi = File descriptor
+ * rsi = Buffer address
+ * rdx = Buffer length
+ */
+int syscall_write(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+    printf(BLK "Got write() syscall (rax = 0). Arguments given:\n"
+               "rdi = %i, rsi = 0x%x, rdx = %i\n" WHT, rdi, rsi, rdx);
+    Task current_task = get_task(kernel.tasklist.current_task); 
+    File *f = current_task.resources[rdi];
+    if (!f->present) {
+        printf("File could not be written to, has not been opened.\n");
+        return 1;
+    }
+    int write_status = write(f, (char*) rsi, rdx);
+    if (write_status != 0) return write_status;
+    return 0;
 }
 
 void syscall_msg2() {

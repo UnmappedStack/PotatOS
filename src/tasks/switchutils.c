@@ -18,7 +18,7 @@ uint64_t task_get_rsp(Task *task) {
     return task->current_rsp;
 }
 
-uint64_t task_disable_first_exec(Task *task) {
+void task_disable_first_exec(Task *task) {
     task->flags &= ~TASK_FIRST_EXEC;
 }
 

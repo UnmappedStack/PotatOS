@@ -77,6 +77,7 @@ void kdebugf(char* format, ...) {
 }
 
 void kfailf(char* format, ...) {
+    printf("\n");
     fill_screen(0xFF0000);
     write_serial(BRED "[ FAIL ] " WHT);
     va_list args;

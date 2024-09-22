@@ -14,7 +14,9 @@ void unpack_ustar(char drive_char, char *archive_addr) {
         uint64_t filesize = oct2bin(archive_addr + 0x7C, 11);
         uint8_t type = *((uint8_t*)(archive_addr + 156));
         if (type != '5') { // not a directory
-            char *new_name = (char*) malloc(ku_strlen(archive_addr) + 4);
+            uint64_t len = ku_strlen(archive_addr) + 4;
+            char *new_name = (char*) malloc(len);
+            ku_memset((uint8_t*) new_name, 0, len);
             new_name[0] = drive_char;
             new_name[1] = ':';
             new_name[2] = '/';

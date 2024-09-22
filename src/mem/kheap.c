@@ -51,7 +51,7 @@ void* malloc(uint64_t size) {
             this_pool->free = false;
             this_pool->required_size = size + sizeof(Pool);
             return (void*) this_pool->data;
-        } else if (this_pool->size > this_pool->required_size + size) {
+        } else if (this_pool->size > this_pool->required_size + size + sizeof(Pool)) {
             Pool *new_pool = (Pool*) split_pool(this_pool, size);
             return (void*) new_pool->data;
         } else if (this_pool->next_pool == 0) {
