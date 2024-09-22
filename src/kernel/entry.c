@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../tasks/include/syscalls.h"
 #include "../utils/include/cpu_utils.h"
 #include "../tasks/include/spawn.h"
 #include "../tasks/include/tasklist.h"
@@ -63,6 +64,7 @@ void _start() {
     init_vfs();
     setup_initrd();
     init_tasklist();
+    init_syscalls();
     init_smp();
     for (uint64_t i = 0; i < 999999; i++)
         outb(0x80, 0); 

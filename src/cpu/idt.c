@@ -35,17 +35,9 @@ extern void machineCheckException();
 extern void simdFloatingPointException();
 extern void virtualisationException();
 
-__attribute__((interrupt))
-void test_isr(void*) {
-    lock_pit();
-    printf("This message was printed from a syscall called from a user program! This is so awesome!!! :D\n\n");
-    unlock_pit();
-}
-
 void init_IDT() {
     kstatusf("Initiating IDT... ");
-    struct IDTEntry *IDT = (struct IDTEntry*) ((uint64_t)kmalloc(1) + ((uint64_t) kernel.hhdm));
-    set_IDT_entry(0x80, &test_isr, 0xEF, IDT);
+    struct IDTEntry *IDT = (struct IDTEntry*) ((uint64_t)kmalloc(1) + ((uint64_t) kernel.hhdm)); 
     set_IDT_entry(0, &divideException, 0x8F, IDT);
     set_IDT_entry(1, &debugException, 0x8F, IDT);
     set_IDT_entry(3, &breakpointException, 0x8F, IDT);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 struct IDTEntry {
     uint16_t offset1;
     uint16_t segment_selector;
