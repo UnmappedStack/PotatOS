@@ -15,17 +15,8 @@ extern lock_pit
 pit_isr:
     jmp task_switch
 
-;switch_gdt_selectors:
-;    mov ds, 0x2b
-;    mov es, 0x2b
-;    mov fs, 0x2b
-;    mov gs, 0x2b
-;    mov ss, 0x2b
-;    ret
-
 task_switch:
     cli
-    ; yes ik this is required, it's just temporary
     mov al, 0x20
     out 0x20, al
     ;; push the registers of the current context

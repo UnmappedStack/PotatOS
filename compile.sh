@@ -10,8 +10,7 @@ make
 
 # compile/assemble userspace components
 
-nasm -f elf64 userspace/test/main.asm -o bin/usermain.o
-ld -o ramdiskroot/testuser bin/usermain.o -e _start
+gcc -ffreestanding -nostdlib -e _start -o ramdiskroot/testuser userspace/test/main.c
 
 # set up the initial ramdisk
 
