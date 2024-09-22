@@ -69,7 +69,8 @@ void _start() {
     init_syscalls();
     init_smp();
     for (uint64_t i = 0; i < 999999; i++)
-        outb(0x80, 0); 
+        outb(0x80, 0);
+    printf("\n");
     kstatusf("Trying to run init process...");
     spawn("R:/ramdiskroot/testuser");
     printf(BGRN " Ok!\n\n" WHT);

@@ -16,8 +16,8 @@ I have a Discord server for PotatOS where I will share most updates, and you can
 ## Special Thanks
 The OS development community is a particularly helpful one, and there are a few people from my server who have been particularly helpful who I'd like to point out. I'm glad that they are all much smarter than me and I learn from them all the time! (This list is in no particular order.)
 
-- [Dcraftbg](https://github.com/Dcraftbg) is an awesome guy who has helped me with a ton, especially when it comes to paging. He also works on [MinOS](https://github.com/Dcraftbg/MinOS), so definitely check that out :D
-- [Bananymous](https://github.com/Bananymous) helped me especially in the early stages of OSDev when I was working on SpecOS, and from that I've been able to make PotatOS so much better earlier on, so thank you! He also wrote an amazing kernel which is mostly POSIX compatible, [Banan-OS](https://github.com/Bananymous/banan-os).
+- [Dcraftbg](https://github.com/Dcraftbg) is an awesome guy who has helped me with a ton, especially when it comes to paging. He came up with the algorithm that I use to calculate page level indexes, he helped me with debugging paging quite a lot, and generally explained it to me really well, as well as explaining some VFS concepts to me. He also works on [MinOS](https://github.com/Dcraftbg/MinOS), so definitely check that out :D
+- [Bananymous](https://github.com/Bananymous) helped me especially in the early stages of OSDev when I was working on SpecOS, and from that I've been able to make PotatOS so much better earlier on, so thank you! In the early days of SpecOS I basically completely relied on him xD. He also wrote an amazing kernel which is mostly POSIX compatible, [Banan-OS](https://github.com/Bananymous/banan-os).
 - [AProgrammablePhoenex](https://github.com/AProgrammablePhoenix) (aka. Alex) has just been generally very supportive of my project, and has left many a 🌳 emoji as I rant about updates on PotatOS. Not to mention he was amazingly helpful when I was doing context switch, and his bug finds were the final steps to userspace support for me! He also is writing an OS named after everybody's fav fruit, [Cocos](https://github.com/AProgrammablePhoenix/Cocos) :)
 
 ## Usage
@@ -84,6 +84,11 @@ Uhh I have no idea what this involves, I haven't done networking before. I'll se
 - [ ] Text editor
 - [ ] Port TCC
 - [ ] Port Python?
+
+## Contributions
+I'm currently not open to pull requests in most cases. If there's something specific that you *really* want to implement, you can open an issue and ask to be assigned to it *before* you begin. This may be changed in the future.
+
+If you do contribute, it cannot contain code from any other licenses or contain non-original code without it being specified in a comment at the top of the file. If you do this, you also agree to your contribution being under the same license as the rest of the project, as seen below.
 
 ## License
 This project is under the Mozilla Public License 2.0. See more information in the [LICENSE](https://github.com/jakeSteinburger/PotatOS/blob/main/LICENSE) file.

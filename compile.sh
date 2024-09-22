@@ -10,7 +10,7 @@ make
 
 # compile/assemble userspace components
 
-gcc -ffreestanding -nostdlib -e _start -o ramdiskroot/testuser userspace/test/main.c
+gcc -ffreestanding -nostdlib -e main -o ramdiskroot/testuser userspace/test/main.c
 
 # set up the initial ramdisk
 

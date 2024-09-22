@@ -21,8 +21,8 @@ void write_screen(char *str) {
     );
 }
 
-void _start() {
-    char *msg = "Hello world from a proper userspace syscall (but written in C this time)!\n\n";
+void main() {
+    char *msg = "Hello world from a proper userspace syscall!\n\n";
     write_screen(msg);
     for (;;);
 }
