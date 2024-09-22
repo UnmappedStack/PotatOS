@@ -38,7 +38,7 @@ extern void virtualisationException();
 __attribute__((interrupt))
 void test_isr(void*) {
     lock_pit();
-    printf("This message was printed from a syscall called from a user program! This is so awesome!!! :D\n");
+    printf("This message was printed from a syscall called from a user program! This is so awesome!!! :D\n\n");
     unlock_pit();
 }
 

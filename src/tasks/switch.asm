@@ -3,6 +3,7 @@
 global pit_isr
 
 extern task_disable_first_exec
+extern task_get_kernel_stack
 extern task_get_rsp
 extern printf
 extern task_select
@@ -23,6 +24,7 @@ pit_isr:
 ;    ret
 
 task_switch:
+    cli
     ; yes ik this is required, it's just temporary
     mov al, 0x20
     out 0x20, al
@@ -58,9 +60,6 @@ task_switch_first_exec:
     mov rdi, r15 ; get Task* back from r15 and put it into rdi to pass into task_get_entry_point
     ;; turn off first exec flag
     call task_disable_first_exec
-    ;; set the new stack
-    call task_get_rsp
-    mov rsp, rax
     ;; push the interrupt stack
     ; ss = 0x20 | 3
     mov rbx, 0x20
@@ -99,14 +98,12 @@ task_switch_first_exec:
     xor r13, r13
     xor r14, r14
     xor r15, r15
+    sti
     iretq
     jmp $
 
 ;; I wasn't sure what to name this label so it's kinda dumbly named lmao
 task_switch_previously_executed:
-    ;; switch stacks
-    call task_get_rsp
-    mov rsp, rax
     ;; pop general purpose registers from the stack, leaving only the interrupt frame registers
     pop r15
     pop r14
@@ -124,6 +121,7 @@ task_switch_previously_executed:
     pop rbx
     pop rax
     ;; jump to the entry point
+    sti
     iretq
     jmp $
 

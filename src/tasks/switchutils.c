@@ -21,3 +21,7 @@ uint64_t task_get_rsp(Task *task) {
 uint64_t task_disable_first_exec(Task *task) {
     task->flags &= ~TASK_FIRST_EXEC;
 }
+
+uint64_t task_get_kernel_stack(Task *task) {
+    return task->kernel_rsp;
+}
