@@ -40,7 +40,6 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 - [X] IDT
 - [X] Exception handler
 - [X] Userspace support
-- [X] Basic libc for userspace applications
 - [ ] SMP
     - [X] Initialisation
     - [X] Spinlocks
@@ -77,7 +76,7 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 Uhh I have no idea what this involves, I haven't done networking before. I'll see :D
 
 ### Userspace components
-- [ ] Some sorta libc
+- [X] Some sorta libc
 - [ ] DOOM!
 - [ ] A shell + utilities
 - [ ] Basic GUI/window server + components
