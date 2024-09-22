@@ -1,6 +1,6 @@
 #include <stdio.h>
 
 void main() {
-    printf("fputs()? Ew. I use printf like a normal person.\n");
+    printf("PotatOS now has it's own very tiny standard library!\n");
     for (;;);
 }

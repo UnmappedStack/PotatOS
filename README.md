@@ -40,6 +40,7 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 - [X] IDT
 - [X] Exception handler
 - [X] Userspace support
+- [X] Basic libc for userspace applications
 - [ ] SMP
     - [X] Initialisation
     - [X] Spinlocks
