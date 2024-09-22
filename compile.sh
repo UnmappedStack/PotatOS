@@ -10,10 +10,9 @@ make
 
 # compile/assemble userspace components
 
-gcc -ffreestanding -nostdlib -e main -o ramdiskroot/testuser userspace/test/main.c
+gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/testuser userspace/test/main.c
 
 # set up the initial ramdisk
-
 
 tar --create --format=ustar --file=initrd ramdiskroot
 
