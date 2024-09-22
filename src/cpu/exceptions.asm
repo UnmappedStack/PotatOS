@@ -2,6 +2,7 @@
 
 section .text
 
+extern lock_pit
 extern exception_handler
 
 global divideException
@@ -133,6 +134,7 @@ baseHandler:
    push rax
    cld
    mov rdi, rsp
+   call lock_pit
    call exception_handler 
    add rsp, 8
    pop r15

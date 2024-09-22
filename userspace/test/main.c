@@ -1,6 +1,6 @@
 #include <stdio.h>
 
 void main() {
-    printf("PotatOS now has it's own very tiny standard library!\n");
+    printf("This message was printed from userspace!\n");
     for (;;);
 }
