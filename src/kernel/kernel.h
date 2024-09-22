@@ -15,6 +15,8 @@ typedef struct {
     struct      limine_framebuffer **framebuffers;
     struct      limine_file *initial_ramdisk;
     struct      limine_smp_response *smp_response;
+    volatile uint64_t framebuffer_size;
+    uint32_t    *back_buffer;
     bool        in_exception_handler;
     uint64_t    hhdm;
     long        last_freed_page;

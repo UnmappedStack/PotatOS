@@ -50,7 +50,6 @@ void show_boot_info() {
 void _start() {
     disable_interrupts();
     init_kernel_data();
-    fill_screen(0x0000FF);
     init_serial();
     show_boot_info();
     init_PMM();
@@ -60,6 +59,8 @@ void _start() {
     init_IDT();
     init_irq();
     init_PIT();
+    init_framebuffer();
+    fill_screen(0x0000FF);
     init_paging();
     switch_page_structures();
     init_vfs();
