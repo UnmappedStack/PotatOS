@@ -19,6 +19,8 @@ typedef struct {
     volatile uint64_t framebuffer_size;
     psf1Header  *font_info;
     uint8_t     *font_data;
+    uint32_t    fg_colour;
+    uint32_t    bg_colour;
     bool        font_avaliable;
     uint64_t    ch_X;
     uint64_t    ch_Y;

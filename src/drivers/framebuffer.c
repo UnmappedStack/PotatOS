@@ -12,7 +12,7 @@ void init_framebuffer() {
     kernel.framebuffer_size = framebuffer->width * (framebuffer->bpp / 8) * framebuffer->height;
     kernel.back_buffer = kmalloc(PAGE_ALIGN_UP(kernel.framebuffer_size) / 4096) + kernel.hhdm;
     ku_memset((uint8_t*) kernel.back_buffer, 0, kernel.framebuffer_size);
-    printf(BGRN " Ok!\n" WHT);
+    printf(" Ok!\n");
 }
 
 void swap_framebuffers() {

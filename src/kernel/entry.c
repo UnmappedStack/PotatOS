@@ -39,6 +39,8 @@ void init_kernel_data() {
     kernel.font_avaliable  = false;
     kernel.ch_X            = 5;
     kernel.ch_Y            = 5;
+    kernel.fg_colour       = 0xd8d9d7;
+    kernel.bg_colour       = 0x012456;
 }
 
 Kernel kernel = {0};
@@ -57,29 +59,28 @@ void _start() {
     init_serial();
     show_boot_info();
     init_PMM();
+    init_paging();
+    switch_page_structures();
     init_kheap();
+    init_vfs();
+    init_devices();
+    setup_initrd();
+    init_framebuffer();
+    fill_screen(kernel.bg_colour);
+    init_font();
     init_TSS();
     init_GDT();
     init_IDT();
     init_irq();
     init_PIT();
-    init_framebuffer();
-    init_vfs();
-    init_devices();
-    setup_initrd();
-    init_paging();
-    switch_page_structures();
     init_tasklist();
     init_syscalls();
-    fill_screen(0x012456);
-    init_font();
     init_smp();
-    for (uint64_t i = 0; i < 999999; i++)
+    for (uint64_t i = 0; i < 99999; i++)
         outb(0x80, 0);
-    printf("\n");
     kstatusf("Trying to run init process...");
     spawn("R:/ramdiskroot/testuser");
-    printf(BGRN " Ok!\n\n" WHT);
+    printf(" Ok!\n\n");
     enable_interrupts();
     unlock_pit();
     kstatusf("All tasks halted, nothing left to do.\n\n");

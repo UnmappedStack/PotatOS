@@ -7,5 +7,5 @@ void init_devices() {
     kstatusf("Initiating devices...");
     Inode *devfs = tempfs_new();
     mount('D', FS_TEMPFS, true, (uintptr_t) devfs, 0, 0);
-    printf(BGRN " Ok!\n" WHT);
+    printf(" Ok!\n");
 }

@@ -1,3 +1,5 @@
+#include "../drivers/include/renderfont.h"
+#include "../kernel/kernel.h"
 #include "../drivers/include/framebuffer.h"
 #include "../drivers/include/serial.h"
 #include "include/string.h"
@@ -7,8 +9,17 @@
 
 Spinlock serial_lock;
 
+void write_text(char *text) {
+    write_serial(text);
+    if (kernel.font_avaliable) write_string(text, kernel.fg_colour);
+}
+
+void write_character(char ch) {
+    write_serial_char(ch);
+    if (kernel.font_avaliable) write_char(ch, kernel.fg_colour);
+}
+
 void printf_template(char* format, va_list args) {
-    spinlock_aquire(&serial_lock);
     size_t i   = 0;
     size_t len = ku_strlen(format);
     while (i < len) {
@@ -18,32 +29,34 @@ void printf_template(char* format, va_list args) {
             if (format[i] == 'd' || format[i] == 'i') {
                 ku_uint64_to_string(va_arg(args, uint64_t), buffer);
                 buffer[9] = 0;
-                write_serial(buffer);
+                write_text(buffer);
             } else if (format[i] == 'c') {
                 char character = va_arg(args, int);
-                write_serial_char(character);
+                write_character(character);
             } else if (format[i] == 'x') {
                 char bufferx[20];
                 ku_uint64_to_hex_string(va_arg(args, uint64_t), bufferx);
                 bufferx[19] = 0;
-                write_serial(bufferx);
+                write_text(bufferx);
             } else if (format[i] == 'b') {
                 char bufferb[65];
                 ku_uint64_to_binary_string(va_arg(args, uint64_t), bufferb);
                 bufferb[64] = 0;
-                write_serial(bufferb);
+                write_text(bufferb);
             } else if (format[i] == 's') {
-                write_serial(va_arg(args, char*));
+                write_text(va_arg(args, char*));
             }
         } else {
-            write_serial_char(format[i]);
+            write_character(format[i]);
         }
         i++;
     }
+    if (kernel.font_avaliable) swap_framebuffers();
     spinlock_release(&serial_lock);
 }
 
 void printf(char* format, ...) {
+    spinlock_aquire(&serial_lock);
     va_list args;
     va_start(args, format);
     printf_template(format, args);
@@ -52,7 +65,8 @@ void printf(char* format, ...) {
 
 // and alternate versions for some different types of messages
 void kstatusf(char* format, ...) {
-    write_serial(BYEL "[STATUS] " WHT);
+    spinlock_aquire(&serial_lock);
+    write_text("[STATUS] ");
     va_list args;
     va_start(args, format);
     printf_template(format, args);
@@ -61,7 +75,8 @@ void kstatusf(char* format, ...) {
 
 
 void ktestf(char* format, ...) {
-    write_serial(BCYN "[ TEST ] " WHT);
+    spinlock_aquire(&serial_lock);
+    write_text("[ TEST ] ");
     va_list args;
     va_start(args, format);
     printf_template(format, args);
@@ -69,7 +84,8 @@ void ktestf(char* format, ...) {
 }
 
 void kdebugf(char* format, ...) {
-    write_serial(BMAG "[KDEBUG] " WHT);
+    spinlock_aquire(&serial_lock);
+    write_text("[KDEBUG] ");
     va_list args;
     va_start(args, format);
     printf_template(format, args);
@@ -77,9 +93,10 @@ void kdebugf(char* format, ...) {
 }
 
 void kfailf(char* format, ...) {
-    printf("\n");
+    spinlock_aquire(&serial_lock);
+    write_text("\n");
     fill_screen(0xFF0000);
-    write_serial(BRED "[ FAIL ] " WHT);
+    write_text("[ FAIL ] ");
     va_list args;
     va_start(args, format);
     printf_template(format, args);

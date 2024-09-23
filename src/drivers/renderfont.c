@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "include/serial.h"
 #include "include/framebuffer.h"
 #include "include/renderfont.h"
 #include "../fs/include/vfs.h"
@@ -40,8 +41,8 @@ void init_font() {
         return;
     }
     kernel.font_avaliable = true;
-    write_string("Graphical font rendering enabled.\n", 0xFFFFFF);
-    printf(BGRN " Ok!\n" WHT);
+    write_string("Graphical font rendering enabled.\n", kernel.fg_colour);
+    write_serial(" Ok!\n");
 }
 
 void draw_char(char ch, uint32_t colour, uint64_t x_coord, uint64_t y_coord) {
@@ -75,5 +76,4 @@ void write_string(const char *str, uint32_t colour) {
         write_char(*str, colour);
         str++;
     }
-    swap_framebuffers();
 }

@@ -8,4 +8,5 @@ typedef struct {
 } __attribute__((packed)) psf1Header;
 
 void init_font();
+void write_char(char ch, uint32_t colour);
 void write_string(const char *str, uint32_t colour);
