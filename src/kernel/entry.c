@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../drivers/include/renderfont.h"
 #include "../fs/include/devices.h"
 #include "../tasks/include/syscalls.h"
 #include "../utils/include/cpu_utils.h"
@@ -35,6 +36,9 @@ void init_kernel_data() {
     kernel.framebuffers    = (framebuffer_request.response)->framebuffers;
     kernel.initial_ramdisk = *((initrd_request.response)->modules);
     kernel.smp_response    = smp_request.response;
+    kernel.font_avaliable  = false;
+    kernel.ch_X            = 5;
+    kernel.ch_Y            = 5;
 }
 
 Kernel kernel = {0};
@@ -60,14 +64,15 @@ void _start() {
     init_irq();
     init_PIT();
     init_framebuffer();
-    fill_screen(0x0000FF);
-    init_paging();
-    switch_page_structures();
     init_vfs();
     init_devices();
     setup_initrd();
+    init_paging();
+    switch_page_structures();
     init_tasklist();
     init_syscalls();
+    fill_screen(0x012456);
+    init_font();
     init_smp();
     for (uint64_t i = 0; i < 999999; i++)
         outb(0x80, 0);

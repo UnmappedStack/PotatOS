@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "../drivers/include/renderfont.h"
 #include "../limine.h"
 #include "../mem/include/vector.h"
 #include "../cpu/include/gdt.h"
@@ -16,6 +17,11 @@ typedef struct {
     struct      limine_file *initial_ramdisk;
     struct      limine_smp_response *smp_response;
     volatile uint64_t framebuffer_size;
+    psf1Header  *font_info;
+    uint8_t     *font_data;
+    bool        font_avaliable;
+    uint64_t    ch_X;
+    uint64_t    ch_Y;
     uint32_t    *back_buffer;
     bool        in_exception_handler;
     uint64_t    hhdm;

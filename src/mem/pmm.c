@@ -62,6 +62,8 @@ bool check_pages_avaliable(uint64_t section_index, uint64_t page_frame_number, u
     uint64_t top_page = page_frame_number + num_pages;
     if (top_page > pages_in_section) return false;
     uint8_t *bitmap_start = (uint8_t*) (*kernel.memmap.entries)[section_index].base + kernel.hhdm;
+    if (memmap_entries[section_index].type != LIMINE_MEMMAP_USABLE) return false;
+    if (pages_in_section < num_pages) return false;
     for (; page_frame_number < top_page; page_frame_number++) {
         // check if the single page is avaliable. If not, break.
         uint64_t byte = page_frame_number / 8;
@@ -100,8 +102,7 @@ void* kmalloc(uint64_t num_pages) {
         }
     }
     // no avaliable space! panic.
-    kfailf("No more avaliable space in RAM to allocate! Trying to allocate %i pages. Halting device.\n",
-           num_pages);
+    kfailf("No more avaliable space in RAM to allocate! Trying to allocate %i pages. Halting device.\n", num_pages);
     halt();
     return 0; // random val to please the compiler
 }
