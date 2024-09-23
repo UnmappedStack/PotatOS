@@ -38,6 +38,15 @@ Task get_task(size_t pid) {
     return *((Task*) vector_at(kernel.tasklist.list, pid));
 }
 
+/*
+len = 5
+0
+1
+2
+3
+4 - 
+*/
+
 Task* task_select() {
     if ((kernel.tasklist.list)->length == 1)
         return (Task*) vector_at(kernel.tasklist.list, 0);

@@ -80,6 +80,7 @@ void _start() {
         outb(0x80, 0);
     kstatusf("Trying to run init process...");
     spawn("R:/ramdiskroot/testuser");
+    spawn("R:/ramdiskroot/testuser");
     printf(" Ok!\n\n");
     enable_interrupts();
     unlock_pit();

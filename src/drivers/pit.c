@@ -5,7 +5,7 @@
 #include "../drivers/include/irq.h"
 #include "../kernel/kernel.h"
 
-#define HERTZ_DIVIDER 1190 // this would be about 1 ms
+#define HERTZ_DIVIDER 11900 // this would be about 1 ms
 
 extern void pit_isr();
 

@@ -21,7 +21,7 @@ typedef struct {
 Pool create_pool(uint64_t size, uint64_t required_size, uintptr_t next_pool, bool free) {
     Pool pool;
     pool.verify        = 69;
-    pool.size          = size;
+    pool.size          = size - 1;
     pool.required_size = required_size;
     pool.next_pool     = next_pool;
     pool.free          = free;
