@@ -95,7 +95,6 @@ void kdebugf(char* format, ...) {
 void kfailf(char* format, ...) {
     spinlock_aquire(&serial_lock);
     write_text("\n");
-    fill_screen(0xFF0000);
     write_text("[ FAIL ] ");
     va_list args;
     va_start(args, format);

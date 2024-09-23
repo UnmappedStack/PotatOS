@@ -59,8 +59,6 @@ void _start() {
     init_serial();
     show_boot_info();
     init_PMM();
-    init_paging();
-    switch_page_structures();
     init_kheap();
     init_vfs();
     init_devices();
@@ -68,6 +66,8 @@ void _start() {
     init_framebuffer();
     fill_screen(kernel.bg_colour);
     init_font();
+    init_paging();
+    switch_page_structures();
     init_TSS();
     init_GDT();
     init_IDT();
@@ -78,6 +78,8 @@ void _start() {
     init_smp();
     for (uint64_t i = 0; i < 99999; i++)
         outb(0x80, 0);
+    for (uint64_t i = 0; i < 100; i++)
+        printf("%i\n", i);
     kstatusf("Trying to run init process...");
     spawn("R:/ramdiskroot/testuser");
     printf(" Ok!\n\n");

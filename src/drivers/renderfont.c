@@ -49,26 +49,27 @@ void draw_char(char ch, uint32_t colour, uint64_t x_coord, uint64_t y_coord) {
     uint64_t first_byte_idx = ch * kernel.font_info->char_size;
     for (uint8_t y = 0; y < kernel.font_info->char_size; y++) {
         for (uint8_t x = 0; x < 8; x++) {
-            if ((kernel.font_data[first_byte_idx + y] >> (7 - x)) & 1) {
+            if ((kernel.font_data[first_byte_idx + y] >> (7 - x)) & 1)
                 draw_pixel(x_coord + x, y_coord + y, colour);
-            }
+            else
+                draw_pixel(x_coord + x, y_coord + y, kernel.bg_colour);
         }
     }
 }
 
 void scroll_line() {
-    kernel.ch_X = 5;
-    kernel.ch_Y = 5;
-    fill_screen(kernel.bg_colour);
+    scroll_pixel(33);
+    kernel.ch_Y -= 33;
+    swap_framebuffers();
 }
 
 void new_line() {
     kernel.ch_X = 5;
-    kernel.ch_Y += kernel.font_info->char_size;
+    kernel.ch_Y += kernel.font_info->char_size + 1;
+    if (kernel.ch_Y >= kernel.framebuffers[0]->height - (kernel.font_info->char_size / 2)) scroll_line();
 }
 
 void write_char(char ch, uint32_t colour) {
-    if (kernel.ch_Y > kernel.framebuffers[0]->height - 20) scroll_line();
     if (ch == '\n') {
         new_line();
         return;

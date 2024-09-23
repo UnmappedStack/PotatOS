@@ -40,3 +40,19 @@ void fill_screen(uint32_t colour) {
     }
     swap_framebuffers();
 }
+
+void scroll_pixel(int pixels) {
+    struct limine_framebuffer *framebuffer = kernel.framebuffers[0];
+    volatile uint32_t *fb_ptr = kernel.back_buffer;
+    for (uint64_t y = 0; y <= framebuffer->height; y++) {
+        for (uint64_t x = 0; x < framebuffer->width; x++) {
+            if (y > (framebuffer->height - pixels)) {
+                draw_pixel(x, y, kernel.bg_colour);
+                continue;
+            }
+            uint32_t *location = (uint32_t*)(((uint8_t*)fb_ptr) + (y + pixels) * framebuffer->pitch);
+            uint32_t above_pixel_value = location[x];
+            draw_pixel(x, y, above_pixel_value);
+        }
+    }
+}

@@ -64,13 +64,16 @@ void register_dump(struct IDTEFrame registers) {
            registers.r8, registers.r9, registers.rax, registers.r10, registers.r11, registers.rbx, registers.r12, registers.r13, registers.rcx, registers.r14, registers.r15, registers.rdx);
     // specifics
     printf("GDTR: 0x%x   IDTR: 0x%x\n"
-           " CR3: 0x%x\n CR2: 0x%x\n",
+           " CR3: 0x%x    CR2: 0x%x\n",
             gdtr, idtr, cr3, cr2);
 }
 
 void kpanic(char* message, struct IDTEFrame registers) {
-    fill_screen(0xFF0000);
-    printf(BRED "\n[KPANIC] " WHT "The potato has gone rotten!\n");
+    kernel.bg_colour = 0xFFFF00;
+    kernel.fg_colour = 0xFF0000;
+    printf("\n[KPANIC] The potato has gone rotten!\n");
+    kernel.fg_colour = 0xd8d9d7;
+    kernel.bg_colour = 0x012456;
     printf("Exception:  %s\n"
            "Error code: 0b%b\n",
             message, registers.ss);
