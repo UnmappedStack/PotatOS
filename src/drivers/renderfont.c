@@ -41,7 +41,7 @@ void init_font() {
         return;
     }
     kernel.font_avaliable = true;
-    write_string("Graphical font rendering enabled.\n", kernel.fg_colour);
+    write_string("Graphical font rendering enabled. Allocator, VFS, TempFS, initrd, and heap have already been set up.\n", kernel.fg_colour);
     write_serial(" Ok!\n");
 }
 
