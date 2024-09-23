@@ -56,12 +56,19 @@ void draw_char(char ch, uint32_t colour, uint64_t x_coord, uint64_t y_coord) {
     }
 }
 
+void scroll_line() {
+    kernel.ch_X = 5;
+    kernel.ch_Y = 5;
+    fill_screen(kernel.bg_colour);
+}
+
 void new_line() {
     kernel.ch_X = 5;
     kernel.ch_Y += kernel.font_info->char_size;
 }
 
 void write_char(char ch, uint32_t colour) {
+    if (kernel.ch_Y > kernel.framebuffers[0]->height - 20) scroll_line();
     if (ch == '\n') {
         new_line();
         return;
