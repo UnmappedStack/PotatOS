@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "../../limine.h"
@@ -46,6 +47,8 @@ void init_paging();
 uint64_t* init_paging_task();
 
 uint64_t virt_to_phys(uint64_t pml4_addr[], uint64_t virt_addr);
+
+void write_vmem(uint64_t *pml4_addr, uint64_t virt_addr, char *data, size_t len);
 
 #define switch_page_structures() \
     kstatusf("Switching CR3 & kernel stack..."); \

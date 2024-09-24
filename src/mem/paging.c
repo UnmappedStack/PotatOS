@@ -57,6 +57,20 @@ uint64_t virt_to_phys(uint64_t pml4_addr[], uint64_t virt_addr) {
     return 0xDEAD;
 }
 
+// writes data to a location in virtual memory
+void write_vmem(uint64_t *pml4_addr, uint64_t virt_addr, char *data, size_t len) {
+    while (len > 0) {
+        // get the address of this virtual address in kernel memory
+        char *kernel_addr = (char*) virt_to_phys(pml4_addr, virt_addr) + kernel.hhdm;
+        uint64_t bytes_to_copy = (len < PAGE_SIZE) ? len : PAGE_SIZE;
+        ku_memcpy(kernel_addr, data, bytes_to_copy);
+        if (len < 4096) return;
+        len -= PAGE_SIZE;
+        virt_addr += PAGE_SIZE;
+        data += PAGE_SIZE;
+    }
+}
+
 void map_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t phys_addr, uint64_t num_pages, uint64_t flags) {
     virt_addr &= ~TOPBITS;
     uint64_t pml1 = (virt_addr >> 12) & 511;
