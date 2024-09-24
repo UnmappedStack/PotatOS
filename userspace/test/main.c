@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main() {
+int main() {
     fputs("This message was printed from userspace!\n", stdout);
-    for (;;);
+    return 0;
 }

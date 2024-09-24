@@ -83,10 +83,14 @@ void _start() {
         outb(0x80, 0);
     kstatusf("Trying to run init process...");
     spawn("R:/ramdiskroot/testuser");
-    printf(" Ok!\n\n");
+    k_ok();
     enable_interrupts();
     unlock_pit();
-    kstatusf("All tasks halted, nothing left to do.\n\n");
-    fill_screen(0x00FF00);
     for(;;);
+}
+void all_tasks_ended() {
+    disable_interrupts();
+    lock_pit();
+    kstatusf("All tasks halted, nothing left to do.\n\n");
+    for (;;);
 }

@@ -43,10 +43,7 @@ void vector_push(Vector *vec, uintptr_t val_addr) {
 }
 
 void* vector_at(Vector *vec, size_t idx) {
-    if (vec->length <= idx) {
-        kfailf("Tried to get value at index %i, vector only of size %i. Cannot get element.\n", idx, vec->length);
-        return NULL;
-    }
+    if (vec->length <= idx) return NULL;
     VectorNode *this_node   = vec->first_node;
     size_t      current_idx = 0;
     for (; current_idx < idx; current_idx++) this_node = (VectorNode*) this_node->next_node;

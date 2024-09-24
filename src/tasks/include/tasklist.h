@@ -6,6 +6,7 @@
 #define TASK_FIRST_EXEC 0b010
 
 typedef struct {
+    bool      is_user;
     uint64_t  pml4_addr;
     uint64_t  kernel_rsp;
     uint64_t  current_rsp;
@@ -21,5 +22,6 @@ typedef struct {
 
 void init_tasklist();
 Task* create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack, uint8_t flags);
-Task get_task(size_t pid);
+Task* get_task(size_t pid);
+void task_remove(size_t pid);
 Task* task_select();

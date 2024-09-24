@@ -4,6 +4,7 @@ section .text
 
 extern lock_pit
 extern exception_handler
+extern try_exit_task
 
 global divideException
 global debugException
@@ -115,42 +116,44 @@ virtualisationException:
 
 align 0x08, db 0x00
 baseHandler:
-   push rax
-   push rbx
-   push rcx
-   push rdx
-   push rsi
-   push rdi
-   push rbp
-   push r8
-   push r9
-   push r10
-   push r11
-   push r12
-   push r13
-   push r14
-   push r15
-   mov rax, cr2
-   push rax
-   cld
-   mov rdi, rsp
-   call lock_pit
-   call exception_handler 
-   add rsp, 8
-   pop r15
-   pop r14
-   pop r13
-   pop r12
-   pop r11
-   pop r10
-   pop r9
-   pop r8
-   pop rbp
-   pop rdi
-   pop rsi
-   pop rdx
-   pop rcx
-   pop rbx
-   pop rax
-   add rsp, 0x10
-   iretq
+    cli
+    push rax
+    push rbx
+    push rcx
+    push rdx
+    push rsi
+    push rdi
+    push rbp
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+    push rax
+    cld
+    mov rdi, rax
+    call try_exit_task
+    mov rdi, rsp
+    call lock_pit
+    call exception_handler 
+    add rsp, 8
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rbp
+    pop rdi
+    pop rsi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
+    add rsp, 0x10
+    iretq

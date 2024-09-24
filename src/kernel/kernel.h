@@ -43,4 +43,4 @@ typedef struct {
 
 extern Kernel kernel;
 
-void _start(); // This is just needed so that the task list can get the address of the kernel entry point.
+void all_tasks_ended();

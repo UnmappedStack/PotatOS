@@ -86,7 +86,7 @@ void ansi_switch_colour(uint8_t colour_code) {
         0x00FF00, // green
         0xFFBF00, // yellow
         0x0000FF, // blue
-        0xFF00FF, // magenta
+        0xBF40BF, // magenta
         0x00FFFF, // cyan
         0xFFFFFF  // white
     };

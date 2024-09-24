@@ -12,8 +12,8 @@
  * rdx = Buffer length
  */
 int syscall_write(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
-    Task current_task = get_task(kernel.tasklist.current_task); 
-    File *f = current_task.resources[rdi];
+    Task *current_task = get_task(kernel.tasklist.current_task); 
+    File *f = current_task->resources[rdi];
     if (!f->present) {
         printf("File could not be written to, has not been opened.\n");
         return 1;
@@ -29,8 +29,8 @@ int syscall_write(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
  * rdx = length
  */
 int syscall_read(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
-    Task current_task = get_task(kernel.tasklist.current_task); 
-    File *f = current_task.resources[rdi];
+    Task *current_task = get_task(kernel.tasklist.current_task); 
+    File *f = current_task->resources[rdi];
     if (!f->present) {
         printf("File could not be read from, has not been opened.\n");
         return 1;
