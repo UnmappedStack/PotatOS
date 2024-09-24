@@ -9,5 +9,5 @@ typedef struct {
 
 void init_font();
 void scroll_line();
-void write_char(char ch, uint32_t colour);
-void write_string(const char *str, uint32_t colour);
+void write_char(char ch);
+void write_string(const char *str);

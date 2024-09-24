@@ -67,5 +67,5 @@ void init_GDT() {
               mov %%ax, %%gs; \
               mov %%ax, %%ss" : : : "eax", "rax");
     asm volatile("mov $0x28, %%ax\nltr %%ax" : : : "eax");
-    printf(" Ok!\n");
+    k_ok();
 }

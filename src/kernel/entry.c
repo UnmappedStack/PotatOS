@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../drivers/include/acpi.h"
 #include "../drivers/include/renderfont.h"
 #include "../fs/include/devices.h"
 #include "../tasks/include/syscalls.h"
@@ -35,6 +36,7 @@ void init_kernel_data() {
     kernel.kernel_addr     = *(kernel_address_request.response);
     kernel.framebuffers    = (framebuffer_request.response)->framebuffers;
     kernel.initial_ramdisk = *((initrd_request.response)->modules);
+    kernel.xsdp_table      = (XSDP*) (rsdp_request.response)->address;
     kernel.smp_response    = smp_request.response;
     kernel.font_avaliable  = false;
     kernel.ch_X            = 5;
@@ -73,13 +75,13 @@ void _start() {
     init_IDT();
     init_irq();
     init_PIT();
+    //init_acpi();
     init_tasklist();
     init_syscalls();
     init_smp();
     for (uint64_t i = 0; i < 99999; i++)
         outb(0x80, 0);
     kstatusf("Trying to run init process...");
-    spawn("R:/ramdiskroot/testuser");
     spawn("R:/ramdiskroot/testuser");
     printf(" Ok!\n\n");
     enable_interrupts();

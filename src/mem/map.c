@@ -21,7 +21,9 @@ void map_sections(uint64_t pml4[]) {
         if (entry_type == LIMINE_MEMMAP_USABLE ||
             entry_type == LIMINE_MEMMAP_BOOTLOADER_RECLAIMABLE ||
             entry_type == LIMINE_MEMMAP_FRAMEBUFFER ||
-            entry_type == LIMINE_MEMMAP_KERNEL_AND_MODULES) {
+            entry_type == LIMINE_MEMMAP_KERNEL_AND_MODULES ||
+            entry_type == LIMINE_MEMMAP_ACPI_NVS ||
+            entry_type == LIMINE_MEMMAP_ACPI_RECLAIMABLE) {
             map_pages(pml4, memmap_entries[entry].base + kernel.hhdm, memmap_entries[entry].base, memmap_entries[entry].length / 4096, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE);
         }
     }

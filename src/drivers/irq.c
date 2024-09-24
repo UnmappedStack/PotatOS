@@ -15,7 +15,7 @@ void init_irq() {
     outb(0xA1, 0x01);
     outb(0x21, 0xFF);
     outb(0xA1, 0xFF);
-    printf(" Ok!\n");
+    k_ok();
 }
 
 void unmask_irq(int IRQ) {

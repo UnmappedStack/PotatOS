@@ -49,4 +49,4 @@ uint64_t* init_paging_task();
     kstatusf("Switching CR3 & kernel stack..."); \
     KERNEL_SWITCH_PAGE_TREE(kernel.cr3); \
     KERNEL_SWITCH_STACK(); \
-    printf(" Ok!\n");
+    k_ok();

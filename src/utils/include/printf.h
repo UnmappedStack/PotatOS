@@ -27,3 +27,4 @@ void kdebugf(char* format, ...);
 void ktestf(char* format, ...);
 void kstatusf(char* format, ...);
 void kfailf(char* format, ...);
+void k_ok();

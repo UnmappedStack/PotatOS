@@ -41,16 +41,16 @@ void init_font() {
         return;
     }
     kernel.font_avaliable = true;
-    write_string("Graphical font rendering enabled. Allocator, VFS, TempFS, initrd, and heap have already been set up.\n", kernel.fg_colour);
-    write_serial(" Ok!\n");
+    write_string("Graphical font rendering enabled. Allocator, VFS, TempFS, initial ramdisk, and heap have already been set up.\n");
+    write_serial(BGRN " Ok!\n" WHT);
 }
 
-void draw_char(char ch, uint32_t colour, uint64_t x_coord, uint64_t y_coord) {
+void draw_char(char ch, uint64_t x_coord, uint64_t y_coord) {
     uint64_t first_byte_idx = ch * kernel.font_info->char_size;
     for (uint8_t y = 0; y < kernel.font_info->char_size; y++) {
         for (uint8_t x = 0; x < 8; x++) {
             if ((kernel.font_data[first_byte_idx + y] >> (7 - x)) & 1)
-                draw_pixel(x_coord + x, y_coord + y, colour);
+                draw_pixel(x_coord + x, y_coord + y, kernel.fg_colour);
             else
                 draw_pixel(x_coord + x, y_coord + y, kernel.bg_colour);
         }
@@ -69,19 +69,38 @@ void new_line() {
     if (kernel.ch_Y >= kernel.framebuffers[0]->height - (kernel.font_info->char_size / 2)) scroll_line();
 }
 
-void write_char(char ch, uint32_t colour) {
+void write_char(char ch) {
     if (ch == '\n') {
         new_line();
         return;
     }
-    draw_char(ch, colour, kernel.ch_X, kernel.ch_Y);
+    draw_char(ch, kernel.ch_X, kernel.ch_Y);
     kernel.ch_X += 8;
     if (kernel.ch_X >= kernel.framebuffers[0]->width - 5) new_line();
 }
 
-void write_string(const char *str, uint32_t colour) {
+void ansi_switch_colour(uint8_t colour_code) {
+    uint32_t ansi_colours[] = {
+        0x808080, // grey/black
+        0xFF0000, // red
+        0x00FF00, // green
+        0xFFBF00, // yellow
+        0x0000FF, // blue
+        0xFF00FF, // magenta
+        0x00FFFF, // cyan
+        0xFFFFFF  // white
+    };
+    kernel.fg_colour = ansi_colours[colour_code];
+}
+
+void write_string(const char *str) {
     while (*str) {
-        write_char(*str, colour);
+        if (*str == '\e') {
+            ansi_switch_colour(str[5] - 48);
+            str += 7;
+            continue;
+        }
+        write_char(*str);
         str++;
     }
 }

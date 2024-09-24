@@ -14,7 +14,7 @@ void init_vfs() {
     kstatusf("Initialising VFS...");
     ku_memset((uint8_t*)kernel.drives, 0, sizeof(Drive) * 26);
     filesystems[0] = TempFS;
-    printf(" Ok!\n");
+    k_ok();
 }
 
 int mount(char drive, uint16_t filesystem, bool memory_based, uintptr_t mem_offset, uint64_t disk, uint64_t partition) {

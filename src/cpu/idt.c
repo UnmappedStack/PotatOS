@@ -60,5 +60,5 @@ void init_IDT() {
     kernel.idtr.size   = (sizeof(struct IDTEntry) * 256) - 1;
     kernel.idtr.offset = (uint64_t) IDT;
     asm("lidt %0" : : "m" (kernel.idtr));
-    printf(" Ok!\n");
+    k_ok();
 }

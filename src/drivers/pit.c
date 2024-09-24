@@ -16,7 +16,7 @@ void init_PIT() {
     outb(0x40, (HERTZ_DIVIDER >> 8) & 0xFF);
     set_IDT_entry(32, &pit_isr, 0x8E, (struct IDTEntry*) kernel.idtr.offset);
     lock_pit();
-    printf(" Ok!\n");
+    k_ok();
 }
 
 void unlock_pit() {

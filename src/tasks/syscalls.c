@@ -54,5 +54,5 @@ void init_syscalls() {
     kstatusf("Initiating syscalls...");
     struct IDTEntry *IDT = (struct IDTEntry*) kernel.idtr.offset;
     set_IDT_entry(0x80, &syscall_isr, 0xEF, IDT);
-    printf(" Ok!\n");
+    k_ok();
 }

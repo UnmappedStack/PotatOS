@@ -18,7 +18,7 @@ void init_tasklist() {
     };
     vector_push(kernel.tasklist.list, (uintptr_t) first_task);
     kernel.tasklist.current_task = 0;
-    printf(" Ok!\n");
+    k_ok();
 }
 
 Task* create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stack, uint8_t flags) {

@@ -32,7 +32,7 @@ void init_kheap() {
     kstatusf("Initiating kheap...");
     kernel.kheap_start = ((uintptr_t) kmalloc(2)) + ((uintptr_t) kernel.hhdm);
     *((Pool*) kernel.kheap_start) = create_pool(8192, sizeof(Pool), 0, true);
-    printf(" Ok!\n");
+    k_ok();
 }
 
 void* split_pool(Pool *pool_addr, uint64_t size) {

@@ -11,12 +11,12 @@ Spinlock serial_lock;
 
 void write_text(char *text) {
     write_serial(text);
-    if (kernel.font_avaliable) write_string(text, kernel.fg_colour);
+    if (kernel.font_avaliable) write_string(text);
 }
 
 void write_character(char ch) {
     write_serial_char(ch);
-    if (kernel.font_avaliable) write_char(ch, kernel.fg_colour);
+    if (kernel.font_avaliable) write_char(ch);
 }
 
 void printf_template(char* format, va_list args) {
@@ -66,7 +66,7 @@ void printf(char* format, ...) {
 // and alternate versions for some different types of messages
 void kstatusf(char* format, ...) {
     spinlock_aquire(&serial_lock);
-    write_text("[STATUS] ");
+    write_text(BYEL "[STATUS] " WHT);
     va_list args;
     va_start(args, format);
     printf_template(format, args);
@@ -76,7 +76,7 @@ void kstatusf(char* format, ...) {
 
 void ktestf(char* format, ...) {
     spinlock_aquire(&serial_lock);
-    write_text("[ TEST ] ");
+    write_text(BCYN "[ TEST ] " WHT);
     va_list args;
     va_start(args, format);
     printf_template(format, args);
@@ -85,7 +85,7 @@ void ktestf(char* format, ...) {
 
 void kdebugf(char* format, ...) {
     spinlock_aquire(&serial_lock);
-    write_text("[KDEBUG] ");
+    write_text(BMAG "[KDEBUG] " WHT);
     va_list args;
     va_start(args, format);
     printf_template(format, args);
@@ -95,9 +95,16 @@ void kdebugf(char* format, ...) {
 void kfailf(char* format, ...) {
     spinlock_aquire(&serial_lock);
     write_text("\n");
-    write_text("[ FAIL ] ");
+    write_text(BRED "[ FAIL ] " WHT);
     va_list args;
     va_start(args, format);
     printf_template(format, args);
     va_end(args);
+}
+
+void k_ok() {
+    spinlock_aquire(&serial_lock);
+    write_text(BGRN " Ok!\n" WHT);
+    spinlock_release(&serial_lock);
+    if (kernel.font_avaliable) swap_framebuffers();
 }
