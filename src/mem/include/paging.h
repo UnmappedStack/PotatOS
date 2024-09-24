@@ -45,6 +45,8 @@ void init_paging();
 
 uint64_t* init_paging_task();
 
+uint64_t virt_to_phys(uint64_t pml4_addr[], uint64_t virt_addr);
+
 #define switch_page_structures() \
     kstatusf("Switching CR3 & kernel stack..."); \
     KERNEL_SWITCH_PAGE_TREE(kernel.cr3); \

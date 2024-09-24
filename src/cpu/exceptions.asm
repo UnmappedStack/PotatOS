@@ -116,7 +116,6 @@ virtualisationException:
 
 align 0x08, db 0x00
 baseHandler:
-    cli
     push rax
     push rbx
     push rcx
@@ -133,9 +132,9 @@ baseHandler:
     push r14
     push r15
     push rax
-    cld
     mov rdi, rax
     call try_exit_task
+    cld
     mov rdi, rsp
     call lock_pit
     call exception_handler 

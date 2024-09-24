@@ -16,6 +16,47 @@
 
 #define TOPBITS 0xFFFF000000000000
 
+// Returns the physical address of a virtual address.
+// Returns 0xDEAD if it's unmapped.
+uint64_t virt_to_phys(uint64_t pml4_addr[], uint64_t virt_addr) {
+    virt_addr &= ~TOPBITS;
+    uint64_t pml1 = (virt_addr >> 12) & 511;
+    uint64_t pml2 = (virt_addr >> (12 + 9)) & 511;
+    uint64_t pml3 = (virt_addr >> (12 + 18)) & 511;
+    uint64_t pml4 = (virt_addr >> (12 + 27)) & 511;
+    for (; pml4 < 512; pml4++) {
+        uint64_t *pml3_addr = NULL;
+        if (pml4_addr[pml4] == 0)
+            return 0xDEAD;
+        else
+            pml3_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml4_addr[pml4]) + kernel.hhdm);
+
+        for (; pml3 < 512; pml3++) {
+            uint64_t *pml2_addr = NULL;
+            if (pml3_addr[pml3] == 0)
+                return 0xDEAD;
+            else
+                pml2_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml3_addr[pml3]) + kernel.hhdm);
+
+            for (; pml2 < 512; pml2++) {
+                uint64_t *pml1_addr = NULL;
+                if (pml2_addr[pml2] == 0)
+                    return 0xDEAD;
+                else
+                    pml1_addr = (uint64_t*)(PAGE_ALIGN_DOWN(pml2_addr[pml2]) + kernel.hhdm);
+                
+                if (pml1_addr[pml1] == 0)
+                    return 0xDEAD;
+
+                return (uint64_t)(PAGE_ALIGN_DOWN(pml1_addr[pml1]));
+            }
+            pml2 = 0;
+        }
+        pml3 = 0;
+    }
+    return 0xDEAD;
+}
+
 void map_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t phys_addr, uint64_t num_pages, uint64_t flags) {
     virt_addr &= ~TOPBITS;
     uint64_t pml1 = (virt_addr >> 12) & 511;

@@ -68,6 +68,7 @@ void _start() {
     init_framebuffer();
     fill_screen(kernel.bg_colour);
     init_font();
+    init_tasklist();
     init_paging();
     switch_page_structures();
     init_TSS();
@@ -76,7 +77,6 @@ void _start() {
     init_irq();
     init_PIT();
     //init_acpi();
-    init_tasklist();
     init_syscalls();
     init_smp();
     for (uint64_t i = 0; i < 99999; i++)
