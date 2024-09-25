@@ -22,6 +22,7 @@
 #include "../mem/include/print_mem.h"
 #include "../mem/include/paging.h"
 #include "../cpu/include/idt.h"
+#include "../utils/include/string.h"
 #include "../cpu/include/gdt.h"
 #include "../limine.h"
 #include "kernel.h"
@@ -55,6 +56,8 @@ void show_boot_info() {
     printf("\n");
 }
 
+const char *argv[] = {"R:/ramdiskroot/testuser", "Arg test 1!", "Second :D"};
+
 void _start() {
     disable_interrupts();
     init_kernel_data();
@@ -81,9 +84,8 @@ void _start() {
     init_smp();
     for (uint64_t i = 0; i < 99999; i++)
         outb(0x80, 0);
-    kstatusf("Trying to run init process...");
-    spawn("R:/ramdiskroot/testuser");
-    k_ok();
+    kstatusf("Trying to run init process...\n");
+    spawn("R:/ramdiskroot/testuser", argv, 3);
     enable_interrupts();
     unlock_pit();
     for(;;);

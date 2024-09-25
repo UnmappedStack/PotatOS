@@ -7,7 +7,8 @@
 void try_exit_task(uint64_t exit_code) {
     Task *current_task = get_task(kernel.tasklist.current_task);
     if (current_task == NULL || !current_task->is_user) return;
-    printf("Exited process with PID %i with status code %i.\n", kernel.tasklist.current_task, exit_code);
+    printf("\n");
+    kstatusf("Exited process of PID %i with status code %i.\n", kernel.tasklist.current_task, exit_code);
     task_remove(kernel.tasklist.current_task);
     if ((kernel.tasklist.list)->length != 1) {
         unlock_pit();

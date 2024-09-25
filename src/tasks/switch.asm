@@ -2,6 +2,8 @@
 
 global pit_isr
 
+extern task_get_argc
+extern task_get_argv
 extern task_disable_first_exec
 extern task_get_kernel_stack
 extern task_get_rsp
@@ -11,6 +13,11 @@ extern task_get_cr3
 extern task_get_entry_point
 extern task_get_flags
 extern lock_pit
+
+%define USER_STACK_PAGES 2
+%define PAGE_SIZE 4096
+%define USER_STACK_PTR 0x700000000000
+%define USER_STACK_ADDR (USER_STACK_PTR - USER_STACK_PAGES * PAGE_SIZE)
 
 pit_isr:
     jmp task_switch
@@ -69,17 +76,18 @@ task_switch_first_exec:
     xor rbx, rbx
     ; rip
     call task_get_entry_point
-    xor r15, r15 ; <-|-- r15 and rdi are no longer needed, clear them
-    xor rdi, rdi ; <-|
     push rax
-    xor rax, rax ; rax is no longer needed 
+    ;; pass it the cmd line args
+    call task_get_argc
+    mov r15, rax
+    call task_get_argv
+    mov rdi, r15
+    mov rsi, rax
     ;; clear all the gen purpose registers
     xor rax, rax
     xor rbx, rbx
     xor rcx, rcx
     xor rdx, rdx
-    xor rsi, rsi
-    xor rdi, rdi
     xor rbp, rbp
     xor r8, r8
     xor r9, r9

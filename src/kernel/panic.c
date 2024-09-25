@@ -76,7 +76,7 @@ void kpanic(char* message, struct IDTEFrame registers) {
     kernel.bg_colour = 0x012456;
     printf("Exception:  %s\n"
            "Error code: 0b%b\n",
-            message, registers.ss);
+            message, registers.code);
     register_dump(registers);
     stack_trace(registers.rbp, registers.rip);
     printf("\n");

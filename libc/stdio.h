@@ -16,7 +16,7 @@ size_t strlen(const char *str);
 #ifndef STRLEN_IMPL
 size_t strlen(const char *str) {
     size_t len = 0;
-    while (str[len])
+    while (str[len] != 0)
         len++;
     return len;
 } 
@@ -122,41 +122,39 @@ void fputs(char *str, uint8_t file_descriptor) {
 }
 #endif
 
-void printf(char *format, ...);
+void printf(const char *format, ...);
 
 #ifndef PRINTF_IMPL
-void printf(char *format, ...) {
+void printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
-    size_t i   = 0;
-    size_t len = strlen(format);
-    while (i < len) {
-        if (format[i] == '%') {
-            i++;
+    while (*format) {
+        if (*format == '%') {
+            format++;
             char buffer[10];
-            if (format[i] == 'd' || format[i] == 'i') {
+            if (*format == 'd' || *format == 'i') {
                 int_to_string(va_arg(args, uint64_t), buffer);
                 buffer[9] = 0;
                 fputs(buffer, stdout);
-            } else if (format[i] == 'c') {
+            } else if (*format == 'c') {
                 buffer[0] = va_arg(args, int);
                 buffer[1] = 0;
                 fputs(buffer, stdout);
-            } else if (format[i] == 'x') {
+            } else if (*format == 'x') {
                 char bufferx[20];
                 int_to_hex_string(va_arg(args, uint64_t), bufferx);
                 bufferx[19] = 0;
                 fputs(bufferx, stdout);
-            } else if (format[i] == 's') {
+            } else if (*format == 's') {
                 fputs(va_arg(args, char*), stdout);
             }
         } else {
             char buffer[2];
-            buffer[0] = format[i];
+            buffer[0] = *format;
             buffer[1] = 0;
             fputs(buffer, stdout);
         }
-        i++;
+        format++;
     }
     va_end(args);
 }

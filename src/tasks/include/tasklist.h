@@ -7,6 +7,8 @@
 
 typedef struct {
     bool      is_user;
+    uint64_t  argc;
+    uint64_t  argv;
     uint64_t  pml4_addr;
     uint64_t  kernel_rsp;
     uint64_t  current_rsp;

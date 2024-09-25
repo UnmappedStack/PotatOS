@@ -25,3 +25,11 @@ void task_disable_first_exec(Task *task) {
 uint64_t task_get_kernel_stack(Task *task) {
     return task->kernel_rsp;
 }
+
+uint64_t task_get_argc(Task *task) {
+    return task->argc;
+}
+
+uint64_t task_get_argv(Task *task) {
+    return task->argv;
+}

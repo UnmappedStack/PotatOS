@@ -10,7 +10,7 @@ make
 
 # compile/assemble userspace components
 
-gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/testuser userspace/test/main.c
+gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/testuser userspace/test/main.c -g
 
 # set up the initial ramdisk
 
@@ -41,4 +41,4 @@ xorriso -as mkisofs -b boot/limine/limine-bios-cd.bin \
 
 # run in qemu
 
-qemu-system-x86_64 potatos.iso -serial stdio --no-reboot --no-shutdown -smp 5 -accel kvm
+qemu-system-x86_64 potatos.iso -serial stdio --no-reboot --no-shutdown -smp 5 -accel kvm -M smm=off -d int
