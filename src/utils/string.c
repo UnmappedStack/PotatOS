@@ -27,9 +27,7 @@ size_t ku_strlen(const char* str) {
 }
 
 void ku_memcpy(char* dest, const char* from, size_t n) {
-    for (size_t i = 0; i < n; i++) {
-        dest[i] = from[i];
-    }
+    asm ("rep movsb" : : "D" (dest), "S" (from), "c" (n) : "memory");
 }
 
 bool ku_memcmp(const char* str1, const char* str2, uint64_t size) {
