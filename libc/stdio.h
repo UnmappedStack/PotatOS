@@ -175,17 +175,11 @@ File open(char *path, uint64_t flags, uint64_t mode);
 File open(char *path, uint64_t flags, uint64_t mode) {
     uint64_t file_descriptor;
     asm volatile (
-        "movq %1, %%rdi\n" // filename buffer
-        "movq %2, %%rsi\n" // flags
-        "movq %3, %%rdx\n" // mode
-        "movq $3, %%rax\n" // open sysycall
-        "int $0x80\n"
-        "movq %%rax, %0"
-        : "=r" (file_descriptor)
-        : "r" ((uint64_t) path), "r" ((uint64_t) flags), "r" ((uint64_t) mode)
-        : "%rdi", "%rsi", "%rdx", "%rax"
+        "int $0x80"
+        : "=a" (file_descriptor)
+        : "D" ((uint64_t) path), "S" ((uint64_t) flags), "d" ((uint64_t) mode), "a" (3)
     );
-    fputs("", stdout); // this only works for some reason if I add fputs here. I'm taking the broken route.
+    fputs("", stdout);
     return file_descriptor;
 }
 #endif
@@ -196,10 +190,8 @@ void close(File f);
 void close(File f) {
     fputs("", stdout);
     asm volatile (
-        "movq %0, %%rdi\n" // file descriptor
         "int $0x80"
-        : : "r" ((uint64_t) f)
-        : "%rdi"
+        : : "D" ((uint64_t) f)
     );
 }
 #endif

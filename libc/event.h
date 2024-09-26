@@ -16,13 +16,8 @@ void get_event(Event *buffer);
 void get_event(Event *buffer) {
     printf(""); // it seems to only work when I have a printf here for some reason, so I'm taking the broken solution for now lmao
     asm volatile(
-        "movq %0, %%rdi\n"
-        "movq $2, %%rax\n"
-        "xor %%rsi, %%rsi\n"
-        "xor %%rdx, %%rdx\n"
         "int $0x80"
-        : : "r" ((uint64_t) buffer)
-        : "%rdi", "%rax", "%rdi", "%rdx" 
+        : : "D" ((uint64_t) buffer), "a" (2)
     );
 }
 #endif
