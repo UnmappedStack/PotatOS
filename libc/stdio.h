@@ -167,10 +167,12 @@ void printf(const char *format, ...) {
 #define MODE_WRITEONLY 0b10
 #define MODE_READWRITE 0b11
 
-int open(char *path, uint64_t flags, uint64_t mode);
+#define File uint64_t
+
+File open(char *path, uint64_t flags, uint64_t mode);
 
 #ifndef OPEN_IMPL
-int open(char *path, uint64_t flags, uint64_t mode) {
+File open(char *path, uint64_t flags, uint64_t mode) {
     uint64_t file_descriptor;
     asm volatile (
         "movq %1, %%rdi\n" // filename buffer
@@ -188,3 +190,16 @@ int open(char *path, uint64_t flags, uint64_t mode) {
 }
 #endif
 
+void close(File f);
+
+#ifndef CLOSE_IMPL
+void close(File f) {
+    fputs("", stdout);
+    asm volatile (
+        "movq %0, %%rdi\n" // file descriptor
+        "int $0x80"
+        : : "r" ((uint64_t) f)
+        : "%rdi"
+    );
+}
+#endif

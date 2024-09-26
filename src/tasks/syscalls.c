@@ -75,6 +75,15 @@ uint64_t syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
     return 1;
 }
 
+/* Close a file
+ * rdi = file descriptor
+ */
+
+void syscall_close(uint64_t rdi) {
+    Task *current_task = get_task(kernel.tasklist.current_task);
+    close(current_task->resources[rdi]);
+}
+
 void syscall_invalid() {
     printf("Hey that syscall doesn't exist! (Invalid syscall!)\n");
 }

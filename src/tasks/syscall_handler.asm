@@ -11,12 +11,14 @@ extern syscall_read
 extern syscall_get_event
 extern syscall_open
 extern syscall_invalid
+extern syscall_close
 
 syscall_lookup:
     dq syscall_read
     dq syscall_write
     dq syscall_get_event
     dq syscall_open
+    dq syscall_close
 syscall_lookup_end:
 
 global syscall_isr
