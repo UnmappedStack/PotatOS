@@ -1,4 +1,6 @@
 #include "include/syscalls.h"
+#include "../mem/include/kheap.h"
+#include "include/events.h"
 #include "../tasks/include/tasklist.h"
 #include "../utils/include/printf.h"
 #include "../kernel/kernel.h"
@@ -40,8 +42,14 @@ int syscall_read(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
     return 0;
 }
 
-void syscall_msg3() {
-    printf("Message from syscall #3 O_O\n");
+/* Get event from event queue
+ * rdi = event buffer.
+ */
+void syscall_get_event(uint64_t rdi) {
+    Task  *current_task = get_task(kernel.tasklist.current_task);
+    Event *this_event   = get_event(current_task->event_queue);
+    *((Event*) rdi)     = *this_event;
+    free(this_event);
 }
 
 void syscall_invalid() {

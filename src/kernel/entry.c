@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../tasks/include/events.h"
 #include "../drivers/include/acpi.h"
 #include "../drivers/include/renderfont.h"
 #include "../fs/include/devices.h"
@@ -84,7 +85,7 @@ void _start() {
     init_smp();
     for (uint64_t i = 0; i < 9999; i++)
         outb(0x80, 0);
-    kstatusf("Trying to run init process...\n");
+    kstatusf("Trying to run init process...\n"); 
     spawn("R:/ramdiskroot/testuser", argv, 3);
     enable_interrupts();
     unlock_pit();

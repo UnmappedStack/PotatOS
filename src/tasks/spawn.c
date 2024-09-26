@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stddef.h>
+#include "include/events.h"
 #include "include/tasklist.h"
 #include "../kernel/kernel.h"
 #include "../mem/include/pmm.h"
@@ -150,6 +151,7 @@ int spawn(char *path, const char *argv[], size_t argc) {
     Task *new_task = create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_PTR, TASK_PRESENT | TASK_FIRST_EXEC);
     new_task->argc = argc;
     new_task->argv = ARGV_DATA_ADDR + arg_size;
+    new_task->event_queue = new_event_queue();
     free(buffer);
 
     // open standard resource streams

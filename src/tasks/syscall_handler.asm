@@ -8,13 +8,13 @@ extern unlock_pit
 
 extern syscall_write
 extern syscall_read
-extern syscall_msg3
+extern syscall_get_event
 extern syscall_invalid
 
 syscall_lookup:
     dq syscall_read
     dq syscall_write
-    dq syscall_msg3
+    dq syscall_get_event
 syscall_lookup_end:
 
 global syscall_isr

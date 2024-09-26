@@ -1,4 +1,5 @@
 #pragma once
+#include "events.h"
 #include "../../mem/include/vector.h"
 #include "../../fs/include/vfs.h"
 
@@ -6,15 +7,16 @@
 #define TASK_FIRST_EXEC 0b010
 
 typedef struct {
-    bool      is_user;
-    uint64_t  argc;
-    uint64_t  argv;
-    uint64_t  pml4_addr;
-    uint64_t  kernel_rsp;
-    uint64_t  current_rsp;
-    uintptr_t entry_point;
-    File*     resources[20];
-    uint8_t   flags;
+    bool       is_user;
+    EventQueue event_queue;
+    uint64_t   argc;
+    uint64_t   argv;
+    uint64_t   pml4_addr;
+    uint64_t   kernel_rsp;
+    uint64_t   current_rsp;
+    uintptr_t  entry_point;
+    File*      resources[20];
+    uint8_t    flags;
 } Task;
 
 typedef struct {
