@@ -1,3 +1,4 @@
+#include "include/end_task.h"
 #include "../drivers/include/pit.h"
 #include "../utils/include/printf.h"
 #include "include/tasklist.h"

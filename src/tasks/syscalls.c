@@ -7,6 +7,7 @@
 #include "../cpu/include/idt.h"
 #include "../drivers/include/pit.h"
 #include "../fs/include/vfs.h"
+#include "include/end_task.h"
 
 /* Write syscall handler
  * rdi = File descriptor
@@ -50,6 +51,28 @@ void syscall_get_event(uint64_t rdi) {
     Event *this_event   = get_event(current_task->event_queue);
     *((Event*) rdi)     = *this_event;
     free(this_event);
+}
+
+/* Open a file
+ * rdi = filename buffer
+ * rsi = flags
+ * rdx = mode
+ *
+ * returns file descriptor number in rax
+ */
+
+uint64_t syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+    uint64_t file_descriptor = 0;
+    uint64_t current_task_id = kernel.tasklist.current_task;
+    Task *current_task = get_task(current_task_id);
+    for (; file_descriptor < NUM_RESOURCES; file_descriptor++) {
+        if (current_task->resources[file_descriptor] != 0) continue;
+        current_task->resources[file_descriptor] = open((char*) rdi, rsi, rdx);
+        return file_descriptor;
+    }
+    kfailf("Couldn't open new file: too many files already open. Exiting program.\n");
+    try_exit_task(1);
+    return 1;
 }
 
 void syscall_invalid() {

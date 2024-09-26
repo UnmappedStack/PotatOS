@@ -159,3 +159,32 @@ void printf(const char *format, ...) {
     va_end(args);
 }
 #endif
+
+#define O_CREAT    0b001
+#define O_CREATALL 0b010
+
+#define MODE_READONLY  0b01
+#define MODE_WRITEONLY 0b10
+#define MODE_READWRITE 0b11
+
+int open(char *path, uint64_t flags, uint64_t mode);
+
+#ifndef OPEN_IMPL
+int open(char *path, uint64_t flags, uint64_t mode) {
+    uint64_t file_descriptor;
+    asm volatile (
+        "movq %1, %%rdi\n" // filename buffer
+        "movq %2, %%rsi\n" // flags
+        "movq %3, %%rdx\n" // mode
+        "movq $3, %%rax\n" // open sysycall
+        "int $0x80\n"
+        "movq %%rax, %0"
+        : "=r" (file_descriptor)
+        : "r" ((uint64_t) path), "r" ((uint64_t) flags), "r" ((uint64_t) mode)
+        : "%rdi", "%rsi", "%rdx", "%rax"
+    );
+    fputs("", stdout); // this only works for some reason if I add fputs here. I'm taking the broken route.
+    return file_descriptor;
+}
+#endif
+

@@ -147,17 +147,14 @@ int spawn(char *path, const char *argv[], size_t argc) {
         *((char**)(((uint64_t)arg_page) + arg_size + (i * sizeof(uint64_t)))) = (char*) (((uint64_t)arg_page) + arg_size_hitherto);
         arg_size_hitherto += ku_strlen(argv[i]) + 1;
     }
-
     Task *new_task = create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_PTR, TASK_PRESENT | TASK_FIRST_EXEC);
     new_task->argc = argc;
     new_task->argv = ARGV_DATA_ADDR + arg_size;
     new_task->event_queue = new_event_queue();
     free(buffer);
-
     // open standard resource streams
     new_task->resources[0] = open("D:/stdin",  O_CREATALL, MODE_READWRITE);
     new_task->resources[1] = open("D:/stdout", O_CREATALL, MODE_READWRITE);
     new_task->resources[2] = open("D:/stderr", O_CREATALL, MODE_READWRITE);
-
     return 0;
 }

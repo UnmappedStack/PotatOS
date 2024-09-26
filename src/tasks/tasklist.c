@@ -1,4 +1,5 @@
 #include "include/tasklist.h"
+#include "../utils/include/string.h"
 #include "../mem/include/paging.h"
 #include "../mem/include/vector.h"
 #include "../kernel/kernel.h"
