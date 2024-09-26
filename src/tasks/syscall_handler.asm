@@ -9,8 +9,8 @@ extern unlock_pit
 extern syscall_write
 extern syscall_read
 extern syscall_get_event
-extern syscall_open
 extern syscall_invalid
+extern syscall_open
 extern syscall_close
 
 syscall_lookup:
@@ -24,19 +24,13 @@ syscall_lookup_end:
 global syscall_isr
 
 syscall_isr:
-    cli
-    push rax
-    push rdi
-    push rsi
-    push rdx
-    pop rdx
-    pop rsi
-    pop rdi
-    pop rax
     cmp rax, (syscall_lookup_end-syscall_lookup) / 8
     jge invalid_syscall
     push rbx
     push rcx
+    push rdx
+    push rsi
+    push rdi
     push rbp
     push r8
     push r9
@@ -56,12 +50,13 @@ syscall_isr:
     pop r9
     pop r8
     pop rbp
+    pop rdi
+    pop rsi
+    pop rdx
     pop rcx
     pop rbx
-    sti
     ret
 
 invalid_syscall:
     call syscall_invalid
-    call unlock_pit
     ret

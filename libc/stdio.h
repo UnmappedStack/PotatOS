@@ -191,7 +191,7 @@ void close(File f) {
     fputs("", stdout);
     asm volatile (
         "int $0x80"
-        : : "D" ((uint64_t) f)
+        : : "D" ((uint64_t) f), "a" (4)
     );
 }
 #endif

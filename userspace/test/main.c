@@ -6,5 +6,11 @@ int main(int argc, char **argv) {
     printf("Number of arguments: %i\n", argc);
     for (int i = 0; i < argc; i++)
         printf("Argument %i: %s\n", i, argv[i]);
+    fputs("Trying to open R:/ramdiskroot/testfile1.txt...\n", stdout);
+    File f = open("R:/ramdiskroot/testfile1.txt", 0, MODE_READONLY);
+    printf("Success! File descriptor = %i\n", f);
+    printf("Trying to close...\n");
+    close(f);
+    printf("Closed successfully!\n");
     return 0;
 }

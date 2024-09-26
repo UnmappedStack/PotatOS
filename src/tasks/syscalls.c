@@ -82,6 +82,7 @@ uint64_t syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
 void syscall_close(uint64_t rdi) {
     Task *current_task = get_task(kernel.tasklist.current_task);
     close(current_task->resources[rdi]);
+    current_task->resources[rdi] = NULL;
 }
 
 void syscall_invalid() {
