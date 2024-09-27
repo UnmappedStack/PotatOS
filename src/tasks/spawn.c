@@ -96,11 +96,9 @@ size_t last_loadable_segment(elf_program_header *program_header_entries, size_t 
 
 int spawn(char *path, const char *argv[], size_t argc) {
     File *f = open(path, 0, MODE_READONLY);
+    if (f == NULL) return 2;
     size_t flength = file_length(f); 
     char *buffer = (char*) malloc(flength);
-    if (f == NULL) {
-        return 2;
-    }
     int status = read(f, buffer, flength);
     if (status != 0) {
         close(f);

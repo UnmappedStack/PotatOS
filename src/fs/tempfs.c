@@ -21,11 +21,23 @@ FileSystem TempFS = {
     .length_function    = &tempfs_length
 };
 
+void tempfs_mkdir_nonlinear(void *current_dir, const char *dirname, DirEntryNode *first_dir_entry);
+
 Inode* tempfs_new() {
     Inode *root_inode = (Inode*) malloc(sizeof(Inode));
-    root_inode->dir_first_node = (DirEntryNode*) malloc(sizeof(DirEntryNode)); // one empty entry
-    ((DirEntryNode*)root_inode->dir_first_node)->inode = (uintptr_t) malloc(sizeof(Inode));
-    ku_memset((uint8_t*)((DirEntryNode*)root_inode->dir_first_node)->inode, 0, sizeof(Inode));
+    // create two entries at the start, `.` and `..`
+    // make the `.` entry
+    root_inode->dir_first_node = (DirEntryNode*) malloc(sizeof(DirEntryNode));
+    ((DirEntryNode*)root_inode->dir_first_node)->inode  = (uintptr_t) malloc(sizeof(Inode));
+    ((DirEntryNode*)root_inode->dir_first_node)->is_dir = true;
+    Inode *first_inode = (Inode*) ((DirEntryNode*)root_inode->dir_first_node)->inode;
+    first_inode->filename[0] = '.';
+    first_inode->filename[1] = 0;
+    first_inode->is_dir = true;
+    first_inode->dir_first_node = root_inode->dir_first_node;
+    first_inode->num_entries = 2;
+    // make the `..` entry (identical for the root to `.`)
+    tempfs_mkdir_nonlinear((void*) root_inode, "..", root_inode->dir_first_node);
     root_inode->is_dir         = true;
     return root_inode;
 }
@@ -50,11 +62,28 @@ Inode* tempfs_addentry(Inode *current_dir, const char *dirname, bool is_dir) {
     return (Inode*) new_entry->inode;
 }
 
+// like mkdir, but you can choose the first dir entry that it points to, like an existing one
+void tempfs_mkdir_nonlinear(void *current_dir, const char *dirname, DirEntryNode *first_dir_entry) {
+    Inode *new_inode = tempfs_addentry((Inode*)current_dir, dirname, true);
+    new_inode->dir_first_node = first_dir_entry;
+}
+
 void tempfs_mkdir(void *current_dir, const char *dirname) {
     Inode *new_inode = tempfs_addentry((Inode*)current_dir, dirname, true);
+    // create two entries at the start, `.` and `..`
+    // make the `.` entry
     new_inode->dir_first_node = (DirEntryNode*) malloc(sizeof(DirEntryNode));
-    ((DirEntryNode*)new_inode->dir_first_node)->inode = (uintptr_t) malloc(sizeof(Inode));
+    ((DirEntryNode*)new_inode->dir_first_node)->inode  = (uintptr_t) malloc(sizeof(Inode));
     ku_memset((uint8_t*)((DirEntryNode*)new_inode->dir_first_node)->inode, 0, sizeof(Inode));
+    ((DirEntryNode*)new_inode->dir_first_node)->is_dir = true;
+    Inode *first_inode = (Inode*) ((DirEntryNode*)new_inode->dir_first_node)->inode;
+    ku_memset((uint8_t*)((DirEntryNode*)new_inode->dir_first_node)->inode, 0, sizeof(Inode));
+    first_inode->filename[0] = '.';
+    first_inode->is_dir = true;
+    first_inode->dir_first_node = new_inode->dir_first_node;
+    first_inode->num_entries = 2;
+    // make the `..` entry
+    tempfs_mkdir_nonlinear((void*) new_inode, "..", ((Inode*) current_dir)->dir_first_node);
 }
 
 void tempfs_mkfile(void *current_dir, const char *filename) {

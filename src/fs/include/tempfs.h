@@ -20,10 +20,10 @@ typedef struct {
 } DirEntryNode;
 
 typedef struct {
-    char filename[20];
+    char     filename[20];
     uint64_t size_pages;
     size_t   length;
-    bool is_dir;
+    bool     is_dir;
     union {
         FileNode *file_first_node;
         struct {

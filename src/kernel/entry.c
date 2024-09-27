@@ -86,7 +86,10 @@ void _start() {
     for (uint64_t i = 0; i < 9999; i++)
         outb(0x80, 0);
     kstatusf("Trying to run init process...\n"); 
-    spawn("R:/ramdiskroot/testuser", argv, 3);
+    if (spawn("R:/ramdiskroot/testuser", argv, 3) != 0) {
+        kfailf("Init program not found, nothing to do. Halting.");
+        halt();
+    }
     enable_interrupts();
     unlock_pit();
     for(;;);
