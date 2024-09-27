@@ -18,6 +18,7 @@ typedef struct {
     uint64_t   current_rsp;
     uintptr_t  entry_point;
     File*      resources[NUM_RESOURCES];
+    uintptr_t  parent;
     uint8_t    flags;
 } Task;
 

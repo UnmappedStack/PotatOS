@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include "../../mem/include/vector.h"
 
+// event types
+#define EVENT_TASK_EXITED 1
+
 typedef struct {
     bool do_handle;
     uint64_t event_id;

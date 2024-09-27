@@ -1,4 +1,5 @@
 #include "include/tasklist.h"
+#include "include/events.h"
 #include "../utils/include/string.h"
 #include "../mem/include/paging.h"
 #include "../mem/include/vector.h"
@@ -12,10 +13,12 @@ void init_tasklist() {
     Task *first_task = (Task*) malloc(sizeof(Task));
     *first_task = (Task) {
         .is_user     = false,
+        .event_queue = new_event_queue(),
         .pml4_addr   = kernel.cr3,
         .kernel_rsp  = KERNEL_STACK_PTR,
         .current_rsp = KERNEL_STACK_PTR,
         .entry_point = (uintptr_t) &all_tasks_ended,
+        .parent      = (uintptr_t) first_task, // this task is it's own parent
         .flags       = 0
     };
     vector_push(kernel.tasklist.list, (uintptr_t) first_task);

@@ -195,3 +195,19 @@ void close(File f) {
     );
 }
 #endif
+
+uint64_t spawn(char *path, const char **argv, uint64_t argc);
+
+#ifndef SPAWN_IMPL
+uint64_t spawn(char *path, const char **argv, uint64_t argc) {
+    uint64_t status;
+    fputs("", stdout);
+    asm volatile (
+        "int $0x80"
+        : "=a" (status)
+        : "D" ((uint64_t) path), "S" ((uint64_t) argv), "d" (argc), "a" (5)
+    );
+    fputs("", stdout);
+    return status;
+}
+#endif

@@ -1,3 +1,4 @@
+#include "include/spawn.h"
 #include "include/syscalls.h"
 #include "../mem/include/kheap.h"
 #include "include/events.h"
@@ -83,6 +84,16 @@ void syscall_close(uint64_t rdi) {
     Task *current_task = get_task(kernel.tasklist.current_task);
     close(current_task->resources[rdi]);
     current_task->resources[rdi] = NULL;
+}
+
+/* Spawn a new process & create an event when it's finished executing
+ * rdi = program path buffer
+ * rsi = argv (**char)
+ * rdx = argc
+ */
+
+int syscall_spawn(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+    return spawn((char*) rdi, (const char**) rsi, rdx);
 }
 
 void syscall_invalid() {
