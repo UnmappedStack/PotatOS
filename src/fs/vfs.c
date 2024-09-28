@@ -58,6 +58,34 @@ uint8_t check_file_type(char *fname) {
         return FTYPE_REGULAR;
 }
 
+void change_cd(char *path) {
+    Task *current_task = get_task(kernel.tasklist.current_task);
+    uint64_t path_len = ku_strlen(path);
+    if (path[1] != ':' || path[2] != '/') {
+        if (path[0] == '/') {
+            char *path_ext = (char*) malloc(path_len + 4);
+            ku_memcpy(path_ext + 2, path, path_len + 1);
+            path_ext[0] = current_task->current_dir[0];
+            path_ext[1] = ':';
+            path_ext[path_len + 2] = '/';
+            path_ext[path_len + 3] = 0;
+            path = path_ext;
+        } else {
+            char *cd = current_task->current_dir;
+            uint64_t cd_len = ku_strlen(cd);
+            char *path_ext = (char*) malloc(cd_len + path_len + 1);
+            ku_memcpy(path_ext, cd, cd_len);
+            ku_memcpy(path_ext + cd_len, path, path_len + 1);
+            path_ext[path_len + cd_len] = '/';
+            path_ext[path_len + cd_len + 1] = 0;
+            path = path_ext;
+        }
+    }
+    free(current_task->current_dir);
+    current_task->current_dir = (char*) malloc(ku_strlen(path) + 1);
+    ku_memcpy(current_task->current_dir, path, ku_strlen(path) + 1);
+}
+
 File* open(char *path, int flags, uint8_t mode) {
     if (path[1] != ':' || path[2] != '/') {
         if (path[0] == '/') {

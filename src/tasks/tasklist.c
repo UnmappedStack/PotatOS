@@ -11,10 +11,12 @@ void init_tasklist() {
     kstatusf("Initiating tasks...");
     kernel.tasklist.list = new_vector(sizeof(Task));
     Task *first_task = (Task*) malloc(sizeof(Task));
+    char *current_dir = (char*) malloc(4);
+    ku_memcpy(current_dir, "R:/", 4);
     *first_task = (Task) {
         .is_user     = false,
         .event_queue = new_event_queue(),
-        .current_dir = "R:/",
+        .current_dir = current_dir,
         .pml4_addr   = kernel.cr3,
         .kernel_rsp  = KERNEL_STACK_PTR,
         .current_rsp = KERNEL_STACK_PTR,

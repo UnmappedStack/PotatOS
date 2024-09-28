@@ -54,6 +54,7 @@ typedef struct {
 extern FileSystem filesystems[];
 
 void  init_vfs();
+void change_cd(char *path);
 int  mount(char drive, uint16_t filesystem, bool memory_based, uintptr_t mem_offset, uint64_t disk, uint64_t partition);
 int unmount(char drive);
 File* open(char *path, int flags, uint8_t mode);
