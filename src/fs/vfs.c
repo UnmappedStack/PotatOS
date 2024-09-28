@@ -61,10 +61,18 @@ uint8_t check_file_type(char *fname) {
 File* open(char *path, int flags, uint8_t mode) {
     if (path[1] != ':' || path[2] != '/') {
         if (path[0] == '/') {
-            char *path_ext = (char*) malloc(ku_strlen(path) + 2);
+            char *path_ext = (char*) malloc(ku_strlen(path) + 3);
             ku_memcpy(path_ext + 2, path, ku_strlen(path) + 1);
             path_ext[0] = get_task(kernel.tasklist.current_task)->current_dir[0];
             path_ext[1] = ':';
+            path = path_ext;
+        } else {
+            char *cd = get_task(kernel.tasklist.current_task)->current_dir;
+            uint64_t cd_len = ku_strlen(cd);
+            uint64_t path_len = ku_strlen(path);
+            char *path_ext = (char*) malloc(cd_len + path_len + 1);
+            ku_memcpy(path_ext, cd, cd_len);
+            ku_memcpy(path_ext + cd_len, path, path_len + 1);
             path = path_ext;
         }
     }
@@ -128,6 +136,23 @@ File* open(char *path, int flags, uint8_t mode) {
 }
 
 int mkdir(char *path) {
+    if (path[1] != ':' || path[2] != '/') {
+        if (path[0] == '/') {
+            char *path_ext = (char*) malloc(ku_strlen(path) + 3);
+            ku_memcpy(path_ext + 2, path, ku_strlen(path) + 1);
+            path_ext[0] = get_task(kernel.tasklist.current_task)->current_dir[0];
+            path_ext[1] = ':';
+            path = path_ext;
+        } else {
+            char *cd = get_task(kernel.tasklist.current_task)->current_dir;
+            uint64_t cd_len = ku_strlen(cd);
+            uint64_t path_len = ku_strlen(path);
+            char *path_ext = (char*) malloc(cd_len + path_len + 1);
+            ku_memcpy(path_ext, cd, cd_len);
+            ku_memcpy(path_ext + cd_len, path, path_len + 1);
+            path = path_ext;
+        }
+    }
     char drive = path[0];
     if (drive >= 'a' && drive <= 'z') drive -= 32;
     if (drive < 'A' || drive > 'Z') return 1;
