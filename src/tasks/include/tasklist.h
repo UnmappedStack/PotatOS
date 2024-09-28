@@ -11,6 +11,7 @@
 typedef struct {
     bool       is_user;
     EventQueue event_queue;
+    char       *current_dir;
     uint64_t   argc;
     uint64_t   argv;
     uint64_t   pml4_addr;

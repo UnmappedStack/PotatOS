@@ -14,6 +14,7 @@ void init_tasklist() {
     *first_task = (Task) {
         .is_user     = false,
         .event_queue = new_event_queue(),
+        .current_dir = "R:/",
         .pml4_addr   = kernel.cr3,
         .kernel_rsp  = KERNEL_STACK_PTR,
         .current_rsp = KERNEL_STACK_PTR,
@@ -36,6 +37,10 @@ Task* create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stac
         .current_rsp = user_stack,
         .flags       = flags
     };
+    char *current_dir    = get_task(kernel.tasklist.current_task)->current_dir;
+    uint64_t dirname_len = ku_strlen(current_dir);
+    new_task->current_dir = (char*) malloc(dirname_len);
+    ku_memcpy(new_task->current_dir, current_dir, dirname_len);
     vector_push(kernel.tasklist.list, (uintptr_t) new_task);
     return new_task;
 }

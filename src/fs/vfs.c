@@ -59,10 +59,17 @@ uint8_t check_file_type(char *fname) {
 }
 
 File* open(char *path, int flags, uint8_t mode) {
+    if (path[1] != ':' || path[2] != '/') {
+        if (path[0] == '/') {
+            char *path_ext = (char*) malloc(ku_strlen(path) + 2);
+            ku_memcpy(path_ext + 2, path, ku_strlen(path) + 1);
+            path_ext[0] = get_task(kernel.tasklist.current_task)->current_dir[0];
+            path_ext[1] = ':';
+            path = path_ext;
+        }
+    }
     char drive = path[0];
-    if (drive >= 'a' && drive <= 'z') drive -= 32;
     if (drive < 'A' || drive > 'Z') return NULL;
-    if (path[1] != ':' || path[2] != '/') return NULL;
     char *new_path = (char*) malloc(ku_strlen(path));
     ku_memcpy(new_path, path, ku_strlen(path));
     new_path[ku_strlen(path)] = 0;
