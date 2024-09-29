@@ -1,3 +1,5 @@
+#include "include/framebuffer.h"
+#include "include/renderfont.h"
 #include "include/keyboard.h"
 #include "../kernel/kernel.h"
 #include "../utils/include/printf.h"
@@ -69,9 +71,19 @@ void keyboard_isr(void*) {
         return;
     }
     if (scancode == 0x0E && current_input_data->input_len > 0) { // backspace
-        kernel.ch_X -= 8;
+        // cover it up
+        printf(" ");
+        kernel.ch_X -= 16;
         printf(" ");
         kernel.ch_X -= 8;
+        // redraw the cursor
+        uint32_t prev_bg = kernel.bg_colour;
+        kernel.bg_colour = 0xFFFFFF;
+        write_char(' ');
+        kernel.bg_colour = prev_bg;
+        kernel.ch_X -= 8;
+        swap_framebuffers();
+        // remove from buffer
         current_input_data->input_len--;
         current_input_data->current_buffer[current_input_data->input_len] = 0;
         end_of_interrupt();
@@ -90,6 +102,9 @@ void keyboard_isr(void*) {
     if (scancode == 0x1C || current_input_data->buffer_size == current_input_data->input_len) { // enter
         current_input_data->current_buffer[current_input_data->input_len] = 0;
         current_input_data->currently_reading = false;
+        // remove the cursor
+        printf(" ");
+        kernel.ch_X -= 8;
         end_of_interrupt();
         return;
     }
@@ -112,6 +127,12 @@ void keyboard_isr(void*) {
     printf("%c", ch);
     current_input_data->current_buffer[current_input_data->input_len] = ch;
     current_input_data->input_len++;
+    uint32_t prev_bg = kernel.bg_colour;
+    kernel.bg_colour = 0xFFFFFF;
+    write_char(' ');
+    kernel.bg_colour = prev_bg;
+    swap_framebuffers();
+    kernel.ch_X -= 8;
     end_of_interrupt();
     return;
 }
