@@ -58,6 +58,15 @@ typedef struct {
 
 KeyboardData *current_input_data;
 
+void draw_cursor() {
+    uint32_t prev_bg = kernel.bg_colour;
+    kernel.bg_colour = 0xFFFFFF;
+    write_char(' ');
+    kernel.bg_colour = prev_bg;
+    kernel.ch_X -= 8;
+    swap_framebuffers();
+}
+
 __attribute__((interrupt))
 void keyboard_isr(void*) {
     if (!current_input_data->currently_reading) return;
@@ -76,13 +85,7 @@ void keyboard_isr(void*) {
         kernel.ch_X -= 16;
         printf(" ");
         kernel.ch_X -= 8;
-        // redraw the cursor
-        uint32_t prev_bg = kernel.bg_colour;
-        kernel.bg_colour = 0xFFFFFF;
-        write_char(' ');
-        kernel.bg_colour = prev_bg;
-        kernel.ch_X -= 8;
-        swap_framebuffers();
+        draw_cursor();
         // remove from buffer
         current_input_data->input_len--;
         current_input_data->current_buffer[current_input_data->input_len] = 0;
@@ -127,12 +130,7 @@ void keyboard_isr(void*) {
     printf("%c", ch);
     current_input_data->current_buffer[current_input_data->input_len] = ch;
     current_input_data->input_len++;
-    uint32_t prev_bg = kernel.bg_colour;
-    kernel.bg_colour = 0xFFFFFF;
-    write_char(' ');
-    kernel.bg_colour = prev_bg;
-    swap_framebuffers();
-    kernel.ch_X -= 8;
+    draw_cursor();
     end_of_interrupt();
     return;
 }
@@ -141,6 +139,7 @@ int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
     lock_pit();
     Inode *file = (Inode*) filev;
     KeyboardData *kb_data = (KeyboardData*) file->private;
+    draw_cursor();
     kb_data->currently_reading = true;
     kb_data->current_buffer    = buffer;
     kb_data->buffer_size       = max_len - 1;
