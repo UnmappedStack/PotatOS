@@ -122,6 +122,23 @@ void fputs(char *str, uint8_t file_descriptor) {
 }
 #endif
 
+void fgets(char *buffer, uint64_t max_len, uint8_t file_descriptor);
+
+#ifndef FGETS_IMPL
+void fgets(char *buffer, uint64_t max_len, uint8_t file_descriptor) {
+    asm volatile (
+        "movq %2, %%rdi\n" // file descriptor
+        "movq %0, %%rsi\n" // buffer addr
+        "movq %1, %%rdx\n" // buffer len
+        "movq $0, %%rax\n" // read syscall
+        "int $0x80"
+        : : "r" ((uint64_t) buffer), "r" ((uint64_t) max_len), "r" ((uint64_t) file_descriptor)
+        : "%rdi", "%rsi", "%rdx", "%rax"
+    );
+    fputs("", stdout);
+}
+#endif
+
 void printf(const char *format, ...);
 
 #ifndef PRINTF_IMPL

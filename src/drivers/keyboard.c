@@ -8,6 +8,7 @@
 #include "../fs/include/devices.h"
 #include "../fs/include/tempfs.h"
 #include "../fs/include/vfs.h"
+#include "include/pit.h"
 #include "../mem/include/kheap.h"
 
 #define PS2_DATA_REGISTER    0x60
@@ -116,6 +117,7 @@ void keyboard_isr(void*) {
 }
 
 int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
+    lock_pit();
     Inode *file = (Inode*) filev;
     KeyboardData *kb_data = (KeyboardData*) file->private;
     kb_data->currently_reading = true;
@@ -124,19 +126,21 @@ int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
     current_input_data = kb_data;
     while (kb_data->currently_reading) outb(0x80, 0);
     printf("\n");
-    kdebugf("Finished reading user input! Written to buffer: \"%s\"\n", kb_data->current_buffer);
     kb_data->current_buffer = 0;
     kb_data->input_len      = 0;
+    unlock_pit();
     return 0;
 }
 
 void open_ps2_kb(void *filev, uint8_t mode) {
-    if (mode != MODE_READONLY) return; // yeah nah
+    if (mode != MODE_READONLY) {
+        kfailf("Cannot open keyboard devices (such as D:/stdin) with write modes. Must be MODE_READONLY.\n");
+        return; // yeah nah
+    }
     Inode *file = (Inode*) filev;
     KeyboardData *kb_data = (KeyboardData*) malloc(sizeof(KeyboardData));
     file->private = (void*) kb_data;
     *kb_data = (KeyboardData) {0};
-    kdebugf("Keyboard device opened.\n");
     unmask_irq(1);
     asm("sti");
 }
@@ -144,7 +148,6 @@ void open_ps2_kb(void *filev, uint8_t mode) {
 void close_ps2_kb(void *filev) {
     Inode *file = (Inode*) filev;
     free(file->private);
-    kdebugf("Close device.\n");
 }
 
 void init_ps2_keyboard() {

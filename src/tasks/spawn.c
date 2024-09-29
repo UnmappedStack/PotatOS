@@ -152,7 +152,7 @@ int spawn(char *path, const char *argv[], size_t argc) {
     new_task->parent = (uintptr_t) get_task(kernel.tasklist.current_task);
     free(buffer);
     // open standard resource streams
-    new_task->resources[0] = open("D:/stdin",  O_CREATALL, MODE_READWRITE);
+    new_task->resources[0] = open("D:/stdin",  0, MODE_READONLY);
     new_task->resources[1] = open("D:/stdout", O_CREATALL, MODE_READWRITE);
     new_task->resources[2] = open("D:/stderr", O_CREATALL, MODE_READWRITE);
     return 0;
