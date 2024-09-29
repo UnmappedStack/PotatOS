@@ -9,16 +9,17 @@
 
 FileSystem TempFS = {
     .fs_id = FS_TEMPFS,
-    .find_function      = &tempfs_find,
-    .find_root_function = &tempfs_find_root,
-    .open_dir_function  = &tempfs_open_dir,
-    .open_file_function = &tempfs_open_file,
-    .mkdir_function     = &tempfs_mkdir,
-    .mkfile_function    = &tempfs_mkfile,
-    .close_function     = &tempfs_close,
-    .write_function     = &tempfs_write,
-    .read_function      = &tempfs_read,
-    .length_function    = &tempfs_length
+    .find_function        = &tempfs_find,
+    .find_root_function   = &tempfs_find_root,
+    .open_dir_function    = &tempfs_open_dir,
+    .open_file_function   = &tempfs_open_file,
+    .mkdir_function       = &tempfs_mkdir,
+    .mkfile_function      = &tempfs_mkfile,
+    .close_function       = &tempfs_close,
+    .write_function       = &tempfs_write,
+    .read_function        = &tempfs_read,
+    .length_function      = &tempfs_length,
+    .tempfs_create_device = &tempfs_create_device
 };
 
 void tempfs_mkdir_nonlinear(void *current_dir, const char *dirname, DirEntryNode *first_dir_entry);
@@ -90,6 +91,12 @@ void tempfs_mkfile(void *current_dir, const char *filename) {
     tempfs_addentry((Inode*)current_dir, filename, false);
 }
 
+void tempfs_create_device(void *current_dir, const char *devname, DeviceOps operations) {
+    Inode *new_device      = tempfs_addentry((Inode*) current_dir, devname, false);
+    new_device->type       = FILETYPE_DEVICE;
+    new_device->operations = operations;
+}
+
 void* tempfs_find(void *current_dir, const char *dirname) {
     DirEntryNode *this_entry = ((Inode*)current_dir)->dir_first_node;
     Inode        *this_inode = (Inode*) this_entry->inode;
@@ -115,6 +122,7 @@ size_t tempfs_length(void *filev) {
 
 int tempfs_write(void *filev, char *data, size_t len) {
     Inode *file = (Inode*) filev;
+    if (file->type == FILETYPE_DEVICE) return file->operations.write(file, data, len);
     file->length = len;
     if (file->file_first_node == NULL)
         file->file_first_node = (FileNode*) malloc(sizeof(FileNode));
@@ -135,6 +143,7 @@ int tempfs_write(void *filev, char *data, size_t len) {
 
 int tempfs_read(void *filev, char *buffer, size_t max_len) {
     Inode *file = (Inode*) filev;
+    if (file->type == FILETYPE_DEVICE) return file->operations.read(file, buffer, max_len);
     FileNode *this_fnode = file->file_first_node;
     uint64_t len_left = max_len;
     for (size_t i = 0; i < max_len && this_fnode != NULL; i += FILENODE_DATA_SIZE) {

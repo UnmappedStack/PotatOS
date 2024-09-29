@@ -17,6 +17,73 @@ void init_vfs() {
     k_ok();
 }
 
+int create_device(char *path, DeviceOps operations) {
+    if (path[1] != ':' || path[2] != '/') {
+        if (path[0] == '/') {
+            char *path_ext = (char*) malloc(ku_strlen(path) + 3);
+            ku_memcpy(path_ext + 2, path, ku_strlen(path) + 1);
+            path_ext[0] = get_task(kernel.tasklist.current_task)->current_dir[0];
+            path_ext[1] = ':';
+            path = path_ext;
+        } else {
+            char *cd = get_task(kernel.tasklist.current_task)->current_dir;
+            uint64_t cd_len = ku_strlen(cd);
+            uint64_t path_len = ku_strlen(path);
+            char *path_ext = (char*) malloc(cd_len + path_len + 1);
+            ku_memcpy(path_ext, cd, cd_len);
+            ku_memcpy(path_ext + cd_len, path, path_len + 1);
+            path = path_ext;
+        }
+    }
+    char drive = path[0];
+    if (drive < 'A' || drive > 'Z') return 4;
+    char *new_path = (char*) malloc(ku_strlen(path));
+    ku_memcpy(new_path, path, ku_strlen(path));
+    new_path[ku_strlen(path)] = 0;
+    new_path += 3;
+    uint8_t drive_num = drive - 'A';
+    if (kernel.drives[drive_num].fs.fs_id != FS_TEMPFS) {
+        kfailf("[FSERR] Cannot create device on persistant file system, only on TempFS drives. Failed to create new device!\n");
+        return 5;
+    }
+    if (!kernel.drives[drive_num].present) {
+        kfailf("Drive is not present.\n");
+        free(new_path - 3);
+        return 3;
+    }
+    uint64_t i = 3;
+    void *root = (kernel.drives[drive_num].fs.find_root_function      )((void*)kernel.drives[drive_num].mem_offset);
+    void *current_obj = (kernel.drives[drive_num].fs.open_dir_function)(root);
+    while (path[i]) {
+        size_t this_len = 0;
+        for (; new_path[this_len] != '/' && new_path[this_len] != 0; this_len++);
+        bool is_dir = new_path[this_len] == '/';
+        new_path[this_len] = 0;
+        if (is_dir) {
+            void *this_dir = (kernel.drives[drive_num].fs.find_function)(current_obj, new_path);
+            if (this_dir == NULL) {
+                kfailf("[FSERR] Cannot open file: directory \"%s\" does not exist.\n", new_path);
+                return 2;
+            }
+            current_obj = (kernel.drives[drive_num].fs.open_dir_function)(this_dir);
+            new_path += this_len + 1;
+            i += this_len + 1;
+        } else {
+            void *this_file = (kernel.drives[drive_num].fs.find_function)(current_obj, new_path);
+            if (this_file == NULL) {
+                (kernel.drives[drive_num].fs.tempfs_create_device)(current_obj, new_path, operations);
+            } else {
+                kfailf("[FSERR] Cannot create device \"%s\", already exists.\n", new_path);
+                return 1;
+            }
+            current_obj = (kernel.drives[drive_num].fs.open_file_function)(this_file);
+            break;
+        }
+    }
+    free((void*)(((uint64_t)new_path) - i));
+    return 0;
+}
+
 int mount(char drive, uint16_t filesystem, bool memory_based, uintptr_t mem_offset, uint64_t disk, uint64_t partition) {
     if (drive >= 'a' && drive <= 'z') drive -= 32;
     if (drive < 'A' || drive > 'Z') return 1;

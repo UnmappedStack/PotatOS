@@ -1,4 +1,5 @@
 #pragma once
+#include "devices.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -27,6 +28,7 @@ typedef struct {
     int    (*write_function    )(void *file, char *buffer, size_t len);
     int    (*read_function     )(void *file, char *buffer, size_t max_len);
     size_t (*length_function   )(void *file);
+    void   (*tempfs_create_device)(void *current_dir, const char *devname, DeviceOps operations);
 } FileSystem;
 
 typedef struct {

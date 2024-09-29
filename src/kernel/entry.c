@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../drivers/include/keyboard.h"
 #include "../tasks/include/events.h"
 #include "../drivers/include/acpi.h"
 #include "../drivers/include/renderfont.h"
@@ -82,6 +83,7 @@ void _start() {
     init_PIT();
     //init_acpi();
     init_syscalls();
+    init_ps2_keyboard();
     init_smp();
     for (uint64_t i = 0; i < 9999; i++)
         outb(0x80, 0);
