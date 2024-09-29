@@ -77,7 +77,6 @@ int create_device(char *path, DeviceOps operations) {
                 kfailf("[FSERR] Cannot create device \"%s\", already exists.\n", new_path);
                 return 1;
             }
-            current_obj = (kernel.drives[drive_num].fs.open_file_function)(this_file);
             break;
         }
     }
@@ -217,7 +216,7 @@ File* open(char *path, int flags, uint8_t mode) {
                     return NULL;
                 }
             }
-            current_obj = (kernel.drives[drive_num].fs.open_file_function)(this_file);
+            current_obj = (kernel.drives[drive_num].fs.open_file_function)(this_file, mode);
             break;
         }
     }

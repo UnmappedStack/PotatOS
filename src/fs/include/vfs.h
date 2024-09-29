@@ -21,7 +21,7 @@ typedef struct {
     void*  (*find_function     )(void *current_dir, const char *dirname);
     void*  (*find_root_function)(void *fs  );
     void*  (*open_dir_function )(void *dir );
-    void*  (*open_file_function)(void *file);
+    void*  (*open_file_function)(void *file, uint8_t mode);
     void   (*mkdir_function    )(void *current_dir, const char *dirname);
     void   (*mkfile_function   )(void *current_dir, const char *filename);
     void   (*close_function    )(void *file);

@@ -6,11 +6,21 @@
 #include "../cpu/include/idt.h"
 #include <stddef.h>
 #include "../fs/include/devices.h"
+#include "../fs/include/tempfs.h"
 #include "../fs/include/vfs.h"
+#include "../mem/include/kheap.h"
 
 #define PS2_DATA_REGISTER    0x60
 #define PS2_STATUS_REGISTER  0x64
 #define PS2_COMMAND_REGISTER 0x64
+
+typedef struct {
+    uint64_t input_len;
+    bool     currently_reading;
+    bool     shifted;
+    bool     caps;
+    bool     is_release;
+} KeyboardData;
 
 __attribute__((interrupt))
 void keyboard_isr(void*) {
@@ -23,8 +33,18 @@ int read_ps2_kb(void *file, char *buffer, size_t max_len) {
     return 0;
 }
 
-void open_ps2_kb(void *file) {
+void open_ps2_kb(void *filev, uint8_t mode) {
+    if (mode != MODE_READONLY) return; // yeah nah
+    Inode *file = (Inode*) filev;
+    KeyboardData *kb_data = (KeyboardData*) malloc(sizeof(KeyboardData));
+    file->private = (void*) kb_data;
+    *kb_data = (KeyboardData) {0};
     kdebugf("Keyboard device opened.\n");
+}
+
+void close_ps2_kb(void *filev) {
+    Inode *file = (Inode*) file;
+    free(file->private);
 }
 
 void init_ps2_keyboard() {

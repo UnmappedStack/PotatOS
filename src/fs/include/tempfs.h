@@ -30,6 +30,7 @@ typedef struct {
     bool      is_dir;
     uint8_t   type;
     DeviceOps operations;
+    void      *private; // for if it's a device
     union {
         FileNode *file_first_node;
         struct {
@@ -44,7 +45,7 @@ Inode* tempfs_new();
 void* tempfs_find_root(void *fs);
 void* tempfs_find(void *current_dir, const char *dirname);
 void* tempfs_open_dir(void *dir);
-void* tempfs_open_file(void *file);
+void* tempfs_open_file(void *file, uint8_t mode);
 void  tempfs_close(void *file);
 void tempfs_mkdir(void *current_dir, const char *dirname);
 void tempfs_mkfile(void *current_dir, const char *filename);

@@ -167,9 +167,9 @@ void* tempfs_open_dir(void *dir) {
         return NULL;
 }
 
-void* tempfs_open_file(void *file) {
+void* tempfs_open_file(void *file, uint8_t mode) {
     if (((Inode*)file)->type == FILETYPE_DEVICE) {
-        ((Inode*) file)->operations.open(file);
+        ((Inode*) file)->operations.open(file, mode);
         return file;
     }
     if (!((Inode*)file)->is_dir)
@@ -178,5 +178,6 @@ void* tempfs_open_file(void *file) {
         return NULL;
 }
 
-// and something even more high tech...
-void tempfs_close(void *inode) {}
+void tempfs_close(void *inode) {
+    if (((Inode*) inode)->type == FILETYPE_DEVICE) ((Inode*) inode)->operations.close(inode);
+}
