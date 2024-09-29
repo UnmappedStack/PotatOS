@@ -168,6 +168,10 @@ void* tempfs_open_dir(void *dir) {
 }
 
 void* tempfs_open_file(void *file) {
+    if (((Inode*)file)->type == FILETYPE_DEVICE) {
+        ((Inode*) file)->operations.open(file);
+        return file;
+    }
     if (!((Inode*)file)->is_dir)
         return file;
     else
