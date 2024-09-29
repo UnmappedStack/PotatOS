@@ -72,6 +72,7 @@ int create_device(char *path, DeviceOps operations) {
             void *this_file = (kernel.drives[drive_num].fs.find_function)(current_obj, new_path);
             if (this_file == NULL) {
                 (kernel.drives[drive_num].fs.tempfs_create_device)(current_obj, new_path, operations);
+                this_file = (kernel.drives[drive_num].fs.find_function)(current_obj, new_path);
             } else {
                 kfailf("[FSERR] Cannot create device \"%s\", already exists.\n", new_path);
                 return 1;

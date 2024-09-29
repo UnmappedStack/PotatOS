@@ -65,3 +65,4 @@ int   mkdir(char *path);
 int   write(File *f, char *buffer, size_t size);
 int   read(File *f, char *buffer, size_t max_len);
 size_t file_length(File *f);
+int create_device(char *path, DeviceOps operations);
