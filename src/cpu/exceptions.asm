@@ -131,8 +131,8 @@ baseHandler:
     push r13
     push r14
     push r15
-    ;mov rdi, rax
-    ;call try_exit_task
+    mov rdi, rax
+    call try_exit_task
     mov rax, cr2
     push rax
     cld

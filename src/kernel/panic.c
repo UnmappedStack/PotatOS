@@ -72,7 +72,9 @@ void register_dump(struct IDTEFrame registers) {
 
 void kpanic(char* message, struct IDTEFrame registers) {
     kernel.bg_colour = 0xFFFF00;
-    printf(BRED "\n[KPANIC]" WHT " The potato has gone rotten!\n");
+    kernel.fg_colour = 0xFF0000;
+    printf("\n[KPANIC] The potato has gone rotten!\n");
+    kernel.fg_colour = 0xd8d9d7;
     kernel.bg_colour = 0x012456;
     printf("Exception:  %s\n"
            "Error code: 0b%b\n",
