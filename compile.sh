@@ -10,7 +10,8 @@ make
 
 # compile/assemble userspace components
 mkdir ramdiskroot/exec
-gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/exec/shell userspace/test/main.c -g
+gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/exec/shell userspace/shell.c -g
+gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/exec/helloworld userspace/helloworld.c -g
 
 # set up the initial ramdisk
 tar --create --file=initrd --format=ustar -C ramdiskroot exec sys
