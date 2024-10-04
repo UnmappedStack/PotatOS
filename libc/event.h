@@ -8,6 +8,9 @@ typedef struct {
     uint64_t data1;
 } Event;
 
+// event types
+#define EVENT_TASK_EXITED 1
+
 void poll(Event *buffer);
 
 #ifndef POLL_IMPL
