@@ -1,3 +1,4 @@
+#include "../drivers/include/serial.h"
 #include "../utils/include/cpu_utils.h"
 #include "kernel.h"
 #include "../drivers/include/framebuffer.h"
@@ -55,6 +56,7 @@ void register_dump(struct IDTEFrame registers) {
     asm("sidt %0" : "=m"(idtr));
     asm("mov %%cr3, %0" : "=r"(cr3));
     asm("mov %%cr2, %0" : "=r"(cr2));
+    printf("Done\n");
     printf("\nRegisters: \n");
     // gen purpose
     printf("  r8: 0x%x     r9: 0x%x     rax: 0x%x\n"
@@ -70,20 +72,19 @@ void register_dump(struct IDTEFrame registers) {
 
 void kpanic(char* message, struct IDTEFrame registers) {
     kernel.bg_colour = 0xFFFF00;
-    kernel.fg_colour = 0xFF0000;
-    printf("\n[KPANIC] The potato has gone rotten!\n");
-    kernel.fg_colour = 0xd8d9d7;
+    printf(BRED "\n[KPANIC]" WHT " The potato has gone rotten!\n");
     kernel.bg_colour = 0x012456;
     printf("Exception:  %s\n"
            "Error code: 0b%b\n",
             message, registers.code);
-    register_dump(registers);
     stack_trace(registers.rbp, registers.rip);
+    register_dump(registers);
     printf("\n");
     halt();
 }
 
 void exception_handler(struct IDTEFrame registers) {
+    disable_interrupts();
     if (kernel.in_exception_handler) halt();
     kernel.in_exception_handler = true;
     static char label_designate[30];

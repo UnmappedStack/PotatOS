@@ -19,7 +19,7 @@
 
 void init_font() {
     kstatusf("Initiating graphical font drawing...");
-    File *f = open("R:/ramdiskroot/zap-light16.psf", 0, MODE_READONLY);
+    File *f = open("R:/sys/zap-light16.psf", 0, MODE_READONLY);
     if (f == NULL) {
         kfailf("Font file could not be opened! All output will now be through serial.\n");
         return;

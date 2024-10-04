@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <event.h>
 
-const char *argvals[] = {"R:/ramdiskroot/testuser", "Arg test 1!", "Second :D"};
+const char *argvals[] = {"R:/exec/shell", "Arg test 1!", "Second :D"};
 
 int main(int argc, char **argv) {
     fputs("PotatOS PowerlessShell, compiled on " __DATE__ "\n"

@@ -72,7 +72,7 @@ void show_boot_info() {
     printf("\n");
 }
 
-const char *argv[] = {"R:/ramdiskroot/testuser", "Arg test 1!", "Second :D"};
+const char *argv[] = {"R:/ramdiskroot/exec/shell", "Arg test 1!", "Second :D"};
 
 void _start() {
     disable_interrupts();
@@ -86,13 +86,13 @@ void _start() {
     setup_initrd();
     init_framebuffer();
     fill_screen(kernel.bg_colour);
+    init_TSS();
+    init_GDT();
+    init_IDT();
     init_font();
     init_tasklist();
     init_paging();
     switch_page_structures();
-    init_TSS();
-    init_GDT();
-    init_IDT();
     init_irq();
     init_PIT();
     //init_acpi();
@@ -102,7 +102,7 @@ void _start() {
     for (uint64_t i = 0; i < 9999; i++)
         outb(0x80, 0);
     kstatusf("Trying to run init process...\n");
-    if (spawn("R:/ramdiskroot/testuser", argv, 3) != 0) {
+    if (spawn("R:/exec/shell", argv, 3) != 0) {
         kfailf("Could not run init application. Halting.\n");
         halt();
     }

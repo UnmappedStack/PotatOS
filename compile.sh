@@ -9,13 +9,11 @@ make -C limine
 make
 
 # compile/assemble userspace components
-
-gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/testuser userspace/test/main.c -g
+mkdir ramdiskroot/exec
+gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/exec/shell userspace/test/main.c -g
 
 # set up the initial ramdisk
-
-tar --create --format=ustar --file=initrd ramdiskroot
-
+tar --create --file=initrd --format=ustar -C ramdiskroot exec sys
 # set up the sysroot
 
 mkdir -p sysroot
