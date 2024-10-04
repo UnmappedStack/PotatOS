@@ -72,7 +72,7 @@ void show_boot_info() {
     printf("\n");
 }
 
-const char *argv[] = {"R:/ramdiskroot/exec/shell", "Arg test 1!", "Second :D"};
+const char *argv[] = {"R:/exec/shell", "Arg test 1!", "Second :D"};
 
 void _start() {
     disable_interrupts();
