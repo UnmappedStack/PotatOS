@@ -22,7 +22,7 @@ void add_event(EventQueue q, uint64_t event_type, uint64_t data0, uint64_t data1
     vector_push(q.queue, (uintptr_t) event_addr);
 }
 
-Event* get_event(EventQueue q) {
+Event* poll(EventQueue q) {
     if ((q.queue)->length == 0) {
         Event *to_return = (Event*) malloc(sizeof(Event));
         *to_return = (Event) {
@@ -32,6 +32,19 @@ Event* get_event(EventQueue q) {
     } else {
         Event *this_event = (Event*) vector_at(q.queue, (q.queue)->length - 1);
         vector_pop(q.queue, (q.queue)->length - 1);
+        return this_event;
+    }
+}
+
+Event* peek(EventQueue q) {
+    if ((q.queue)->length == 0) {
+        Event *to_return = (Event*) malloc(sizeof(Event));
+        *to_return = (Event) {
+            .do_handle = false
+        };
+        return to_return;
+    } else {
+        Event *this_event = (Event*) vector_at(q.queue, (q.queue)->length - 1);
         return this_event;
     }
 }

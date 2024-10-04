@@ -1,4 +1,5 @@
 #pragma once
+#include <stdio.h>
 
 typedef struct {
     bool do_handle;
@@ -7,17 +8,26 @@ typedef struct {
     uint64_t data1;
 } Event;
 
-void get_event(Event *buffer);
+void poll(Event *buffer);
 
-// syscall 2
-// rdi = event buffer
-
-#ifndef GET_EVENT_IMPL
-void get_event(Event *buffer) {
-    printf(""); // it seems to only work when I have a printf here for some reason, so I'm taking the broken solution for now lmao
+#ifndef POLL_IMPL
+void poll(Event *buffer) {
+    fputs("", stdout); // it seems to only work when I have an fputs here for some reason, so I'm taking the broken solution for now lmao
     asm volatile(
         "int $0x80"
-        : : "D" ((uint64_t) buffer), "a" (2)
+        : : "D" ((uint64_t) buffer), "a" (6)
+    );
+}
+#endif
+
+void peek(Event *buffer);
+
+#ifndef PEEK_IMPL
+void peek(Event *buffer) {
+    fputs("", stdout); // it seems to only work when I have an fputs here for some reason, so I'm taking the broken solution for now lmao
+    asm volatile(
+        "int $0x80"
+        : : "D" ((uint64_t) buffer), "a" (7)
     );
 }
 #endif

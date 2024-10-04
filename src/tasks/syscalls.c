@@ -56,12 +56,23 @@ void syscall_get_cwd(uint64_t rdi, uint64_t rsi) {
     ku_memcpy((char*) rdi, current_task->current_dir, copy_len);
 }
 
-/* Get event from event queue
+/* Get event from event queue, don't pop it
  * rdi = event buffer.
  */
-void syscall_get_event(uint64_t rdi) {
+void syscall_poll(uint64_t rdi) {
     Task  *current_task = get_task(kernel.tasklist.current_task);
-    Event *this_event   = get_event(current_task->event_queue);
+    Event *this_event   = poll(current_task->event_queue);
+    *((Event*) rdi)     = *this_event;
+    free(this_event);
+}
+
+
+/* Get event from event queue and pop it
+ * rdi = event buffer.
+ */
+void syscall_peek(uint64_t rdi) {
+    Task  *current_task = get_task(kernel.tasklist.current_task);
+    Event *this_event   = peek(current_task->event_queue);
     *((Event*) rdi)     = *this_event;
     free(this_event);
 }

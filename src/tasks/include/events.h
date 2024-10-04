@@ -19,5 +19,6 @@ typedef struct {
 
 EventQueue new_event_queue();
 void add_event(EventQueue q, uint64_t event_type, uint64_t data0, uint64_t data1);
-Event* get_event(EventQueue q);
+Event* poll(EventQueue q);
+Event* peek(EventQueue q);
 void cleanup_event(Event *event);

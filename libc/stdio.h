@@ -194,7 +194,7 @@ File open(char *path, uint64_t flags, uint64_t mode) {
     asm volatile (
         "int $0x80"
         : "=a" (file_descriptor)
-        : "D" ((uint64_t) path), "S" ((uint64_t) flags), "d" ((uint64_t) mode), "a" (3)
+        : "D" ((uint64_t) path), "S" ((uint64_t) flags), "d" ((uint64_t) mode), "a" (2)
     );
     fputs("", stdout);
     return file_descriptor;
@@ -208,7 +208,7 @@ void close(File f) {
     fputs("", stdout);
     asm volatile (
         "int $0x80"
-        : : "D" ((uint64_t) f), "a" (4)
+        : : "D" ((uint64_t) f), "a" (3)
     );
 }
 #endif
@@ -222,7 +222,7 @@ uint64_t spawn(char *path, const char **argv, uint64_t argc) {
     asm volatile (
         "int $0x80"
         : "=a" (status)
-        : "D" ((uint64_t) path), "S" ((uint64_t) argv), "d" (argc), "a" (5)
+        : "D" ((uint64_t) path), "S" ((uint64_t) argv), "d" (argc), "a" (4)
     );
     fputs("", stdout);
     return status;
@@ -232,7 +232,7 @@ uint64_t spawn(char *path, const char **argv, uint64_t argc) {
 void get_cwd(char *buffer, uint64_t buffer_len) {
     asm volatile (
         "int $0x80"
-        : : "D" ((uint64_t) buffer), "S" ((uint64_t) buffer_len), "a" (6)
+        : : "D" ((uint64_t) buffer), "S" ((uint64_t) buffer_len), "a" (5)
     );
     fputs("", stdout);
 }

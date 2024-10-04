@@ -8,7 +8,8 @@ extern unlock_pit
 
 extern syscall_write
 extern syscall_read
-extern syscall_get_event
+extern syscall_poll
+extern syscall_peek
 extern syscall_invalid
 extern syscall_open
 extern syscall_close
@@ -18,11 +19,12 @@ extern syscall_get_cwd
 syscall_lookup:
     dq syscall_read
     dq syscall_write
-    dq syscall_get_event
     dq syscall_open
     dq syscall_close
     dq syscall_spawn
     dq syscall_get_cwd
+    dq syscall_poll
+    dq syscall_peek
 syscall_lookup_end:
 
 global syscall_isr
