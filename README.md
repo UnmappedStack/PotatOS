@@ -77,7 +77,8 @@ Uhh I have no idea what this involves, I haven't done networking before. I'll se
 
 ### Userspace components
 - [X] Some sorta libc
-- [ ] A shell + utilities
+- [X] A userspace shell
+- [ ] Some simple shell commands
 - [ ] DOOM!
 - [ ] Basic GUI/window server + components
 - [ ] Terminal emulator
