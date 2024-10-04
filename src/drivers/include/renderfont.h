@@ -11,3 +11,4 @@ void init_font();
 void scroll_line();
 void write_char(char ch);
 void write_string(const char *str);
+void clear_screen();

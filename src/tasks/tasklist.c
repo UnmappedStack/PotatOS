@@ -41,8 +41,9 @@ Task* create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stac
     };
     char *current_dir    = get_task(kernel.tasklist.current_task)->current_dir;
     uint64_t dirname_len = ku_strlen(current_dir);
-    new_task->current_dir = (char*) malloc(dirname_len);
-    ku_memcpy(new_task->current_dir, current_dir, dirname_len);
+    new_task->current_dir = (char*) malloc(dirname_len) + 1;
+    ku_memset(new_task->current_dir, 0, dirname_len);
+    ku_memcpy(new_task->current_dir, current_dir, dirname_len + 1);
     vector_push(kernel.tasklist.list, (uintptr_t) new_task);
     return new_task;
 }
@@ -63,8 +64,9 @@ Task* task_select() {
     else if (++kernel.tasklist.current_task >= (kernel.tasklist.list)->length)
         kernel.tasklist.current_task = 0;
     Task *new_task = (Task*) vector_at(kernel.tasklist.list, kernel.tasklist.current_task);
-    if (new_task->flags & TASK_PRESENT)
+    if (new_task->flags & TASK_PRESENT) {
         return new_task;
-    else
+    }  else {
         return task_select(); // switch to the next one again
+    }
 }

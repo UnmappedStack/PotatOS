@@ -48,10 +48,11 @@ bool ku_strcmp(const char* str1, const char* str2) {
     return true;
 }
 
-void ku_memset(uint8_t *array, uint8_t value, size_t size) {
-    for (size_t i = 0; i < size; i++) {
-        array[i] = value;
-    }
+void ku_memset(void *array, uint64_t value, size_t size) {
+    asm volatile(
+        "rep stosb"
+        : : "D" (array), "a" (value), "c" (size)
+    );
 }
 
 void ku_add_char_to_string(char *str, char c) {

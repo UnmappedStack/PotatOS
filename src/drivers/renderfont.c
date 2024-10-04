@@ -104,3 +104,13 @@ void write_string(const char *str) {
         str++;
     }
 }
+
+void clear_screen() {
+    for (uint64_t x = 0; x < kernel.framebuffers[0]->width; x++) {
+        for (uint64_t y = 0; y < kernel.framebuffers[0]->height; y++) {
+            draw_pixel(x, y, kernel.bg_colour);
+            kernel.ch_X = 5;
+            kernel.ch_Y = 5;
+        }
+    }
+}

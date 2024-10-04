@@ -33,10 +33,8 @@ override KCFLAGS += \
     -Wextra \
     -std=gnu11 \
     -ffreestanding \
-    -fno-stack-protector \
-    -fno-stack-check \
-    -fPIE \
     -m64 \
+    -fPIE \
     -march=x86-64 \
     -mno-80387 \
     -mno-mmx \

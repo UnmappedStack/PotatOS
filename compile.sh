@@ -41,4 +41,4 @@ xorriso -as mkisofs -b boot/limine/limine-bios-cd.bin \
 
 # run in qemu
 
-qemu-system-x86_64 potatos.iso -serial stdio --no-reboot --no-shutdown -smp 5 -accel kvm
+qemu-system-x86_64 potatos.iso -serial stdio --no-reboot --no-shutdown -smp 5 -accel kvm -monitor telnet:127.0.0.1:8000,server,nowait

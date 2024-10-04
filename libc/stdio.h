@@ -228,3 +228,11 @@ uint64_t spawn(char *path, const char **argv, uint64_t argc) {
     return status;
 }
 #endif
+
+void get_cwd(char *buffer, uint64_t buffer_len) {
+    asm volatile (
+        "int $0x80"
+        : : "D" ((uint64_t) buffer), "S" ((uint64_t) buffer_len), "a" (6)
+    );
+    fputs("", stdout);
+}

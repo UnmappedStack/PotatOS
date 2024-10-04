@@ -13,6 +13,7 @@ extern syscall_invalid
 extern syscall_open
 extern syscall_close
 extern syscall_spawn
+extern syscall_get_cwd
 
 syscall_lookup:
     dq syscall_read
@@ -21,13 +22,15 @@ syscall_lookup:
     dq syscall_open
     dq syscall_close
     dq syscall_spawn
+    dq syscall_get_cwd
 syscall_lookup_end:
 
 global syscall_isr
 
 syscall_isr:
+    cli
     cmp rax, (syscall_lookup_end-syscall_lookup) / 8
-    jge invalid_syscall
+    jae invalid_syscall
     push rbx
     push rcx
     push rdx
@@ -43,6 +46,7 @@ syscall_isr:
     push r14
     push r15
     call [syscall_lookup + rax * 8]
+    call unlock_pit
     pop r15
     pop r14
     pop r13
@@ -57,6 +61,7 @@ syscall_isr:
     pop rdx
     pop rcx
     pop rbx
+    sti
     ret
 
 invalid_syscall:

@@ -12,6 +12,7 @@
 #include "../fs/include/vfs.h"
 #include "include/pit.h"
 #include "../mem/include/kheap.h"
+#include "../utils/include/cpu_utils.h"
 
 #define PS2_DATA_REGISTER    0x60
 #define PS2_STATUS_REGISTER  0x64
@@ -137,6 +138,7 @@ void keyboard_isr(void*) {
 
 int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
     lock_pit();
+    enable_interrupts();
     Inode *file = (Inode*) filev;
     KeyboardData *kb_data = (KeyboardData*) file->private;
     draw_cursor();
@@ -145,10 +147,9 @@ int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
     kb_data->buffer_size       = max_len - 1;
     current_input_data = kb_data;
     while (kb_data->currently_reading) outb(0x80, 0);
-    printf("\n");
     kb_data->current_buffer = 0;
     kb_data->input_len      = 0;
-    unlock_pit();
+    disable_interrupts();
     return 0;
 }
 
@@ -181,14 +182,3 @@ void init_ps2_keyboard() {
     set_IDT_entry(33, &keyboard_isr, 0x8E, (struct IDTEntry*) kernel.idtr.offset);
     unmask_irq(1);
 }
-
-
-
-
-
-
-
-
-
-
-

@@ -33,6 +33,20 @@
 #include "../mem/include/pmm.h"
 #include "bootinfo.h"
 
+#if UINT32_MAX == UINTPTR_MAX
+#define STACK_CHK_GUARD 0xe2dee396
+#else
+#define STACK_CHK_GUARD 0x595e9fbd94fda766
+#endif
+
+uintptr_t __stack_chk_guard = STACK_CHK_GUARD;
+
+__attribute__((noreturn))
+void __stack_chk_fail(void) {
+	kfailf("Stack smashing detected. Halting.\n");
+    halt();
+}
+
 void init_kernel_data() {
     kernel.memmap          = *memmap_request.response;
     kernel.hhdm            = (hhdm_request.response)->offset;
@@ -89,9 +103,10 @@ void _start() {
         outb(0x80, 0);
     kstatusf("Trying to run init process...\n");
     if (spawn("R:/ramdiskroot/testuser", argv, 3) != 0) {
-        kfailf("Init program not found, nothing to do. Halting.");
+        kfailf("Could not run init application. Halting.\n");
         halt();
     }
+    clear_screen();
     enable_interrupts();
     unlock_pit();
     for(;;);

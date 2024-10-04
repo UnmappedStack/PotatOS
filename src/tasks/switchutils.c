@@ -1,6 +1,11 @@
+#include "../kernel/kernel.h"
 #include "../mem/include/paging.h"
 #include "../utils/include/printf.h"
 #include "include/tasklist.h"
+
+Task* get_current_task() {
+    return get_task(kernel.tasklist.current_task);
+}
 
 uint64_t task_get_cr3(Task *task) {
     return (uint64_t) task->pml4_addr;
@@ -32,4 +37,8 @@ uint64_t task_get_argc(Task *task) {
 
 uint64_t task_get_argv(Task *task) {
     return task->argv;
+}
+
+void task_set_rsp(Task *task, uint64_t rsp) {
+    task->current_rsp = rsp;
 }

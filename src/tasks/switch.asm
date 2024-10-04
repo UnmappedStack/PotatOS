@@ -2,6 +2,7 @@
 
 global pit_isr
 
+extern unlock_pit
 extern task_get_argc
 extern task_get_argv
 extern task_disable_first_exec
@@ -13,11 +14,17 @@ extern task_get_cr3
 extern task_get_entry_point
 extern task_get_flags
 extern lock_pit
+extern task_set_rsp
+extern get_current_task
 
-%define USER_STACK_PAGES 2
+%define STACK_PAGES 2
 %define PAGE_SIZE 4096
 %define USER_STACK_PTR 0x700000000000
-%define USER_STACK_ADDR (USER_STACK_PTR - USER_STACK_PAGES * PAGE_SIZE)
+%define USER_STACK_ADDR (USER_STACK_PTR - STACK_PAGES * PAGE_SIZE)
+
+%define KERNEL_STACK_PTR 0xFFFFFFFFFFFFF000
+%define KERNEL_STACK_ADDR (KERNEL_STACK_PTR - STACK_PAGES * PAGE_SIZE)
+
 
 pit_isr:
     jmp task_switch
@@ -26,7 +33,7 @@ task_switch:
     cli
     mov al, 0x20
     out 0x20, al
-    ;; push the registers of the current context
+    ;; push all the registers onto the stack
     push rax
     push rbx
     push rcx
@@ -42,12 +49,21 @@ task_switch:
     push r13
     push r14
     push r15
+    ; set this task's rsp to the current rsp
+    call get_current_task
+    mov rdi, rax
+    mov rsi, rsp
+    call task_set_rsp
+    ; select new task etc
     call task_select ; gets next task and puts it into rax
     mov rdi, rax ; put the return val (Task*) into rdi to pass into task_switch_page_tree
-    mov r15, rax     ; keep Task* for later in r15.
+    mov r15, rax ; keep Task* for later in r15.
     call task_get_cr3 ; get the pml4 based on the task selected (which is in rdi)
     mov cr3, rax ; switch the page tree
-    mov rdi, r15 ; get Task* back from r15 and put it into rdi to pass into task_get_flags
+    mov rdi, r15 ; get Task* back from r15 and put it into rdi to pass into task_get_flags & task_get_rsp
+    ; set the current rsp to that of the new task
+    call task_get_rsp
+    mov rsp, rax
     call task_get_flags ; get the flags of the task
     and rax, 0b10 ; check if it's the first exec
     jnz task_switch_first_exec ; if it is the first exec, jump to task_switch_first_exec
@@ -97,7 +113,6 @@ task_switch_first_exec:
     xor r13, r13
     xor r14, r14
     xor r15, r15
-    sti
     iretq
     jmp $
 
@@ -120,13 +135,24 @@ task_switch_previously_executed:
     pop rbx
     pop rax
     ;; jump to the entry point
-    sti
     iretq
     jmp $
 
-print_message:
+print_debug_info:
     mov rdi, msg
+    pop rsi
+    pop rdx
+    pop rcx
+    pop r8
+    pop r9
+    ;; it still needs to be on the stack
+    push r9
+    push r8
+    push rcx
+    push rdx
+    push rsi
     call printf
+    iretq
     ret
 
-msg: db "Doing task switch.", 10, 0
+msg: db 10, "rip: 0x%x, cs: %i, rflags: %i, rsp: 0x%x, ss: %i", 10, 0

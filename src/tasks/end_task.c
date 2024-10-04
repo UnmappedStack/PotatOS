@@ -16,6 +16,7 @@ void try_exit_task(uint64_t exit_code) {
     current_task->flags &= ~TASK_PRESENT;
     if ((kernel.tasklist.list)->length != 1) {
         enable_interrupts();
+        unlock_pit();
         for (;;);
     } else {
         all_tasks_ended();

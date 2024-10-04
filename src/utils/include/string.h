@@ -22,7 +22,7 @@ char* ku_char_to_str(char character);
 void ku_uint16_to_string(uint16_t num, char *str);
 void ku_uint32_to_string(uint32_t num, char *str);
 void ku_uint64_to_string(uint64_t num, char *str);
-void ku_memset(uint8_t *array, uint8_t value, size_t size);
+void ku_memset(void *array, uint64_t value, size_t size);
 void ku_uint32_to_hex_string(uint32_t num, char *str);
 void ku_uint64_to_hex_string(uint64_t num, char *str);
 bool ku_strcmp(const char* str1, const char* str2); 

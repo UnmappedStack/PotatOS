@@ -176,6 +176,7 @@ void alloc_pages(uint64_t pml4_addr[], uint64_t virt_addr, uint64_t num_pages, u
                 
                 for (; pml1 < 512; pml1++) {
                     uint64_t phys = (uint64_t)kmalloc(1);
+                    ku_memset((uint8_t*)(phys + kernel.hhdm), 0, PAGE_SIZE);
                     pml1_addr[pml1] = phys | flags;
                     num_pages--;
                     if (num_pages == 0) return;

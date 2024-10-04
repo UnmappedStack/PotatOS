@@ -128,18 +128,15 @@ int spawn(char *path, const char *argv[], size_t argc) {
     map_pages(new_pml4, first_segment.virtual_address, (uint64_t) copyto_pages, pages_to_map, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE | KERNEL_PFLAG_USER);
     alloc_pages(new_pml4, USER_STACK_ADDR, KERNEL_STACK_PAGES, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_USER | KERNEL_PFLAG_WRITE); // alloc the user stack
     uint64_t new_pml4_phys = (uint64_t)new_pml4 - kernel.hhdm;
-
     // give it the arguments
     uint64_t *arg_page = (uint64_t*) ((uint64_t)kmalloc(1) + kernel.hhdm);
     map_pages(new_pml4, ARGV_DATA_ADDR, (uint64_t) arg_page - kernel.hhdm, 2, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_USER | KERNEL_PFLAG_WRITE);
-    
     size_t arg_size = 0;
     for (uint64_t i = 0; i < argc; i++) {
         uint64_t this_arg_len = ku_strlen(argv[i]) + 1;
         ku_memcpy((char*)(((uint64_t) arg_page) + arg_size), argv[i], this_arg_len);
         arg_size += this_arg_len;
     }
-
     size_t arg_size_hitherto = 0; // fancy words lmao
     for (uint64_t i = 0; i < argc; i++) {
         *((char**)(((uint64_t)arg_page) + arg_size + (i * sizeof(uint64_t)))) = (char*) (((uint64_t)arg_page) + arg_size_hitherto);
