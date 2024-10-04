@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <event.h>
 
+void wait_for_event(uint64_t event_type) {
+    while (true) {
+        static Event this_event;
+        poll(&this_event);
+        if (this_event.do_handle && this_event.event_id == event_type) return;
+    }
+}
+
 const char *argvals[] = {"R:/exec/shell", "Arg test 1!", "Second :D"};
 
 int main(int argc, char **argv) {
@@ -14,7 +22,7 @@ int main(int argc, char **argv) {
         fgets(input_buffer, 200, stdin);
         printf("\n");
         int status = spawn(input_buffer, argvals, 3);
-        for (;;);
+        wait_for_event(EVENT_TASK_EXITED);
     }
     for (;;);
     return 0;
