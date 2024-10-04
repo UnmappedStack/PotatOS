@@ -10,7 +10,6 @@
 #include <stddef.h>
 
 void unpack_ustar(char drive_char, char *archive_addr) {
-    kdebugf("Unpacking archive...\n");
     while (ku_memcmp(archive_addr + 257, "ustar", 5)) {
         uint64_t filesize = oct2bin(archive_addr + 0x7C, 11);
         uint8_t type = *((uint8_t*)(archive_addr + 156));
@@ -23,7 +22,6 @@ void unpack_ustar(char drive_char, char *archive_addr) {
             new_name[2] = '/';
             ku_memcpy(new_name + 3, archive_addr, ku_strlen(archive_addr));
             new_name[ku_strlen(archive_addr) + 4] = 0; // just to be safe
-            kdebugf("Unpack file %s...\n", new_name);
             File *f = open(new_name, O_CREATALL, MODE_WRITEONLY);
             if (f == NULL) {
                 kfailf("Failed to create file (in unpack_ustar). Halting device, as this is a vital step in the boot process.\n");
