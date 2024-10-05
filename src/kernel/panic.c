@@ -56,7 +56,6 @@ void register_dump(struct IDTEFrame registers) {
     asm("sidt %0" : "=m"(idtr));
     asm("mov %%cr3, %0" : "=r"(cr3));
     asm("mov %%cr2, %0" : "=r"(cr2));
-    printf("Done\n");
     printf("\nRegisters: \n");
     // gen purpose
     printf("  r8: 0x%x     r9: 0x%x     rax: 0x%x\n"
@@ -79,8 +78,8 @@ void kpanic(char* message, struct IDTEFrame registers) {
     printf("Exception:  %s\n"
            "Error code: 0b%b\n",
             message, registers.code);
-    stack_trace(registers.rbp, registers.rip);
     register_dump(registers);
+    stack_trace(registers.rbp, registers.rip);
     printf("\n");
     halt();
 }
