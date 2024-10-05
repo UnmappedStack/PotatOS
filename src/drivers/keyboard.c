@@ -133,13 +133,11 @@ void keyboard_isr(void*) {
     current_input_data->input_len++;
     draw_cursor();
     end_of_interrupt();
-    enable_interrupts(); // idk why but not having this causes issues
     return;
 }
 
 int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
     lock_pit();
-    enable_interrupts();
     Inode *file = (Inode*) filev;
     KeyboardData *kb_data = (KeyboardData*) file->private;
     draw_cursor();
@@ -147,6 +145,7 @@ int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
     kb_data->current_buffer    = buffer;
     kb_data->buffer_size       = max_len - 1;
     current_input_data = kb_data;
+    enable_interrupts();
     while (kb_data->currently_reading) outb(0x80, 0);
     kb_data->current_buffer = 0;
     kb_data->input_len      = 0;
