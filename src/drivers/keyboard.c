@@ -133,6 +133,7 @@ void keyboard_isr(void*) {
     current_input_data->input_len++;
     draw_cursor();
     end_of_interrupt();
+    enable_interrupts(); // idk why but not having this causes issues
     return;
 }
 
