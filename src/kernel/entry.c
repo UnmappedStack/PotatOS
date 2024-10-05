@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "../drivers/include/keyboard.h"
+#include "../drivers/include/apic.h"
 #include "../tasks/include/events.h"
 #include "../drivers/include/acpi.h"
 #include "../drivers/include/renderfont.h"
@@ -96,6 +97,7 @@ void _start() {
     init_irq();
     init_PIT();
     init_acpi();
+    init_apic();
     init_syscalls();
     init_ps2_keyboard();
     init_smp();

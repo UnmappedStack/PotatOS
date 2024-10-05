@@ -1,3 +1,4 @@
+#include "../utils/include/string.h"
 #include "../utils/include/printf.h"
 #include "include/acpi.h"
 #include "../kernel/kernel.h"
@@ -18,14 +19,13 @@ void init_acpi() {
     uint64_t rsdt_num_entries = (rsdt->header.length - sizeof(rsdt->header)) / 4;
     kdebugf("Success! RSDT virtual address: 0x%x\n", rsdt);
     kdebugf("Num RSDT entries: %i\n", rsdt_num_entries);
-    find_MADT(rsdt);
+    kernel.rsdt = rsdt;
 }
 
 void* find_MADT(RSDT *root_rsdt) {
     uint64_t num_entries = (root_rsdt->header.length - sizeof(root_rsdt->header)) / 4;
     for (size_t i = 0; i < num_entries; i++) {
         RSDT *this_rsdt = (RSDT*) (root_rsdt->entries[i] + kernel.hhdm);
-        this_rsdt->header.signature[4] = 0;
-        printf("This entry's signature: %s\n", this_rsdt->header.signature);
+        if(ku_memcmp(this_rsdt->header.signature, "APIC", 4)) return (void*) &this_rsdt->header;
     }
 }
