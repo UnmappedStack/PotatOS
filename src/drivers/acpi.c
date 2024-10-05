@@ -1,13 +1,31 @@
 #include "../utils/include/printf.h"
 #include "include/acpi.h"
 #include "../kernel/kernel.h"
+#include "../mem/include/paging.h"
 #include "../utils/include/cpu_utils.h"
 
 void init_acpi() {
-    kstatusf("Initiating ACPI...");
-    if (kernel.xsdp_table->revision != 2) {
-        kfailf("XSDP table not present, only RSDP (meaning that ACPI is version 1.0, must be 2.0 or higher). Cannot parse ACPI tables. Failed to boot.\n");
+    kstatusf("Initiating ACPI...\n");
+    kdebugf("Mapping RSDP...\n");
+    map_pages((uint64_t*) (kernel.cr3 + kernel.hhdm), (uint64_t) kernel.rsdp_table, ((uint64_t) kernel.rsdp_table) - kernel.hhdm, 1, KERNEL_PFLAG_PRESENT);
+    if (kernel.rsdp_table->revision != 0) {
+        kfailf("This device uses XSDP, but only RSDP is supported. Halting.\n");
         halt();
     }
-    k_ok();
+    kdebugf("Nice! RSDP is being used. Mapping RSDT...\n");
+    map_pages((uint64_t*) (kernel.cr3 + kernel.hhdm), (uint64_t) kernel.rsdp_table->rsdt_address + kernel.hhdm, (uint64_t) kernel.rsdp_table->rsdt_address, 1, KERNEL_PFLAG_PRESENT);
+    RSDT *rsdt = (RSDT*) (kernel.rsdp_table->rsdt_address + kernel.hhdm);
+    uint64_t rsdt_num_entries = (rsdt->header.length - sizeof(rsdt->header)) / 4;
+    kdebugf("Success! RSDT virtual address: 0x%x\n", rsdt);
+    kdebugf("Num RSDT entries: %i\n", rsdt_num_entries);
+    find_MADT(rsdt);
+}
+
+void* find_MADT(RSDT *root_rsdt) {
+    uint64_t num_entries = (root_rsdt->header.length - sizeof(root_rsdt->header)) / 4;
+    for (size_t i = 0; i < num_entries; i++) {
+        RSDT *this_rsdt = (RSDT*) (root_rsdt->entries[i] + kernel.hhdm);
+        this_rsdt->header.signature[4] = 0;
+        printf("This entry's signature: %s\n", this_rsdt->header.signature);
+    }
 }

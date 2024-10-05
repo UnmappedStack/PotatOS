@@ -53,7 +53,7 @@ void init_kernel_data() {
     kernel.kernel_addr     = *(kernel_address_request.response);
     kernel.framebuffers    = (framebuffer_request.response)->framebuffers;
     kernel.initial_ramdisk = *((initrd_request.response)->modules);
-    kernel.xsdp_table      = (XSDP*) (rsdp_request.response)->address;
+    kernel.rsdp_table      = (RSDP*) (rsdp_request.response)->address;
     kernel.smp_response    = smp_request.response;
     kernel.font_avaliable  = false;
     kernel.ch_X            = 5;
@@ -95,7 +95,7 @@ void _start() {
     switch_page_structures();
     init_irq();
     init_PIT();
-    //init_acpi();
+    init_acpi();
     init_syscalls();
     init_ps2_keyboard();
     init_smp();

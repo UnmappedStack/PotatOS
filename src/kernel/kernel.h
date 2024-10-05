@@ -17,7 +17,7 @@ typedef struct {
     struct      limine_framebuffer **framebuffers;
     struct      limine_file *initial_ramdisk;
     struct      limine_smp_response *smp_response;
-    XSDP        *xsdp_table;
+    RSDP        *rsdp_table;
     volatile uint64_t framebuffer_size;
     psf1Header  *font_info;
     uint8_t     *font_data;

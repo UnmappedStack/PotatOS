@@ -52,6 +52,8 @@ void write_vmem(uint64_t *pml4_addr, uint64_t virt_addr, char *data, size_t len)
 
 void push_vmem(uint64_t *pml4_addr, uint64_t rsp, char *data, size_t len);
 
+void clear_page_cache(uint64_t addr);
+
 #define switch_page_structures() \
     kstatusf("Switching CR3 & kernel stack..."); \
     KERNEL_SWITCH_PAGE_TREE(kernel.cr3); \
