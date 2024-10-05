@@ -84,7 +84,7 @@ void syscall_peek(uint64_t rdi) {
  *
  * returns file descriptor number in rax
  */
-uint64_t syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
+int syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
     uint64_t file_descriptor = 0;
     uint64_t current_task_id = kernel.tasklist.current_task;
     Task *current_task = get_task(current_task_id);
@@ -93,9 +93,7 @@ uint64_t syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
         current_task->resources[file_descriptor] = open((char*) rdi, rsi, rdx);
         return file_descriptor;
     }
-    kfailf("Couldn't open new file: too many files already open. Exiting program.\n");
-    try_exit_task(1);
-    return 1;
+    return -1;
 }
 
 /* Close a file

@@ -22,6 +22,10 @@ int main(int argc, char **argv) {
         fgets(input_buffer, 200, stdin);
         printf("\n");
         int status = spawn(input_buffer, argvals, 3);
+        if (status != 0) {
+            printf("Couldn't execute program \"%s\". The program may not exist (status code: %i)\n", input_buffer, status);
+            continue;
+        }
         wait_for_event(EVENT_TASK_EXITED);
     }
     for (;;);

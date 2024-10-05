@@ -198,7 +198,6 @@ File* open(char *path, int flags, uint8_t mode) {
                     (kernel.drives[drive_num].fs.mkdir_function)(current_obj, new_path);
                     this_dir = (kernel.drives[drive_num].fs.find_function)(current_obj, new_path); // look again now it's created.
                 } else {
-                    kfailf("[FSERR] Cannot open file: directory \"%s\" does not exist.\n", new_path);
                     return NULL;
                 }
             }
@@ -212,7 +211,6 @@ File* open(char *path, int flags, uint8_t mode) {
                     (kernel.drives[drive_num].fs.mkfile_function)(current_obj, new_path);
                     this_file = (kernel.drives[drive_num].fs.find_function)(current_obj, new_path);
                 } else {
-                    kfailf("[FSERR] Cannot open file: \"%s\" does not exist.\n", new_path);
                     return NULL;
                 }
             }

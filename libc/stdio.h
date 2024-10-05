@@ -184,13 +184,13 @@ void printf(const char *format, ...) {
 #define MODE_WRITEONLY 0b10
 #define MODE_READWRITE 0b11
 
-#define File uint64_t
+#define File int
 
 File open(char *path, uint64_t flags, uint64_t mode);
 
 #ifndef OPEN_IMPL
 File open(char *path, uint64_t flags, uint64_t mode) {
-    uint64_t file_descriptor;
+    int file_descriptor;
     asm volatile (
         "int $0x80"
         : "=a" (file_descriptor)

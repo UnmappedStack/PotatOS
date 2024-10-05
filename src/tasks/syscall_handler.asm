@@ -48,7 +48,6 @@ syscall_isr:
     push r14
     push r15
     call [syscall_lookup + rax * 8]
-    call unlock_pit
     pop r15
     pop r14
     pop r13
@@ -63,6 +62,9 @@ syscall_isr:
     pop rdx
     pop rcx
     pop rbx
+    push rax
+    call unlock_pit
+    pop rax
     sti
     ret
 
