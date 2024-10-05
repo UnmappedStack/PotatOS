@@ -6,14 +6,17 @@
 typedef struct {
     uint8_t entry_type;
     uint8_t record_length;
+} __attribute__ ((packed)) MADTEntryHeader;
+
+typedef struct {
+    MADTEntryHeader header;
     uint8_t processor_id;
     uint8_t apic_id;
     uint32_t flags;
 } __attribute__ ((packed)) ProcessorLocalAPIC;
 
 typedef struct {
-    uint8_t entry_type;
-    uint8_t record_length;
+    MADTEntryHeader header;
     uint8_t ioapic_id;
     uint8_t rsvd;
     uint32_t ioapic_addr;
@@ -21,8 +24,7 @@ typedef struct {
 } __attribute__ ((packed)) IOApic;
 
 typedef struct {
-    uint8_t entry_type;
-    uint8_t record_length;
+    MADTEntryHeader header;
     uint8_t bus_source;
     uint8_t irq_source;
     uint32_t global_system_interrupt;
@@ -30,8 +32,7 @@ typedef struct {
 } __attribute__ ((packed)) IOApicInterruptSourceOverride;
 
 typedef struct {
-    uint8_t entry_type;
-    uint8_t record_length;
+    MADTEntryHeader header;
     uint8_t nmi_source;
     uint8_t rsvd;
     uint16_t flags;
@@ -39,23 +40,20 @@ typedef struct {
 } __attribute__ ((packed)) IOApicNonMaskableInterruptSource;
 
 typedef struct {
-    uint8_t entry_type;
-    uint8_t record_length;
+    MADTEntryHeader header;
     uint8_t processor_id;
     uint16_t flags;
     uint8_t lint;
 } __attribute__ ((packed)) LocalApicNonMaskableInterrupts;
 
 typedef struct {
-    uint8_t entry_type;
-    uint8_t record_length;
+    MADTEntryHeader header;
     uint16_t rsvd;
     uint64_t local_apic_addr;
 } __attribute__ ((packed)) LocalApicAddressOverride;
 
 typedef struct {
-    uint8_t entry_type;
-    uint8_t record_length;
+    MADTEntryHeader header;
     uint16_t rsvd;
     uint32_t local_x2apic_id;
     uint32_t flags;
