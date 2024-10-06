@@ -2,6 +2,13 @@
 #include "acpi.h"
 #include <stdint.h>
 
+#define LOCAL_APIC 0
+#define IOAPIC     1
+
+#define LAPIC_SPURIOUS_INTERRUPT_VECTOR_REGISTER 0x0f0
+#define LAPIC_DESTINATION_FORMAT_REGISTER        0x0e0
+#define LAPIC_TASK_PRIORITY_REGISTER             0x080
+
 // define MADT table entry types
 typedef struct {
     uint8_t entry_type;

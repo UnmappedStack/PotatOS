@@ -28,6 +28,5 @@ int main(int argc, char **argv) {
         }
         wait_for_event(EVENT_TASK_EXITED);
     }
-    for (;;);
     return 0;
 }
