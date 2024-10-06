@@ -66,7 +66,7 @@ void scroll_line() {
 void new_line() {
     kernel.ch_X = 5;
     kernel.ch_Y += kernel.font_info->char_size + 1;
-    if (kernel.ch_Y >= kernel.framebuffers[0]->height - (kernel.font_info->char_size / 2)) scroll_line();
+    if (kernel.ch_Y >= kernel.framebuffers[0]->height - (kernel.font_info->char_size * 2)) scroll_line();
 }
 
 void write_char(char ch) {

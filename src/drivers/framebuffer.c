@@ -46,7 +46,7 @@ void scroll_pixel(int pixels) {
     volatile uint32_t *fb_ptr = kernel.back_buffer;
     for (uint64_t y = 0; y <= framebuffer->height; y++) {
         for (uint64_t x = 0; x < framebuffer->width; x++) {
-            if (y > (framebuffer->height - pixels)) {
+            if (y >= (framebuffer->height - pixels)) {
                 draw_pixel(x, y, kernel.bg_colour);
                 continue;
             }
