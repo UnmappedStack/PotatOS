@@ -37,7 +37,7 @@ void init_local_apic(uintptr_t lapic_addr) {
     kstatusf("Setting task priority of LAPIC...\n");
     write_lapic(lapic_addr, LAPIC_TASK_PRIORITY_REGISTER, 0);
     kstatusf("Setting LAPIC destination format to flat mode...\n");
-    write_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER, 0xF0000000);
+    write_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER, read_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER) | 0xF0000000);
     kstatusf("Setting spurious interrupt vector (and enabling this LAPIC)...\n");
     write_lapic(lapic_addr, LAPIC_SPURIOUS_INTERRUPT_VECTOR_REGISTER, 0x40 | 0x80);
     kstatusf("This LAPIC was successfully set up!\n");
