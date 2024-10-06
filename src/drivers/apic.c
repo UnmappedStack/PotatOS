@@ -9,19 +9,6 @@
 #include "../utils/include/printf.h"
 #include "../kernel/kernel.h"
 
-void mask_pic() {
-    outb(0x20, 0x11);
-    outb(0xA0, 0x11);
-    outb(0x21, 0x20);
-    outb(0xA1, 0x28);
-    outb(0x21, 0x04);
-    outb(0xA1, 0x02);
-    outb(0x21, 0x01);
-    outb(0xA1, 0x01);
-    outb(0x21, 0xFF);
-    outb(0xA1, 0xFF); 
-}
-
 uint32_t read_lapic(uintptr_t lapic_addr, uint64_t reg_offset) {
     uint32_t volatile *lapic_register_addr = (uint32_t volatile *) (((uint64_t)lapic_addr) + reg_offset);
     return (uint32_t) *lapic_register_addr;
@@ -44,7 +31,7 @@ void write_ioapic(void *ioapic_addr, uint32_t reg, uint32_t value) {
    ioapic[4] = value;
 }
 
-void map_ioapic(uintptr_t ioapic_addr, uint8_t vec, uint32_t gsi_base, uint32_t irq, uint32_t lapic_id) {
+void map_ioapic(uintptr_t ioapic_addr, uint8_t vec, uint32_t gsi_base, uint32_t irq, uint32_t lapic_id, bool polarity, bool trigger) {
     kstatusf("Mapping vector %i to irq %i on lapic ID %i\n", vec, irq, lapic_id);
     kdebugf("Global system interrupt base: %i\n", gsi_base);
     uint32_t entry_num = gsi_base + (irq * 2);
@@ -52,17 +39,24 @@ void map_ioapic(uintptr_t ioapic_addr, uint8_t vec, uint32_t gsi_base, uint32_t 
     uint32_t reg_nums[2] = {0x10 + entry_num, 0x11 + entry_num};
     kdebugf("Register numbers: %i and %i\n", reg_nums[0], reg_nums[1]);
     uint32_t redirection_entries[2] = {read_ioapic((void*) ioapic_addr, reg_nums[0]), read_ioapic((void*) ioapic_addr, reg_nums[1])};
-    kdebugf("Original redirection entries: %i and %i\n", redirection_entries[0], redirection_entries[1]);
+    kdebugf("Original redirection entries: 0x%x and 0x%x\n", redirection_entries[0], redirection_entries[1]);
     kstatusf("Trying to set entry one...\n");
     redirection_entries[0] = (redirection_entries[0] & ~0xFF) | vec; // set vector number
-    redirection_entries[0] &= ~0x300; // set delivery mode to normal
-    redirection_entries[0] &= ~0x400; // set destination mode to physical. Probably worse but for now it's just easier.
-    redirection_entries[0] &= ~0x1000; // set polarity to high
-    redirection_entries[0] &= ~0x8000; // makes sure that it's unmasked
-    kdebugf("Done! New value: %i\n", redirection_entries[0]);
+    redirection_entries[0] &= ~0x700; // set delivery mode to normal
+    redirection_entries[0] &= ~0x800; // set destination mode to physical. Probably worse but for now it's just easier.
+    if (polarity)
+        redirection_entries[0] |= 0x2000; // set polarity to low
+    else
+        redirection_entries[0] &= ~0x2000; // set polarity to high
+    if (trigger)
+        redirection_entries[0] |= 0x8000; // set trigger to level
+    else
+        redirection_entries[0] &= ~0x8000; // set trigger to edge
+    redirection_entries[0] &= ~0x10000; // makes sure that it's unmasked
+    kdebugf("Done! New value: 0x%x\n", redirection_entries[0]);
     kstatusf("Trying to set entry two...\n");
     redirection_entries[1] = (lapic_id & 0xF) << 28;
-    kdebugf("Done: New value: %i\n", redirection_entries[1]);
+    kdebugf("Done: New value: 0x%x\n", redirection_entries[1]);
     kstatusf("Trying to set new entries...\n");
     write_ioapic((void*) ioapic_addr, reg_nums[0], redirection_entries[0]);
     write_ioapic((void*) ioapic_addr, reg_nums[1], redirection_entries[1]);
@@ -76,18 +70,26 @@ void init_local_apic(uintptr_t lapic_addr) {
     kstatusf("Setting LAPIC destination format to flat mode...\n");
     write_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER, read_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER) | 0xF0000000);
     kstatusf("Setting spurious interrupt vector (and enabling this LAPIC)...\n");
-    write_lapic(lapic_addr, LAPIC_SPURIOUS_INTERRUPT_VECTOR_REGISTER, 0x40 | 0x80);
+    write_lapic(lapic_addr, LAPIC_SPURIOUS_INTERRUPT_VECTOR_REGISTER, 0xFF | 0x100);
     kstatusf("This LAPIC was successfully set up!\n");
+}
+
+void apic_end_of_interrupt() {
+    write_lapic(kernel.lapic_addr, LAPIC_END_OF_INTERRUPT_REGISTER, 0);
+    enable_interrupts();
 }
 
 void init_apic() {
     kstatusf("Initiating APIC...\n");
-    mask_pic();
+    // disable pic
+    outb(0x21, 0xff);
+    outb(0xA1, 0xff);
     MADT *madt = (MADT*) find_MADT(kernel.rsdt);
     kdebugf("Local APIC paddr: 0x%x\n", madt->local_apic_addr);
     // map the lapic addr
     map_pages((uint64_t*) (kernel.cr3 + kernel.hhdm), (uint64_t) madt->local_apic_addr + kernel.hhdm, (uint64_t) madt->local_apic_addr, 1, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE);
     uint64_t lapic_registers_virt = (uint64_t) madt->local_apic_addr + kernel.hhdm;
+    kernel.lapic_addr = lapic_registers_virt;
     //init_local_apic(lapic_registers_virt);
     MADTEntryHeader *entry = (MADTEntryHeader*) (((uint64_t) madt) + sizeof(MADT));
     uint64_t incremented = sizeof(MADT);
@@ -101,7 +103,7 @@ void init_apic() {
             printf(" - Global system interrupt base: %i\n", this_ioapic->global_system_interrupt_base);
             map_pages((uint64_t*) (kernel.cr3 + kernel.hhdm), (uint64_t) this_ioapic->ioapic_addr + kernel.hhdm, (uint64_t) this_ioapic->ioapic_addr, 1, KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_WRITE);
             ktestf("Attempting to map irq on this IO APIC...\n");
-            map_ioapic((uintptr_t) (((uint64_t) this_ioapic->ioapic_addr) + kernel.hhdm), 33, this_ioapic->global_system_interrupt_base, 1, 0);
+            map_ioapic((uintptr_t) (((uint64_t) this_ioapic->ioapic_addr) + kernel.hhdm), 33, this_ioapic->global_system_interrupt_base, 1, 0, 0, 0);
         } else if (entry->entry_type == LOCAL_APIC) {
             ProcessorLocalAPIC *this_local_apic = (ProcessorLocalAPIC*) entry;
             kstatusf("Processor local APIC device found. Information:\n");
@@ -111,6 +113,6 @@ void init_apic() {
         entry = (MADTEntryHeader*) (((uint64_t) entry) + entry->record_length);
         incremented += entry->record_length;
     }
-    //enable_interrupts();
-    //for (;;);
+    enable_interrupts();
+    for (;;);
 }

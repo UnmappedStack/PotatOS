@@ -19,6 +19,7 @@ typedef struct {
     struct      limine_smp_response *smp_response;
     RSDP        *rsdp_table;
     RSDT        *rsdt;
+    uintptr_t   lapic_addr;
     volatile uint64_t framebuffer_size;
     psf1Header  *font_info;
     uint8_t     *font_data;

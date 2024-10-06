@@ -96,10 +96,10 @@ void _start() {
     switch_page_structures();
     init_irq();
     init_PIT();
-    init_acpi();
-    init_apic();
-    init_syscalls();
     init_ps2_keyboard();
+    init_acpi();
+    //init_apic();
+    init_syscalls();
     init_smp();
     for (uint64_t i = 0; i < 9999; i++)
         outb(0x80, 0);

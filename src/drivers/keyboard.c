@@ -1,3 +1,4 @@
+#include "include/apic.h"
 #include "include/framebuffer.h"
 #include "include/renderfont.h"
 #include "include/keyboard.h"
@@ -70,7 +71,6 @@ void draw_cursor() {
 
 __attribute__((interrupt))
 void keyboard_isr(void*) {
-    //printf("key pressed\n");
     if (!current_input_data->currently_reading) return;
     if (!(inb(PS2_STATUS_REGISTER) & 0x01)) return;
     uint8_t scancode = inb(PS2_DATA_REGISTER);
