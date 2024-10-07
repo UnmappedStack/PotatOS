@@ -60,6 +60,7 @@ void init_kernel_data() {
     kernel.ch_Y            = 5;
     kernel.fg_colour       = 0xd8d9d7;
     kernel.bg_colour       = 0x012456;
+    kernel.total_memory    = (*kernel.memmap.entries)[kernel.memmap.entry_count - 1].base + (*kernel.memmap.entries)[kernel.memmap.entry_count - 1].length;
 }
 
 Kernel kernel = {0};
@@ -80,6 +81,7 @@ void wait_smp_test() {
 const char *argv[] = {"R:/exec/shell", "Arg test 1!", "Second :D"};
 
 void try_spawn_init() {
+    kdebugf("Memory: %i MB/%i MB\n", kernel.total_memory_allocated / 1000000, kernel.total_memory / 1000000);
     kstatusf("Trying to run init process...\n");
     if (spawn("R:/exec/shell", argv, 3) != 0) {
         kfailf("Could not run init application. Halting.\n");
