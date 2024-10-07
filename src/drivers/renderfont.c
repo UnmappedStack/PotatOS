@@ -113,4 +113,5 @@ void clear_screen() {
             kernel.ch_Y = 5;
         }
     }
+    swap_framebuffers();
 }

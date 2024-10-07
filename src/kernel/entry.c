@@ -106,6 +106,7 @@ void _start() {
         kfailf("Could not run init application. Halting.\n");
         halt();
     }
+    clear_screen();
     enable_interrupts();
     unlock_pit();
     for(;;);
