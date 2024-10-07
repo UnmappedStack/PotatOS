@@ -11,18 +11,18 @@
 extern void pit_isr();
 
 void init_PIT() {
-    kstatusf("Initialising PIT clock...");
+    kstatusf("Initialising PIT clock...\n");
     outb(0x43, 0b110100); // set mode to rate generator, channel 0, lobyte/hibyte, binary mode
     outb(0x40, (HERTZ_DIVIDER) & 0xFF);
     outb(0x40, (HERTZ_DIVIDER >> 8) & 0xFF);
     set_IDT_entry(32, &pit_isr, 0x8F, (struct IDTEntry*) kernel.idtr.offset);
+    map_ioapic(32, 2, 0, POLARITY_HIGH, TRIGGER_EDGE);
     lock_pit();
-    k_ok();
+    kstatusf("Successfully initiated PIT.\n");
 }
 
 void unlock_pit() {
-    // todo: make it set it on all lapics
-    map_ioapic(32, 2, 0, POLARITY_HIGH, TRIGGER_EDGE);
+    unmask_ioapic(2, 0);
 }
 
 void lock_pit() {

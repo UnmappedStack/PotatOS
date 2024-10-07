@@ -31,11 +31,17 @@ void write_ioapic(void *ioapic_addr, uint32_t reg, uint32_t value) {
 }
 
 void map_ioapic(uint8_t vec, uint32_t irq, uint32_t lapic_id, bool polarity, bool trigger) {
+    kstatusf("Mapping vector %i to irq %i on lapic ID %i\n", vec, irq, lapic_id);
+    kdebugf("Global system interrupt base: %i\n", kernel.ioapic_device.global_system_interrupt_base);
     uintptr_t ioapic_addr = (uintptr_t) (((uint64_t) kernel.ioapic_device.ioapic_addr) + kernel.hhdm);
     uint32_t gsi_base = kernel.ioapic_device.global_system_interrupt_base;
     uint32_t entry_num = gsi_base + (irq * 2);
+    kdebugf("Entry number: %i\n", entry_num);
     uint32_t reg_nums[2] = {0x10 + entry_num, 0x11 + entry_num};
+    kdebugf("Register numbers: %i and %i\n", reg_nums[0], reg_nums[1]);
     uint32_t redirection_entries[2] = {read_ioapic((void*) ioapic_addr, reg_nums[0]), read_ioapic((void*) ioapic_addr, reg_nums[1])};
+    kdebugf("Original redirection entries: 0x%x and 0x%x\n", redirection_entries[0], redirection_entries[1]);
+    kstatusf("Trying to set entry one...\n");
     redirection_entries[0] = (redirection_entries[0] & ~0xFF) | vec; // set vector number
     redirection_entries[0] &= ~0x700; // set delivery mode to normal
     redirection_entries[0] &= ~0x800; // set destination mode to physical. Probably worse but for now it's just easier.
@@ -48,9 +54,14 @@ void map_ioapic(uint8_t vec, uint32_t irq, uint32_t lapic_id, bool polarity, boo
     else
         redirection_entries[0] &= ~0x8000; // set trigger to edge
     redirection_entries[0] &= ~0x10000; // makes sure that it's unmasked
+    kdebugf("Done! New value: 0x%x\n", redirection_entries[0]);
+    kstatusf("Trying to set entry two...\n");
     redirection_entries[1] = (lapic_id & 0xF) << 28;
+    kdebugf("Done, new value: 0x%x\n", redirection_entries[1]);
+    kstatusf("Trying to set new entries...\n");
     write_ioapic((void*) ioapic_addr, reg_nums[0], redirection_entries[0]);
     write_ioapic((void*) ioapic_addr, reg_nums[1], redirection_entries[1]);
+    kstatusf("Done, this IOAPIC IRQ has been mapped and unmasked.\n");
 }
 
 void mask_ioapic(uint8_t irq, uint32_t lapic_id) {
@@ -62,6 +73,17 @@ void mask_ioapic(uint8_t irq, uint32_t lapic_id) {
     redirection_entry |= 0x10000;
     write_ioapic((void*)ioapic_addr, reg_num, redirection_entry);
 }
+
+void unmask_ioapic(uint8_t irq, uint32_t lapic_id) {
+    uintptr_t ioapic_addr = (uintptr_t) (((uint64_t) kernel.ioapic_device.ioapic_addr) + kernel.hhdm);
+    uint32_t gsi_base = kernel.ioapic_device.global_system_interrupt_base;
+    uint32_t entry_num = gsi_base + (irq * 2);
+    uint32_t reg_num = 0x10 + entry_num;
+    uint32_t redirection_entry = read_ioapic((void*) ioapic_addr, reg_num);
+    redirection_entry &= ~0x10000;
+    write_ioapic((void*)ioapic_addr, reg_num, redirection_entry);
+}
+
 
 void init_local_apic(uintptr_t lapic_addr) {
     kdebugf("Local APIC vaddr: 0x%x\n", lapic_addr);

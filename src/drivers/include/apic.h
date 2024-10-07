@@ -85,4 +85,5 @@ void init_apic();
 void end_of_interrupt();
 void map_ioapic(uint8_t vec, uint32_t irq, uint32_t lapic_id, bool polarity, bool trigger);
 void mask_ioapic(uint8_t irq, uint32_t lapic_id);
+void unmask_ioapic(uint8_t irq, uint32_t lapic_id);
 void map_apic_into_task(uint64_t task_cr3_phys);
