@@ -1,4 +1,4 @@
-#include "../drivers/include/irq.h"
+#include "../drivers/include/apic.h"
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>

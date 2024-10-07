@@ -19,6 +19,10 @@ void write_character(char ch) {
     if (kernel.font_avaliable) write_char(ch);
 }
 
+void aquire_serial_lock() {
+    spinlock_aquire(&serial_lock);
+}
+
 void printf_template(char* format, va_list args) {
     size_t i   = 0;
     size_t len = ku_strlen(format);
@@ -63,39 +67,7 @@ void printf(char* format, ...) {
     va_end(args);
 }
 
-// and alternate versions for some different types of messages
-void kstatusf(char* format, ...) {
-    spinlock_aquire(&serial_lock);
-    write_text(BYEL "[STATUS] " WHT);
-    va_list args;
-    va_start(args, format);
-    printf_template(format, args);
-    va_end(args);
-}
-
-
-void ktestf(char* format, ...) {
-    spinlock_aquire(&serial_lock);
-    write_text(BCYN "[ TEST ] " WHT);
-    va_list args;
-    va_start(args, format);
-    printf_template(format, args);
-    va_end(args);
-}
-
-void kdebugf(char* format, ...) {
-    spinlock_aquire(&serial_lock);
-    write_text(BMAG "[KDEBUG] " WHT);
-    va_list args;
-    va_start(args, format);
-    printf_template(format, args);
-    va_end(args);
-}
-
-void kfailf(char* format, ...) {
-    spinlock_aquire(&serial_lock);
-    write_text("\n");
-    write_text(BRED "[ FAIL ] " WHT);
+void kstatusf_helper(const char *format, ...) {
     va_list args;
     va_start(args, format);
     printf_template(format, args);

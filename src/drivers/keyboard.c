@@ -5,7 +5,6 @@
 #include "../kernel/kernel.h"
 #include "../utils/include/printf.h"
 #include "../utils/include/io.h"
-#include "include/irq.h"
 #include "../cpu/include/idt.h"
 #include <stddef.h>
 #include "../fs/include/devices.h"
@@ -163,8 +162,6 @@ void open_ps2_kb(void *filev, uint8_t mode) {
     KeyboardData *kb_data = (KeyboardData*) malloc(sizeof(KeyboardData));
     file->private = (void*) kb_data;
     *kb_data = (KeyboardData) {0};
-    unmask_irq(1);
-    asm("sti");
 }
 
 void close_ps2_kb(void *filev) {
@@ -181,5 +178,5 @@ void init_ps2_keyboard() {
     };
     create_device("D:/stdin", kb_dev);
     set_IDT_entry(33, &keyboard_isr, 0x8E, (struct IDTEntry*) kernel.idtr.offset);
-    unmask_irq(1);
+    map_ioapic(33, 1, 0, POLARITY_HIGH, TRIGGER_EDGE);
 }

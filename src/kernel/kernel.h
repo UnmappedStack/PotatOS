@@ -5,6 +5,7 @@
 #include "../drivers/include/renderfont.h"
 #include "../limine.h"
 #include "../mem/include/vector.h"
+#include "../drivers/include/apic.h"
 #include "../cpu/include/gdt.h"
 #include "../cpu/include/tss.h"
 #include "../cpu/include/idt.h"
@@ -20,6 +21,8 @@ typedef struct {
     RSDP        *rsdp_table;
     RSDT        *rsdt;
     uintptr_t   lapic_addr;
+    IOApic      ioapic_device;
+    uintptr_t   ioapic_addr;
     volatile uint64_t framebuffer_size;
     psf1Header  *font_info;
     uint8_t     *font_data;

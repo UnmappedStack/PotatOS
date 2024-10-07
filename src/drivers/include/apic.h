@@ -1,6 +1,7 @@
 #pragma once
 #include "acpi.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 #define LOCAL_APIC 0
 #define IOAPIC     1
@@ -9,6 +10,11 @@
 #define LAPIC_DESTINATION_FORMAT_REGISTER        0x0e0
 #define LAPIC_TASK_PRIORITY_REGISTER             0x080
 #define LAPIC_END_OF_INTERRUPT_REGISTER          0x0b0
+
+#define POLARITY_HIGH 0
+#define POLARITY_LOW  1
+#define TRIGGER_LEVEL 1
+#define TRIGGER_EDGE  0
 
 // define MADT table entry types
 typedef struct {
@@ -76,4 +82,7 @@ typedef struct {
 } __attribute__ ((packed)) MADT;
 
 void init_apic();
-void apic_end_of_interrupt();
+void end_of_interrupt();
+void map_ioapic(uint8_t vec, uint32_t irq, uint32_t lapic_id, bool polarity, bool trigger);
+void mask_ioapic(uint8_t irq, uint32_t lapic_id);
+void map_apic_into_task(uint64_t task_cr3_phys);

@@ -2,6 +2,7 @@
 
 global pit_isr
 
+extern end_of_interrupt
 extern unlock_pit
 extern task_get_argc
 extern task_get_argv
@@ -31,8 +32,6 @@ pit_isr:
 
 task_switch:
     cli
-    mov al, 0x20
-    out 0x20, al
     ;; push all the registers onto the stack
     push rax
     push rbx
@@ -49,6 +48,7 @@ task_switch:
     push r13
     push r14
     push r15
+    call end_of_interrupt
     ; set this task's rsp to the current rsp
     call get_current_task
     mov rdi, rax

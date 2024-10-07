@@ -15,7 +15,6 @@
 #include "../utils/include/io.h"
 #include "../processors/include/smp.h"
 #include "../drivers/include/pit.h"
-#include "../drivers/include/irq.h"
 #include "../mem/include/vector.h"
 #include "../fs/include/ustar.h"
 #include "../drivers/include/framebuffer.h"
@@ -94,11 +93,10 @@ void _start() {
     init_tasklist();
     init_paging();
     switch_page_structures();
-    init_irq();
-    init_PIT();
-    init_ps2_keyboard();
     init_acpi();
-    //init_apic();
+    init_apic();
+    init_ps2_keyboard();
+    init_PIT();
     init_syscalls();
     init_smp();
     for (uint64_t i = 0; i < 9999; i++)
@@ -108,7 +106,6 @@ void _start() {
         kfailf("Could not run init application. Halting.\n");
         halt();
     }
-    clear_screen();
     enable_interrupts();
     unlock_pit();
     for(;;);

@@ -1,5 +1,7 @@
 #include <stdarg.h>
 
+#include "../../processors/include/spinlock.h"
+
 #pragma once
 
 // colours
@@ -22,9 +24,39 @@
 #define BCYN "\e[1;36m"
 #define BWHT "\e[1;37m"
 
+void aquire_serial_lock();
+
+void write_text(char *text);
+void printf_template(char* format, va_list args);
+void kstatusf_helper(const char *format, ...);
+
+#define ktestf(format, ...)          \
+    do {                               \
+        aquire_serial_lock();  \
+        write_text(BCYN "[ TEST ] " BLK __FILE__ ": " WHT); \
+        kstatusf_helper(format, ##__VA_ARGS__); \
+    } while(0)
+
+#define kstatusf(format, ...)          \
+    do {                               \
+        aquire_serial_lock();  \
+        write_text(BYEL "[STATUS] " BLK __FILE__ ": " WHT); \
+        kstatusf_helper(format, ##__VA_ARGS__); \
+    } while(0)
+
+#define kdebugf(format, ...)          \
+    do {                               \
+        aquire_serial_lock();  \
+        write_text(BMAG "[KDEBUG] " BLK __FILE__ ": " WHT); \
+        kstatusf_helper(format, ##__VA_ARGS__); \
+    } while(0)
+
+#define kfailf(format, ...)          \
+    do {                               \
+        aquire_serial_lock();  \
+        write_text(BRED "[ FAIL ] " BLK __FILE__ ": " WHT); \
+        kstatusf_helper(format, ##__VA_ARGS__); \
+    } while(0)
+
 void printf(char* format, ...);
-void kdebugf(char* format, ...);
-void ktestf(char* format, ...);
-void kstatusf(char* format, ...);
-void kfailf(char* format, ...);
 void k_ok();

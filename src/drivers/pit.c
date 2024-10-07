@@ -2,8 +2,9 @@
 #include "../utils/include/printf.h"
 #include "../utils/include/io.h"
 #include "../cpu/include/idt.h"
-#include "../drivers/include/irq.h"
+#include "../drivers/include/apic.h"
 #include "../kernel/kernel.h"
+#include "../utils/include/cpu_utils.h"
 
 #define HERTZ_DIVIDER 11900
 
@@ -20,10 +21,11 @@ void init_PIT() {
 }
 
 void unlock_pit() {
-    unmask_irq(0);
+    // todo: make it set it on all lapics
+    map_ioapic(32, 2, 0, POLARITY_HIGH, TRIGGER_EDGE);
 }
 
 void lock_pit() {
-    mask_irq(0);
+    mask_ioapic(2, 0);
 }
 
