@@ -116,7 +116,7 @@ void _start() {
     init_smp();
     wait_smp_test();
     try_spawn_init();
-    clear_screen();
+    //clear_screen();
     enable_interrupts();
     unlock_pit();
     for(;;);

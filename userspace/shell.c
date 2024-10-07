@@ -12,6 +12,8 @@ void wait_for_event(uint64_t event_type) {
 const char *argvals[] = {"R:/exec/shell", "Arg test 1!", "Second :D"};
 
 int main(int argc, char **argv) {
+    fputs("This message was printed from a userspace application :)\n", stdout);
+    for (;;);
     fputs("PotatOS PowerlessShell, compiled on " __DATE__ "\n"
           "This is free & open source software under the Mozilla Public License 2.0. See LICENSE in the GitHub repository for more information.\n\n", stdout);
     static char cwd_buffer[100];

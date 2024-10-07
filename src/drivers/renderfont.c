@@ -58,8 +58,8 @@ void draw_char(char ch, uint64_t x_coord, uint64_t y_coord) {
 }
 
 void scroll_line() {
-    scroll_pixel(33);
-    kernel.ch_Y -= 33;
+    scroll_pixel(kernel.font_info->char_size + 1);
+    kernel.ch_Y -= kernel.font_info->char_size + 1;
     swap_framebuffers();
 }
 
