@@ -72,7 +72,20 @@ void show_boot_info() {
     printf("\n");
 }
 
+void wait_smp_test() {
+    for (uint64_t i = 0; i < 9999; i++)
+        outb(0x80, 0);
+}
+
 const char *argv[] = {"R:/exec/shell", "Arg test 1!", "Second :D"};
+
+void try_spawn_init() {
+    kstatusf("Trying to run init process...\n");
+    if (spawn("R:/exec/shell", argv, 3) != 0) {
+        kfailf("Could not run init application. Halting.\n");
+        halt();
+    }
+}
 
 void _start() {
     disable_interrupts();
@@ -85,7 +98,7 @@ void _start() {
     init_devices();
     setup_initrd();
     init_framebuffer();
-    fill_screen(kernel.bg_colour);
+    clear_screen();
     init_TSS();
     init_GDT();
     init_IDT();
@@ -99,13 +112,8 @@ void _start() {
     init_PIT();
     init_syscalls();
     init_smp();
-    for (uint64_t i = 0; i < 9999; i++)
-        outb(0x80, 0);
-    kstatusf("Trying to run init process...\n");
-    if (spawn("R:/exec/shell", argv, 3) != 0) {
-        kfailf("Could not run init application. Halting.\n");
-        halt();
-    }
+    wait_smp_test();
+    try_spawn_init();
     clear_screen();
     enable_interrupts();
     unlock_pit();
