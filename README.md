@@ -67,7 +67,7 @@ Replace `/dev/sdaX` with the device path of the USB. Make sure that secure boot 
 - [X] PIT
 - [X] Framebuffer
 - [X] PS/2 Keyboard
-- [ ] LAPIC timer
+- [X] LAPIC timer
 - [ ] ACPI
 - [ ] NVMe
 - [ ] USB
