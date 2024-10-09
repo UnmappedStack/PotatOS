@@ -41,10 +41,13 @@ void spurious_irq(void*) {
     end_of_interrupt();
 }
 
+extern void timer_isr();
+
 void init_IDT() {
     kstatusf("Initiating IDT... ");
     struct IDTEntry *IDT = (struct IDTEntry*) ((uint64_t)kmalloc(1) + ((uint64_t) kernel.hhdm)); 
     set_IDT_entry(0xFF, &spurious_irq, 0x8E, IDT);
+    set_IDT_entry(40, &timer_isr, 0x8E, IDT);
     set_IDT_entry(0, &divideException, 0x8E, IDT);
     set_IDT_entry(1, &debugException, 0x8E, IDT);
     set_IDT_entry(3, &breakpointException, 0x8E, IDT);

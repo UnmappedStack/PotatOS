@@ -6,6 +6,8 @@ PTR_SIZE equ 8
 extern lock_pit
 extern unlock_pit
 
+extern lock_lapic_timer
+extern unlock_lapic_timer
 extern syscall_write
 extern syscall_read
 extern syscall_poll
@@ -62,11 +64,7 @@ syscall_isr:
     pop rdx
     pop rcx
     pop rbx
-    push rax
-    call unlock_pit
-    pop rax
-    sti
-    ret
+    iretq
 
 invalid_syscall:
     call syscall_invalid

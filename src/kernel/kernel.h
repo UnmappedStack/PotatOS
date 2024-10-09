@@ -20,6 +20,8 @@ typedef struct {
     struct      limine_smp_response *smp_response;
     uint64_t    total_memory;
     uint64_t    total_memory_allocated;
+    uint64_t    pit_counter;
+    bool        can_task_switch;
     RSDP        *rsdp_table;
     RSDT        *rsdt;
     uintptr_t   lapic_addr;

@@ -1,3 +1,4 @@
+#include "include/pit.h"
 #include "../utils/include/cpu_utils.h"
 #include "../mem/include/paging.h"
 #include "../utils/include/io.h"
@@ -90,10 +91,41 @@ void init_local_apic(uintptr_t lapic_addr) {
     kstatusf("Setting task priority of LAPIC...\n");
     write_lapic(lapic_addr, LAPIC_TASK_PRIORITY_REGISTER, 0);
     kstatusf("Setting LAPIC destination format to flat mode...\n");
-    write_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER, read_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER) | 0xF0000000);
+    write_lapic(lapic_addr, LAPIC_DESTINATION_FORMAT_REGISTER, 0xF0000000);
     kstatusf("Setting spurious interrupt vector (and enabling this LAPIC)...\n");
+    kdebugf("Low value: 0b%b, high value: 0b%b\n", 0xFF, 0x100);
     write_lapic(lapic_addr, LAPIC_SPURIOUS_INTERRUPT_VECTOR_REGISTER, 0xFF | 0x100);
     kstatusf("This LAPIC was successfully set up!\n");
+}
+
+void init_lapic_timer() {
+    uintptr_t lapic_addr = kernel.lapic_addr;
+    kstatusf("Initiating LAPIC timer...\n");
+    kdebugf("Got LAPIC registers address (vmem): 0x%x\n", lapic_addr);
+    write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0);
+    write_lapic(lapic_addr, LAPIC_TIMER_DIVIDER_REGISTER, 3);
+    write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0xFFFFFFFF);
+    pit_wait(10); // wait & calibrate to 10 ms
+    uint32_t current_count = read_lapic(lapic_addr, LAPIC_TIMER_CURRENT_COUNT_REGISTER);
+    write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0);
+    uint32_t num_ticks = 0xFFFFFFFF - current_count;
+    kdebugf("Previous LVT register value: 0b%b\n", read_lapic(lapic_addr, LAPIC_TIMER_LVT_REGISTER));
+    write_lapic(lapic_addr, LAPIC_TIMER_LVT_REGISTER, 40 | 0x20000);
+    kdebugf("New LVT register value: 0b%b\n", read_lapic(lapic_addr, LAPIC_TIMER_LVT_REGISTER));
+    kdebugf("Error status register value: 0b%x\n", read_lapic(lapic_addr, LAPIC_ERROR_STATUS_REGISTER));
+    write_lapic(lapic_addr, LAPIC_TIMER_DIVIDER_REGISTER, 3);
+    kdebugf("Num ticks: 0x%x\n", num_ticks);
+    kdebugf("Current count: 0x%x\n", current_count);
+    write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, num_ticks);
+    kdebugf("New count: 0x%x\n", read_lapic(lapic_addr, LAPIC_TIMER_LVT_REGISTER));
+}
+
+void lock_lapic_timer() {
+    write_lapic(kernel.lapic_addr, LAPIC_TIMER_LVT_REGISTER, read_lapic(kernel.lapic_addr, LAPIC_TIMER_LVT_REGISTER) & ~0x20000);
+}
+
+void unlock_lapic_timer() {
+    write_lapic(kernel.lapic_addr, LAPIC_TIMER_LVT_REGISTER, read_lapic(kernel.lapic_addr, LAPIC_TIMER_LVT_REGISTER) | 0x20000);
 }
 
 void end_of_interrupt() {

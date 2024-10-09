@@ -87,6 +87,7 @@ void try_spawn_init() {
         kfailf("Could not run init application. Halting.\n");
         halt();
     }
+    kernel.can_task_switch = true;
 }
 
 void _start() {
@@ -112,13 +113,15 @@ void _start() {
     init_apic();
     init_ps2_keyboard();
     init_PIT();
+    init_lapic_timer();
     init_syscalls();
     init_smp();
     wait_smp_test();
     try_spawn_init();
-    //clear_screen();
+    clear_screen();
+    lock_pit();
     enable_interrupts();
-    unlock_pit();
+    unlock_lapic_timer();
     for(;;);
 }
 void all_tasks_ended() {

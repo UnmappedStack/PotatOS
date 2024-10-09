@@ -1,6 +1,7 @@
 #include "../kernel/kernel.h"
 #include "../mem/include/paging.h"
 #include "../utils/include/printf.h"
+#include <stdint.h>
 #include "include/tasklist.h"
 
 Task* get_current_task() {
@@ -41,4 +42,8 @@ uint64_t task_get_argv(Task *task) {
 
 void task_set_rsp(Task *task, uint64_t rsp) {
     task->current_rsp = rsp;
+}
+
+bool check_task_switch_allowed() {
+    return kernel.can_task_switch;
 }

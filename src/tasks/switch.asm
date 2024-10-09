@@ -1,9 +1,13 @@
 [BITS 64]
 
-global pit_isr
+global timer_isr
 
+extern check_task_switch_allowed
+extern pit_increment_counter
 extern end_of_interrupt
 extern unlock_pit
+extern unlock_lapic_timer
+extern lock_lapic_timer
 extern task_get_argc
 extern task_get_argv
 extern task_disable_first_exec
@@ -27,7 +31,7 @@ extern get_current_task
 %define KERNEL_STACK_ADDR (KERNEL_STACK_PTR - STACK_PAGES * PAGE_SIZE)
 
 
-pit_isr:
+timer_isr:
     jmp task_switch
 
 task_switch:
@@ -48,7 +52,11 @@ task_switch:
     push r13
     push r14
     push r15
+    call pit_increment_counter
     call end_of_interrupt
+    call check_task_switch_allowed
+    test rax, rax
+    jz cannot_task_switch
     ; set this task's rsp to the current rsp
     call get_current_task
     mov rdi, rax
@@ -137,6 +145,25 @@ task_switch_previously_executed:
     ;; jump to the entry point
     iretq
     jmp $
+
+cannot_task_switch:
+    ; just pop all registers and return
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rbp
+    pop rdi
+    pop rsi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
+    iretq
 
 print_debug_info:
     mov rdi, msg

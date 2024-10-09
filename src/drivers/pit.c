@@ -6,19 +6,33 @@
 #include "../kernel/kernel.h"
 #include "../utils/include/cpu_utils.h"
 
-#define HERTZ_DIVIDER 11900
+#define HERTZ_DIVIDER 1190
 
-extern void pit_isr();
+extern void timer_isr();
 
 void init_PIT() {
     kstatusf("Initialising PIT clock...\n");
     outb(0x43, 0b110100); // set mode to rate generator, channel 0, lobyte/hibyte, binary mode
     outb(0x40, (HERTZ_DIVIDER) & 0xFF);
     outb(0x40, (HERTZ_DIVIDER >> 8) & 0xFF);
-    set_IDT_entry(32, &pit_isr, 0x8F, (struct IDTEntry*) kernel.idtr.offset);
+    set_IDT_entry(32, &timer_isr, 0x8F, (struct IDTEntry*) kernel.idtr.offset);
     map_ioapic(32, 2, 0, POLARITY_HIGH, TRIGGER_EDGE);
     lock_pit();
     kstatusf("Successfully initiated PIT.\n");
+}
+
+void pit_increment_counter() {
+    kernel.pit_counter--;
+}
+
+void pit_wait(uint64_t ms) {
+    kernel.pit_counter = ms; // this is easy since one PIT tick is set to one millisecond
+    unlock_pit();
+    enable_interrupts();
+    while (kernel.pit_counter) outb(0x80, 0);
+    disable_interrupts();
+    lock_pit();
+    return;
 }
 
 void unlock_pit() {

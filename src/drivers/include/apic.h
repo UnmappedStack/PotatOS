@@ -10,6 +10,11 @@
 #define LAPIC_DESTINATION_FORMAT_REGISTER        0x0e0
 #define LAPIC_TASK_PRIORITY_REGISTER             0x080
 #define LAPIC_END_OF_INTERRUPT_REGISTER          0x0b0
+#define LAPIC_TIMER_DIVIDER_REGISTER             0x3e0
+#define LAPIC_TIMER_INITIAL_COUNT_REGISTER       0x380
+#define LAPIC_TIMER_CURRENT_COUNT_REGISTER       0x390
+#define LAPIC_TIMER_LVT_REGISTER                 0x320
+#define LAPIC_ERROR_STATUS_REGISTER              0x280
 
 #define POLARITY_HIGH 0
 #define POLARITY_LOW  1
@@ -87,3 +92,6 @@ void map_ioapic(uint8_t vec, uint32_t irq, uint32_t lapic_id, bool polarity, boo
 void mask_ioapic(uint8_t irq, uint32_t lapic_id);
 void unmask_ioapic(uint8_t irq, uint32_t lapic_id);
 void map_apic_into_task(uint64_t task_cr3_phys);
+void init_lapic_timer();
+void lock_lapic_timer();
+void unlock_lapic_timer();

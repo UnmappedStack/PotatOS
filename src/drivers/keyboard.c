@@ -10,7 +10,7 @@
 #include "../fs/include/devices.h"
 #include "../fs/include/tempfs.h"
 #include "../fs/include/vfs.h"
-#include "include/pit.h"
+#include "include/apic.h"
 #include "../mem/include/kheap.h"
 #include "../utils/include/cpu_utils.h"
 
@@ -70,6 +70,7 @@ void draw_cursor() {
 
 __attribute__((interrupt))
 void keyboard_isr(void*) {
+    if (current_input_data == 0) return;
     if (!current_input_data->currently_reading) return;
     if (!(inb(PS2_STATUS_REGISTER) & 0x01)) return;
     uint8_t scancode = inb(PS2_DATA_REGISTER);
@@ -137,7 +138,6 @@ void keyboard_isr(void*) {
 }
 
 int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
-    lock_pit();
     Inode *file = (Inode*) filev;
     KeyboardData *kb_data = (KeyboardData*) file->private;
     draw_cursor();
