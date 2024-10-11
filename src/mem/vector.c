@@ -42,6 +42,14 @@ void vector_push(Vector *vec, uintptr_t val_addr) {
     vec->length++;
 }
 
+void vector_set(Vector *vec, size_t idx, uintptr_t val) {
+    if (vec->length <= idx) return;
+    VectorNode *this_node   = vec->first_node;
+    size_t      current_idx = 0;
+    for (; current_idx < idx; current_idx++) this_node = (VectorNode*) this_node->next_node;
+    this_node->data_addr = val;
+}
+
 void* vector_at(Vector *vec, size_t idx) {
     if (vec->length <= idx) return NULL;
     VectorNode *this_node   = vec->first_node;

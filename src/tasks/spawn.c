@@ -150,7 +150,7 @@ int spawn(char *path, const char *argv[], size_t argc) {
     new_task->argc = argc;
     new_task->argv = ARGV_DATA_ADDR + arg_size;
     new_task->event_queue = new_event_queue();
-    new_task->parent = (uintptr_t) get_task(kernel.tasklist.current_task);
+    new_task->parent = (uintptr_t) get_current_task();
     free(buffer);
     // open standard resource streams
     new_task->resources[0] = open("D:/stdin",  0, MODE_READONLY);

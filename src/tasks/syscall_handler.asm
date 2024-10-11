@@ -6,6 +6,7 @@ PTR_SIZE equ 8
 extern lock_pit
 extern unlock_pit
 
+extern printf
 extern lock_lapic_timer
 extern unlock_lapic_timer
 extern syscall_write
@@ -69,3 +70,5 @@ syscall_isr:
 invalid_syscall:
     call syscall_invalid
     ret
+
+msg1: db 10, "Doing syscall, rax = %i", 10, 0

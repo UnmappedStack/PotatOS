@@ -35,7 +35,6 @@ timer_isr:
     jmp task_switch
 
 task_switch:
-    cli
     ;; push all the registers onto the stack
     push rax
     push rbx

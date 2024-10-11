@@ -146,13 +146,10 @@ int read_ps2_kb(void *filev, char *buffer, size_t max_len) {
     kb_data->current_buffer    = buffer;
     kb_data->buffer_size       = max_len - 1;
     current_input_data = kb_data;
-    lock_lapic_timer();
     enable_interrupts();
     while (kb_data->currently_reading) outb(0x80, 0);
     kb_data->current_buffer = 0;
     kb_data->input_len      = 0;
-    disable_interrupts();
-    unlock_lapic_timer();
     return 0;
 }
 

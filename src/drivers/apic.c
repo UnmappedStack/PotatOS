@@ -1,3 +1,4 @@
+#include "../processors/include/spinlock.h"
 #include "include/pit.h"
 #include "../utils/include/cpu_utils.h"
 #include "../mem/include/paging.h"
@@ -97,8 +98,13 @@ void init_local_apic(uintptr_t lapic_addr) {
     kstatusf("This LAPIC was successfully set up!\n");
 }
 
+Spinlock current_cpu_lock;
+
 uint64_t get_current_processor() {
-    return read_lapic(kernel.lapic_addr, LAPIC_ID_REGISTER) >> 24;
+    spinlock_aquire(&current_cpu_lock);
+    uint64_t to_return = read_lapic(kernel.lapic_addr, LAPIC_ID_REGISTER) >> 24;
+    spinlock_release(&current_cpu_lock);
+    return to_return;
 }
 
 void init_lapic_timer() {
@@ -108,7 +114,7 @@ void init_lapic_timer() {
     write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0);
     write_lapic(lapic_addr, LAPIC_TIMER_DIVIDER_REGISTER, 3);
     write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0xFFFFFFFF);
-    pit_wait(1); // wait & calibrate to 10 ms
+    pit_wait(10); // wait & calibrate to 10 ms
     uint32_t current_count = read_lapic(lapic_addr, LAPIC_TIMER_CURRENT_COUNT_REGISTER);
     write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0);
     uint32_t num_ticks = 0xFFFFFFFF - current_count;

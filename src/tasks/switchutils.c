@@ -4,10 +4,6 @@
 #include <stdint.h>
 #include "include/tasklist.h"
 
-Task* get_current_task() {
-    return get_task(kernel.tasklist.current_task);
-}
-
 uint64_t task_get_cr3(Task *task) {
     return (uint64_t) task->pml4_addr;
 }

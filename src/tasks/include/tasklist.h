@@ -26,7 +26,7 @@ typedef struct {
 
 typedef struct {
     Vector   *list;
-    uint64_t current_task;
+    Vector   *current_tasks;
 } Tasklist;
 
 void init_tasklist();
@@ -34,3 +34,4 @@ Task* create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stac
 Task* get_task(size_t pid);
 void task_remove(size_t pid);
 Task* task_select();
+Task* get_current_task();

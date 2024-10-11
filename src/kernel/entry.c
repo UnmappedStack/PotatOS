@@ -92,20 +92,17 @@ void _start() {
     show_boot_info();
     init_PMM();
     init_kheap();
-    init_vfs();
-    init_devices();
-    setup_initrd();
-    init_framebuffer();
-    clear_screen();
-    init_TSS();
-    init_GDT();
-    init_IDT();
-    init_font();
-    init_tasklist();
     init_paging();
     switch_page_structures();
     init_acpi();
     init_apic();
+    init_tasklist();
+    init_vfs();
+    init_devices();
+    setup_initrd();
+    init_TSS();
+    init_GDT();
+    init_IDT();
     init_PIT();
     init_lapic_timer();
     init_syscalls();
@@ -115,10 +112,12 @@ void _start() {
     disable_interrupts();
     init_ps2_keyboard();
     try_spawn_init();
+    init_framebuffer();
+    init_font();
     clear_screen();
-    unlock_pit();
-    enable_interrupts();
+    lock_pit();
     unlock_lapic_timer();
+    enable_interrupts();
     for(;;);
 }
 

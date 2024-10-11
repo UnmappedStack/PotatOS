@@ -6,6 +6,9 @@
 #include "../kernel/kernel.h"
 #include "../mem/include/kheap.h"
 #include "../utils/include/printf.h"
+#include "../processors/include/spinlock.h"
+
+Spinlock scheduler_lock;
 
 void init_tasklist() {
     kstatusf("Initiating tasks...");
@@ -25,7 +28,9 @@ void init_tasklist() {
         .flags       = 0
     };
     vector_push(kernel.tasklist.list, (uintptr_t) first_task);
-    kernel.tasklist.current_task = 0;
+    kernel.tasklist.current_tasks = new_vector(sizeof(uint64_t));
+    for (size_t i = 0; i < kernel.smp_response->cpu_count; i++)
+        vector_push(kernel.tasklist.current_tasks, 0);
     k_ok();
 }
 
@@ -39,7 +44,7 @@ Task* create_task(uint64_t pml4_addr, uintptr_t entry_point, uintptr_t user_stac
         .current_rsp = user_stack,
         .flags       = flags
     };
-    char *current_dir    = get_task(kernel.tasklist.current_task)->current_dir;
+    char *current_dir    = get_current_task()->current_dir;
     uint64_t dirname_len = ku_strlen(current_dir);
     new_task->current_dir = (char*) malloc(dirname_len) + 1;
     ku_memset(new_task->current_dir, 0, dirname_len);
@@ -56,20 +61,36 @@ void task_remove(size_t pid) {
     vector_pop(kernel.tasklist.list, pid);
 }
 
+Spinlock get_current_task_lock;
+
+Task* get_current_task() {
+    spinlock_aquire(&get_current_task_lock);
+    Task *to_return = get_task((uint64_t) vector_at(kernel.tasklist.current_tasks, get_current_processor()));
+    spinlock_release(&get_current_task_lock);
+    return to_return;
+}
+
 Task* task_select() {
-    Task *current_task = get_task(kernel.tasklist.current_task);
-    current_task->flags &= ~((uint8_t)TASK_RUNNING);
+    spinlock_aquire(&scheduler_lock);
+    uint64_t current_core_num = get_current_processor();
+    uint64_t current_task_num = (uint64_t) vector_at(kernel.tasklist.current_tasks, current_core_num);
+    Task *current_task = get_task(current_task_num);
+    current_task->flags &= ~((uint8_t) TASK_RUNNING);
     if ((kernel.tasklist.list)->length == 1) {
-        kernel.tasklist.current_task = 0;
+        vector_set(kernel.tasklist.current_tasks, current_core_num, 0);
         return get_task(0);
     }
-    else if (++kernel.tasklist.current_task >= (kernel.tasklist.list)->length)
-        kernel.tasklist.current_task = 0;
-    Task *new_task = get_task(kernel.tasklist.current_task);
+    vector_set(kernel.tasklist.current_tasks, current_core_num, current_task_num + 1);
+    current_task = vector_at(kernel.tasklist.current_tasks, current_core_num);
+    if (current_task_num >= (kernel.tasklist.list)->length)
+        vector_set(kernel.tasklist.current_tasks, current_core_num, 0);
+    Task *new_task = get_current_task();
     if (new_task->flags & TASK_PRESENT && !(new_task->flags & TASK_RUNNING)) {
         new_task->flags |= TASK_RUNNING;
+        spinlock_release(&scheduler_lock);
         return new_task;
     }  else {
+        spinlock_release(&scheduler_lock);
         return task_select(); // switch to the next one again
     }
 }

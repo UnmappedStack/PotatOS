@@ -17,7 +17,7 @@
  * rdx = Buffer length
  */
 int syscall_write(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
-    Task *current_task = get_task(kernel.tasklist.current_task); 
+    Task *current_task = get_current_task(); 
     File *f = current_task->resources[rdi];
     if (!f->present) {
         printf("File could not be written to, has not been opened.\n");
@@ -34,7 +34,7 @@ int syscall_write(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
  * rdx = length
  */
 int syscall_read(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
-    Task *current_task = get_task(kernel.tasklist.current_task); 
+    Task *current_task = get_current_task(); 
     File *f = current_task->resources[rdi];
     if (!f->present) {
         printf("File could not be read from, has not been opened.\n");
@@ -50,7 +50,7 @@ int syscall_read(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
  * rsi = buffer length
  */
 void syscall_get_cwd(uint64_t rdi, uint64_t rsi) {
-    Task *current_task = get_task(kernel.tasklist.current_task);
+    Task *current_task = get_current_task();
     uint64_t cd_len   = ku_strlen(current_task->current_dir);
     uint64_t copy_len = (rsi > cd_len) ? cd_len : rsi;
     ku_memcpy((char*) rdi, current_task->current_dir, copy_len);
@@ -60,7 +60,7 @@ void syscall_get_cwd(uint64_t rdi, uint64_t rsi) {
  * rdi = event buffer.
  */
 void syscall_poll(uint64_t rdi) {
-    Task  *current_task = get_task(kernel.tasklist.current_task);
+    Task  *current_task = get_current_task();
     Event *this_event   = poll(current_task->event_queue);
     *((Event*) rdi)     = *this_event;
     free(this_event);
@@ -71,7 +71,7 @@ void syscall_poll(uint64_t rdi) {
  * rdi = event buffer.
  */
 void syscall_peek(uint64_t rdi) {
-    Task  *current_task = get_task(kernel.tasklist.current_task);
+    Task  *current_task = get_current_task();
     Event *this_event   = peek(current_task->event_queue);
     *((Event*) rdi)     = *this_event;
     free(this_event);
@@ -86,8 +86,7 @@ void syscall_peek(uint64_t rdi) {
  */
 int syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
     uint64_t file_descriptor = 0;
-    uint64_t current_task_id = kernel.tasklist.current_task;
-    Task *current_task = get_task(current_task_id);
+    Task *current_task = get_current_task();
     for (; file_descriptor < NUM_RESOURCES; file_descriptor++) {
         if (current_task->resources[file_descriptor] != 0) continue;
         current_task->resources[file_descriptor] = open((char*) rdi, rsi, rdx);
@@ -101,7 +100,7 @@ int syscall_open(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
  */
 
 void syscall_close(uint64_t rdi) {
-    Task *current_task = get_task(kernel.tasklist.current_task);
+    Task *current_task = get_current_task();
     close(current_task->resources[rdi]);
     current_task->resources[rdi] = NULL;
 }

@@ -18,15 +18,16 @@ void init_vfs() {
 }
 
 int create_device(char *path, DeviceOps operations) {
+    Task *current_task = get_current_task();
     if (path[1] != ':' || path[2] != '/') {
         if (path[0] == '/') {
             char *path_ext = (char*) malloc(ku_strlen(path) + 3);
             ku_memcpy(path_ext + 2, path, ku_strlen(path) + 1);
-            path_ext[0] = get_task(kernel.tasklist.current_task)->current_dir[0];
+            path_ext[0] = current_task->current_dir[0];
             path_ext[1] = ':';
             path = path_ext;
         } else {
-            char *cd = get_task(kernel.tasklist.current_task)->current_dir;
+            char *cd = current_task->current_dir;
             uint64_t cd_len = ku_strlen(cd);
             uint64_t path_len = ku_strlen(path);
             char *path_ext = (char*) malloc(cd_len + path_len + 1);
@@ -126,7 +127,7 @@ uint8_t check_file_type(char *fname) {
 }
 
 void change_cd(char *path) {
-    Task *current_task = get_task(kernel.tasklist.current_task);
+    Task *current_task = get_current_task();
     uint64_t path_len = ku_strlen(path);
     if (path[1] != ':' || path[2] != '/') {
         if (path[0] == '/') {
@@ -154,15 +155,16 @@ void change_cd(char *path) {
 }
 
 File* open(char *path, int flags, uint8_t mode) {
+    Task *current_task = get_current_task();
     if (path[1] != ':' || path[2] != '/') {
         if (path[0] == '/') {
             char *path_ext = (char*) malloc(ku_strlen(path) + 3);
             ku_memcpy(path_ext + 2, path, ku_strlen(path) + 1);
-            path_ext[0] = get_task(kernel.tasklist.current_task)->current_dir[0];
+            path_ext[0] = current_task->current_dir[0];
             path_ext[1] = ':';
             path = path_ext;
         } else {
-            char *cd = get_task(kernel.tasklist.current_task)->current_dir;
+            char *cd = current_task->current_dir;
             uint64_t cd_len = ku_strlen(cd);
             uint64_t path_len = ku_strlen(path);
             char *path_ext = (char*) malloc(cd_len + path_len + 1);
@@ -229,15 +231,16 @@ File* open(char *path, int flags, uint8_t mode) {
 }
 
 int mkdir(char *path) {
+    Task *current_task = get_current_task();
     if (path[1] != ':' || path[2] != '/') {
         if (path[0] == '/') {
             char *path_ext = (char*) malloc(ku_strlen(path) + 3);
             ku_memcpy(path_ext + 2, path, ku_strlen(path) + 1);
-            path_ext[0] = get_task(kernel.tasklist.current_task)->current_dir[0];
+            path_ext[0] = current_task->current_dir[0];
             path_ext[1] = ':';
             path = path_ext;
         } else {
-            char *cd = get_task(kernel.tasklist.current_task)->current_dir;
+            char *cd = current_task->current_dir;
             uint64_t cd_len = ku_strlen(cd);
             uint64_t path_len = ku_strlen(path);
             char *path_ext = (char*) malloc(cd_len + path_len + 1);
