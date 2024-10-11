@@ -32,7 +32,6 @@ void write_ioapic(void *ioapic_addr, uint32_t reg, uint32_t value) {
 }
 
 void map_ioapic(uint8_t vec, uint32_t irq, uint32_t lapic_id, bool polarity, bool trigger) {
-    kstatusf("Mapping vector %i to irq %i on lapic ID %i\n", vec, irq, lapic_id);
     kdebugf("Global system interrupt base: %i\n", kernel.ioapic_device.global_system_interrupt_base);
     uintptr_t ioapic_addr = (uintptr_t) (((uint64_t) kernel.ioapic_device.ioapic_addr) + kernel.hhdm);
     uint32_t gsi_base = kernel.ioapic_device.global_system_interrupt_base;

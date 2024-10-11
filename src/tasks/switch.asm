@@ -3,7 +3,7 @@
 global timer_isr
 
 extern check_task_switch_allowed
-extern pit_increment_counter
+extern pit_decrement_counter
 extern end_of_interrupt
 extern unlock_pit
 extern unlock_lapic_timer
@@ -52,7 +52,7 @@ task_switch:
     push r13
     push r14
     push r15
-    call pit_increment_counter
+    call pit_decrement_counter
     call end_of_interrupt
     call check_task_switch_allowed
     test rax, rax

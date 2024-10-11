@@ -87,6 +87,7 @@ typedef struct {
 } __attribute__ ((packed)) MADT;
 
 void init_apic();
+void init_local_apic(uintptr_t lapic_addr);
 void end_of_interrupt();
 void map_ioapic(uint8_t vec, uint32_t irq, uint32_t lapic_id, bool polarity, bool trigger);
 void mask_ioapic(uint8_t irq, uint32_t lapic_id);

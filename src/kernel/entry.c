@@ -73,11 +73,6 @@ void show_boot_info() {
     printf("\n");
 }
 
-void wait_smp_test() {
-    for (uint64_t i = 0; i < 9999; i++)
-        outb(0x80, 0);
-}
-
 const char *argv[] = {"R:/exec/shell", "Arg test 1!", "Second :D"};
 
 void try_spawn_init() {
@@ -115,11 +110,13 @@ void _start() {
     init_PIT();
     init_lapic_timer();
     init_syscalls();
+    enable_interrupts();
     init_smp();
-    wait_smp_test();
+    lock_pit();
+    disable_interrupts();
     try_spawn_init();
     clear_screen();
-    lock_pit();
+    unlock_pit();
     enable_interrupts();
     unlock_lapic_timer();
     for(;;);

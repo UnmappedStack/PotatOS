@@ -21,7 +21,7 @@ void init_PIT() {
     kstatusf("Successfully initiated PIT.\n");
 }
 
-void pit_increment_counter() {
+void pit_decrement_counter() {
     kernel.pit_counter--;
 }
 
@@ -29,9 +29,8 @@ void pit_wait(uint64_t ms) {
     kernel.pit_counter = ms; // this is easy since one PIT tick is set to one millisecond
     unlock_pit();
     enable_interrupts();
-    while (kernel.pit_counter) outb(0x80, 0);
-    disable_interrupts();
-    lock_pit();
+    while (kernel.pit_counter > 0 && kernel.pit_counter <= ms) outb(0x80, 0);
+    kdebugf("End counter.\n");
     return;
 }
 
