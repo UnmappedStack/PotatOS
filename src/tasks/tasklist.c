@@ -66,7 +66,7 @@ Task* task_select() {
     else if (++kernel.tasklist.current_task >= (kernel.tasklist.list)->length)
         kernel.tasklist.current_task = 0;
     Task *new_task = (Task*) vector_at(kernel.tasklist.list, kernel.tasklist.current_task);
-    if (new_task->flags & TASK_PRESENT) {
+    if (new_task->flags & TASK_PRESENT && !(new_task->flags & TASK_RUNNING)) {
         new_task->flags |= TASK_RUNNING;
         return new_task;
     }  else {
