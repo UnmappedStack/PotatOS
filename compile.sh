@@ -6,7 +6,7 @@ fi
 
 make -C limine
 
-make
+make || { echo "Failed to build, exiting."; exit 1; }
 
 # compile/assemble userspace components
 mkdir ramdiskroot/exec
