@@ -57,6 +57,8 @@ void task_remove(size_t pid) {
 }
 
 Task* task_select() {
+    Task *current_task = (Task*) vector_at(kernel.tasklist.list, kernel.tasklist.current_task);
+    current_task->flags &= ~((uint8_t)TASK_RUNNING);
     if ((kernel.tasklist.list)->length == 1) {
         kernel.tasklist.current_task = 0;
         return (Task*) vector_at(kernel.tasklist.list, 0);
@@ -65,6 +67,7 @@ Task* task_select() {
         kernel.tasklist.current_task = 0;
     Task *new_task = (Task*) vector_at(kernel.tasklist.list, kernel.tasklist.current_task);
     if (new_task->flags & TASK_PRESENT) {
+        new_task->flags |= TASK_RUNNING;
         return new_task;
     }  else {
         return task_select(); // switch to the next one again
