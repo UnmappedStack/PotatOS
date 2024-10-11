@@ -97,6 +97,10 @@ void init_local_apic(uintptr_t lapic_addr) {
     kstatusf("This LAPIC was successfully set up!\n");
 }
 
+uint64_t get_current_processor() {
+    return read_lapic(kernel.lapic_addr, LAPIC_ID_REGISTER) >> 24;
+}
+
 void init_lapic_timer() {
     uintptr_t lapic_addr = kernel.lapic_addr;
     kstatusf("Initiating LAPIC timer...\n");

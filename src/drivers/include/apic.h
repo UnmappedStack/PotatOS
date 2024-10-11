@@ -6,6 +6,7 @@
 #define LOCAL_APIC 0
 #define IOAPIC     1
 
+#define LAPIC_ID_REGISTER                        0x020
 #define LAPIC_SPURIOUS_INTERRUPT_VECTOR_REGISTER 0x0f0
 #define LAPIC_DESTINATION_FORMAT_REGISTER        0x0e0
 #define LAPIC_TASK_PRIORITY_REGISTER             0x080
@@ -96,3 +97,5 @@ void map_apic_into_task(uint64_t task_cr3_phys);
 void init_lapic_timer();
 void lock_lapic_timer();
 void unlock_lapic_timer();
+uint64_t get_current_processor();
+void write_lapic(uintptr_t lapic_addr, uint64_t reg_offset, uint32_t val);

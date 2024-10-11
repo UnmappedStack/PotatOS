@@ -18,7 +18,7 @@ tar --create --file=initrd --format=ustar -C ramdiskroot exec sys
 # set up the sysroot
 
 mkdir -p sysroot
-
+cp media/limine_wallpaper.jpeg sysroot
 mkdir -p sysroot/boot
 mv initrd sysroot/boot
 cp -v bin/potatos sysroot/boot/

@@ -48,6 +48,7 @@ void ap_entry(struct limine_smp_info *smp_info) {
     init_local_apic(kernel.lapic_addr);
     kstatusf("Setting up this processor's LAPIC timer...\n");
     init_lapic_timer();
+    kdebugf("Processor ID from LAPIC detected: %i\n", get_current_processor());
     kstatusf("Successfully initialised processor %i.\n", smp_info->processor_id);
     spinlock_release(&init_lock);
     halt();
