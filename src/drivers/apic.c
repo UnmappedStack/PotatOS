@@ -108,7 +108,7 @@ void init_lapic_timer() {
     write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0);
     write_lapic(lapic_addr, LAPIC_TIMER_DIVIDER_REGISTER, 3);
     write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0xFFFFFFFF);
-    pit_wait(10); // wait & calibrate to 10 ms
+    pit_wait(1); // wait & calibrate to 10 ms
     uint32_t current_count = read_lapic(lapic_addr, LAPIC_TIMER_CURRENT_COUNT_REGISTER);
     write_lapic(lapic_addr, LAPIC_TIMER_INITIAL_COUNT_REGISTER, 0);
     uint32_t num_ticks = 0xFFFFFFFF - current_count;
