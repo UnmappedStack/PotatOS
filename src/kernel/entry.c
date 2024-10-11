@@ -121,9 +121,9 @@ void _start() {
     unlock_lapic_timer();
     for(;;);
 }
+
 void all_tasks_ended() {
     disable_interrupts();
-    lock_pit();
     kstatusf("All tasks halted, nothing left to do.\n\n");
     for (;;);
 }
