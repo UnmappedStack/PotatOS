@@ -3,10 +3,8 @@
 
 PTR_SIZE equ 8
 
-extern lock_pit
-extern unlock_pit
-
-extern printf
+extern lock_syscall_handler
+extern unlock_syscall_handler
 extern lock_lapic_timer
 extern unlock_lapic_timer
 extern syscall_write
@@ -50,7 +48,19 @@ syscall_isr:
     push r13
     push r14
     push r15
+    push rax
+    push rdi
+    push rsi
+    push rdx
+    call lock_syscall_handler
+    pop rdx
+    pop rsi
+    pop rdi
+    pop rax
     call [syscall_lookup + rax * 8]
+    push rax
+    call unlock_syscall_handler
+    pop rax
     pop r15
     pop r14
     pop r13

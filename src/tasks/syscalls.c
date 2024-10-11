@@ -1,3 +1,4 @@
+#include "../processors/include/spinlock.h"
 #include "../utils/include/string.h"
 #include "include/spawn.h"
 #include "include/syscalls.h"
@@ -10,6 +11,16 @@
 #include "../drivers/include/pit.h"
 #include "../fs/include/vfs.h"
 #include "include/end_task.h"
+
+Spinlock syscall_handler_lock;
+
+void lock_syscall_handler() {
+    spinlock_aquire(&syscall_handler_lock);
+}
+
+void unlock_syscall_handler() {
+    spinlock_release(&syscall_handler_lock);
+}
 
 /* Write syscall handler
  * rdi = File descriptor
