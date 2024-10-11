@@ -30,8 +30,8 @@ void pit_wait(uint64_t ms) {
     unlock_pit();
     enable_interrupts();
     while (kernel.pit_counter > 0 && kernel.pit_counter <= ms) outb(0x80, 0);
-    kdebugf("End counter.\n");
-    return;
+    disable_interrupts();
+    lock_pit();
 }
 
 void unlock_pit() {

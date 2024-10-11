@@ -53,7 +53,6 @@ task_switch:
     push r14
     push r15
     call pit_decrement_counter
-    call end_of_interrupt
     call check_task_switch_allowed
     test rax, rax
     jz cannot_task_switch
@@ -101,7 +100,9 @@ task_switch_first_exec:
     ; rip
     call task_get_entry_point
     push rax
+    call unlock_lapic_timer
     ;; pass it the cmd line args
+    call end_of_interrupt
     call task_get_argc
     mov r15, rax
     call task_get_argv
@@ -126,6 +127,7 @@ task_switch_first_exec:
 
 ;; I wasn't sure what to name this label so it's kinda dumbly named lmao
 task_switch_previously_executed:
+    call end_of_interrupt
     ;; pop general purpose registers from the stack, leaving only the interrupt frame registers
     pop r15
     pop r14
@@ -147,6 +149,7 @@ task_switch_previously_executed:
     jmp $
 
 cannot_task_switch:
+    call end_of_interrupt
     ; just pop all registers and return
     pop r15
     pop r14
