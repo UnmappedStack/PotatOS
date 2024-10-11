@@ -106,7 +106,6 @@ void _start() {
     switch_page_structures();
     init_acpi();
     init_apic();
-    init_ps2_keyboard();
     init_PIT();
     init_lapic_timer();
     init_syscalls();
@@ -114,6 +113,7 @@ void _start() {
     init_smp();
     lock_pit();
     disable_interrupts();
+    init_ps2_keyboard();
     try_spawn_init();
     clear_screen();
     unlock_pit();
