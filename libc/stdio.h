@@ -111,13 +111,8 @@ void fputs(char *str, uint8_t file_descriptor);
 void fputs(char *str, uint8_t file_descriptor) {
     size_t len = strlen(str);
     asm volatile (
-        "movq %2, %%rdi\n" // file descriptor
-        "movq %0, %%rsi\n" // buffer addr
-        "movq %1, %%rdx\n" // buffer len
-        "movq $1, %%rax\n" // write syscall
         "int $0x80"
-        : : "r" ((uint64_t) str), "r" ((uint64_t) len), "r" ((uint64_t) file_descriptor)
-        : "%rdi", "%rsi", "%rdx", "%rax"
+        : : "S" ((uint64_t) str), "d" ((uint64_t) len), "D" ((uint64_t) file_descriptor), "a" (1)
     );
 }
 #endif
@@ -127,13 +122,8 @@ void write(char *str, uint8_t file_descriptor, uint64_t len);
 #ifndef WRITE_IMPL
 void write(char *str, uint8_t file_descriptor, uint64_t len) {
     asm volatile (
-        "movq %2, %%rdi\n" // file descriptor
-        "movq %0, %%rsi\n" // buffer addr
-        "movq %1, %%rdx\n" // buffer len
-        "movq $1, %%rax\n" // write syscall
         "int $0x80"
-        : : "r" ((uint64_t) str), "r" (len), "r" ((uint64_t) file_descriptor)
-        : "%rdi", "%rsi", "%rdx", "%rax"
+        : : "S" ((uint64_t) str), "d" (len), "D" ((uint64_t) file_descriptor), "a" (1)
     );
 }
 #endif
@@ -143,13 +133,8 @@ void fgets(char *buffer, uint64_t max_len, uint8_t file_descriptor);
 #ifndef FGETS_IMPL
 void fgets(char *buffer, uint64_t max_len, uint8_t file_descriptor) {
     asm volatile (
-        "movq %2, %%rdi\n" // file descriptor
-        "movq %0, %%rsi\n" // buffer addr
-        "movq %1, %%rdx\n" // buffer len
-        "movq $0, %%rax\n" // read syscall
         "int $0x80"
-        : : "r" ((uint64_t) buffer), "r" ((uint64_t) max_len), "r" ((uint64_t) file_descriptor)
-        : "%rdi", "%rsi", "%rdx", "%rax"
+        : : "S" ((uint64_t) buffer), "d" ((uint64_t) max_len), "D" ((uint64_t) file_descriptor), "a" (0)
     );
 }
 #endif
