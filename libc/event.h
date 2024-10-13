@@ -15,7 +15,6 @@ void poll(Event *buffer);
 
 #ifndef POLL_IMPL
 void poll(Event *buffer) {
-    fputs("", stdout); // it seems to only work when I have an fputs here for some reason, so I'm taking the broken solution for now lmao
     asm volatile(
         "int $0x80"
         : : "D" ((uint64_t) buffer), "a" (6)
@@ -27,7 +26,6 @@ void peek(Event *buffer);
 
 #ifndef PEEK_IMPL
 void peek(Event *buffer) {
-    fputs("", stdout); // it seems to only work when I have an fputs here for some reason, so I'm taking the broken solution for now lmao
     asm volatile(
         "int $0x80"
         : : "D" ((uint64_t) buffer), "a" (7)
