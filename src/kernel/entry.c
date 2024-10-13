@@ -111,9 +111,10 @@ void _start() {
     lock_pit();
     disable_interrupts();
     init_ps2_keyboard();
-    try_spawn_init();
     init_framebuffer();
     init_font();
+    disable_interrupts();
+    try_spawn_init();
     clear_screen();
     lock_pit();
     unlock_lapic_timer();

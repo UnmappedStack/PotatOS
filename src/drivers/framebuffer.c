@@ -1,3 +1,4 @@
+#include "../mem/include/kheap.h"
 #include <stdint.h>
 #include "../utils/include/printf.h"
 #include "include/framebuffer.h"
@@ -5,6 +6,58 @@
 #include "../mem/include/pmm.h"
 #include "../mem/include/paging.h"
 #include "../utils/include/string.h"
+#include "../fs/include/vfs.h"
+#include "../fs/include/tempfs.h"
+#include <stddef.h>
+
+// this just needs to exist, but there really isn't anything to do
+void open_fb_device(void *filev, uint8_t mode) {}
+void close_fb_device(void *filev) {};
+void close_fbinfo_device(void *filev) {}
+
+void open_fbinfo_device(void *filev, uint8_t mode) {
+    if (mode != MODE_READONLY) {
+        kfailf("Can only open framebuffer info devices as MODE_READONLY.\n");
+        return;
+    }
+}
+
+int read_fbinfo_device(void *filev, char *buffer, size_t max_len) {
+    struct limine_framebuffer *framebuffer = kernel.framebuffers[0];
+    char    *labels[] = {"Width: ", "Height: ", "Pitch: ", "Bytes: "};
+    uint64_t vals[]   = {framebuffer->width, framebuffer->height, framebuffer->pitch, kernel.framebuffer_size};
+    uint64_t whole_len = 0;
+    for (size_t i = 0; i < 4; i++)
+        whole_len += ku_strlen(labels[i]) + 8; // 8 bytes for data
+    char *temp_buffer = (char*) malloc(whole_len + 1);
+    uint64_t upto = 0;
+    for (uint64_t i = 0; i < 4; i++) {
+        uint64_t this_strlen = ku_strlen(labels[i]);
+        ku_memcpy((uint8_t*)(((uint64_t) temp_buffer) + upto), labels[i], this_strlen);
+        ku_memcpy((uint8_t*)(((uint64_t)temp_buffer) + upto + this_strlen), ((char*) &vals[i]), 8);
+        upto += this_strlen + 8;
+    }
+    size_t copy_amount = (max_len > upto) ? upto : max_len;
+    ku_memcpy(buffer, temp_buffer, copy_amount);
+    free(temp_buffer);
+    return 0;
+}
+
+int write_fb_device(void *filev, char *buffer, size_t len) {
+    struct limine_framebuffer *framebuffer = kernel.framebuffers[0];
+    size_t copy_amount = (len > kernel.framebuffer_size) ? kernel.framebuffer_size : len;
+    ku_memcpy((uint8_t*) kernel.back_buffer, buffer, copy_amount);
+    swap_framebuffers();
+    return 0;
+}
+
+int read_fb_device(void *filev, char *buffer, size_t max_len) {
+    struct limine_framebuffer *framebuffer = kernel.framebuffers[0];
+    size_t copy_amount = (max_len > kernel.framebuffer_size) ? kernel.framebuffer_size : max_len;
+    ku_memcpy(buffer, (uint8_t*) kernel.back_buffer, copy_amount);
+    swap_framebuffers();
+    return 0;
+}
 
 void init_framebuffer() {
     kstatusf("Initiating framebuffers...");
@@ -12,6 +65,19 @@ void init_framebuffer() {
     kernel.framebuffer_size = framebuffer->width * (framebuffer->bpp / 8) * framebuffer->height;
     kernel.back_buffer = kmalloc(PAGE_ALIGN_UP(kernel.framebuffer_size) / 4096) + kernel.hhdm;
     ku_memset((uint8_t*) kernel.back_buffer, 0, kernel.framebuffer_size);
+    DeviceOps fb_dev = (DeviceOps) {
+        .read = &read_fb_device,
+        .write = &write_fb_device,
+        .open = &open_fb_device,
+        .close = &close_fb_device
+    };
+    DeviceOps fb_info_dev = (DeviceOps) {
+        .read = &read_fbinfo_device,
+        .open = &open_fbinfo_device,
+        .close = &close_fbinfo_device
+    };
+    create_device("D:/fb0", fb_dev);
+    create_device("D:/fbinfo0", fb_info_dev);
     k_ok();
 }
 

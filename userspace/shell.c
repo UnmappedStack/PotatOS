@@ -1,3 +1,4 @@
+#include <graphics.h>
 #include <stdio.h>
 #include <event.h>
 
