@@ -7,6 +7,7 @@ extern lock_syscall_handler
 extern unlock_syscall_handler
 extern lock_lapic_timer
 extern unlock_lapic_timer
+extern syscall_mmap
 extern syscall_exit
 extern syscall_write
 extern syscall_read
@@ -30,6 +31,7 @@ syscall_lookup:
     dq syscall_peek
     dq syscall_get_errno
     dq syscall_exit
+    dq syscall_mmap
 syscall_lookup_end:
 
 global syscall_isr

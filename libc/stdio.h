@@ -4,6 +4,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#define MAP_ANONYMOUS 0x20
+#define PROT_WRITE    2
+
 #define stdin  0
 #define stdout 1
 #define stderr 2
@@ -233,6 +236,22 @@ uint64_t spawn(char *path, const char **argv, uint64_t argc) {
         : "D" ((uint64_t) path), "S" ((uint64_t) argv), "d" (argc), "a" (4)
     );
     return status;
+}
+#endif
+
+void* mmap(void *addr, size_t length, int prot, int flags, int fd, uint64_t offset);
+
+#ifndef MMAP_IMPL
+void* mmap(void *addr, size_t length, int prot, int flags, int fd, uint64_t offset) {
+    void *result;
+    asm volatile (
+        "mov %5, %%r8\n"
+        "mov %6, %%r9\n"
+        "int $0x80"
+        : "=a" (result)
+        : "D" (addr), "S" (length), "d" (prot), "c" (flags), "r" ((uint64_t) fd), "r" (offset), "a" (10)
+    );
+    return result;
 }
 #endif
 

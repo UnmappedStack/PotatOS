@@ -23,6 +23,7 @@ typedef struct {
     uintptr_t  parent;
     uint8_t    flags;
     uint64_t   *errno;
+    void       *mmap_upto;
 } Task;
 
 typedef struct {

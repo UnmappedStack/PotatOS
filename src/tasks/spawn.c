@@ -147,11 +147,12 @@ int spawn(char *path, const char *argv[], size_t argc) {
     map_apic_into_task(new_pml4_phys);
     
     Task *new_task  = create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_PTR, TASK_PRESENT | TASK_FIRST_EXEC);
-    new_task->errno = (uint64_t*) (USER_STACK_PTR - 8);
-    new_task->argc  = argc;
-    new_task->argv  = ARGV_DATA_ADDR + arg_size;
+    new_task->mmap_upto   = (void*) (last_segment.virtual_address + last_segment.size_in_memory);
+    new_task->errno       = (uint64_t*) (USER_STACK_PTR - 8);
+    new_task->argc        = argc;
+    new_task->argv        = ARGV_DATA_ADDR + arg_size;
     new_task->event_queue = new_event_queue();
-    new_task->parent = (uintptr_t) get_current_task();
+    new_task->parent      = (uintptr_t) get_current_task();
     free(buffer);
     // open standard resource streams
     new_task->resources[0] = open("D:/stdin",  0, MODE_READONLY);
