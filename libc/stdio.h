@@ -211,6 +211,17 @@ void close(File f) {
 }
 #endif
 
+void exit();
+
+#ifndef EXIT_IMPL
+void exit() {
+    asm volatile(
+        "int $0x80"
+        : : "a" (9)
+    );
+}
+#endif
+
 uint64_t spawn(char *path, const char **argv, uint64_t argc);
 
 #ifndef SPAWN_IMPL

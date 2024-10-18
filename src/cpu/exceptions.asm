@@ -4,7 +4,7 @@ section .text
 
 extern lock_pit
 extern exception_handler
-extern try_exit_task
+extern syscall_exit
 
 global divideException
 global debugException
@@ -132,7 +132,7 @@ baseHandler:
     push r14
     push r15
     mov rdi, rax
-    call try_exit_task
+    call syscall_exit
     mov rax, cr2
     push rax
     cld
