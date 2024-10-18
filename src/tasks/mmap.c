@@ -15,7 +15,7 @@ void* syscall_mmap(void *addr, size_t length, int prot, int flags, int fd, uint6
     }
     if (addr == NULL) {
         addr = current_task->mmap_upto;
-        current_task->mmap_upto += length;
+        current_task->mmap_upto = (void*) PAGE_ALIGN_UP(((uint64_t) current_task->mmap_upto) + length);
     } 
     uint64_t map_flags = KERNEL_PFLAG_PRESENT | KERNEL_PFLAG_USER;
     if (flags & PROT_WRITE) 
