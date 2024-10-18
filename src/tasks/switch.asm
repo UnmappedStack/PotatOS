@@ -80,14 +80,16 @@ task_switch_first_exec:
     mov rdi, r15 ; get Task* back from r15 and put it into rdi to pass into task_get_entry_point
     ;; turn off first exec flag
     call task_disable_first_exec
+    ; push errno (starts as 0)
+    push 0
     ;; push the interrupt stack
     ; ss = 0x20 | 3
     mov rbx, 0x20
     or rbx, 3
     push rbx
     xor rbx, rbx
-    ; rsp = 0x700000000000
-    mov rbx, 0x700000000000
+    ; rsp = 0x6FFFFFFFFFF8
+    mov rbx, 0x6FFFFFFFFFF8
     push rbx
     ; rflags = 0x200
     push 0x200
@@ -184,4 +186,5 @@ print_debug_info:
     iretq
     ret
 
-msg: db 10, "rip: 0x%x, cs: %i, rflags: %i, rsp: 0x%x, ss: %i", 10, 0
+msg:  db 10, "rip: 0x%x, cs: %i, rflags: %i, rsp: 0x%x, ss: %i", 10, 0
+msg1: db 10, "rsp: 0x%x", 10, 0

@@ -126,6 +126,12 @@ int syscall_spawn(uint64_t rdi, uint64_t rsi, uint64_t rdx) {
     return spawn((char*) rdi, (const char**) rsi, rdx);
 }
 
+/* Gets the address of errno for this task */
+
+uintptr_t syscall_get_errno() {
+    return (uintptr_t) get_current_task()->errno;
+}
+
 void syscall_invalid() {
     printf("Hey that syscall doesn't exist! (Invalid syscall!)\n");
 }

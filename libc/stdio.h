@@ -225,9 +225,27 @@ uint64_t spawn(char *path, const char **argv, uint64_t argc) {
 }
 #endif
 
+uint64_t* get_errno_addr();
+
+#ifndef GET_ERRNO_IMPL
+uint64_t* get_errno_addr() {
+    uint64_t addr;
+    asm volatile (
+        "int $0x80"
+        : "=a" (addr)
+        : "a" (8)
+    );
+    return (uint64_t*) addr;
+}
+#endif
+
+void get_cwd(char *buffer, uint64_t buffer_len);
+
+#ifndef GET_CWD_IMPL
 void get_cwd(char *buffer, uint64_t buffer_len) {
     asm volatile (
         "int $0x80"
         : : "D" ((uint64_t) buffer), "S" ((uint64_t) buffer_len), "a" (5)
     );
 }
+#endif

@@ -143,12 +143,13 @@ int spawn(char *path, const char *argv[], size_t argc) {
         *((char**)(((uint64_t)arg_page) + arg_size + (i * sizeof(uint64_t)))) = (char*) (((uint64_t)arg_page) + arg_size_hitherto);
         arg_size_hitherto += ku_strlen(argv[i]) + 1;
     }
-
+    
     map_apic_into_task(new_pml4_phys);
-
-    Task *new_task = create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_PTR, TASK_PRESENT | TASK_FIRST_EXEC);
-    new_task->argc = argc;
-    new_task->argv = ARGV_DATA_ADDR + arg_size;
+    
+    Task *new_task  = create_task(new_pml4_phys, (uintptr_t) file_header->entry, USER_STACK_PTR, TASK_PRESENT | TASK_FIRST_EXEC);
+    new_task->errno = (uint64_t*) (USER_STACK_PTR - 8);
+    new_task->argc  = argc;
+    new_task->argv  = ARGV_DATA_ADDR + arg_size;
     new_task->event_queue = new_event_queue();
     new_task->parent = (uintptr_t) get_current_task();
     free(buffer);

@@ -9,6 +9,7 @@ extern lock_lapic_timer
 extern unlock_lapic_timer
 extern syscall_write
 extern syscall_read
+extern syscall_get_errno
 extern syscall_poll
 extern syscall_peek
 extern syscall_invalid
@@ -26,6 +27,7 @@ syscall_lookup:
     dq syscall_get_cwd
     dq syscall_poll
     dq syscall_peek
+    dq syscall_get_errno
 syscall_lookup_end:
 
 global syscall_isr

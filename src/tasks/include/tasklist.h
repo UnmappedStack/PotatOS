@@ -22,6 +22,7 @@ typedef struct {
     File*      resources[NUM_RESOURCES];
     uintptr_t  parent;
     uint8_t    flags;
+    uint64_t   *errno;
 } Task;
 
 typedef struct {
