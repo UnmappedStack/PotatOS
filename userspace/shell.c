@@ -1,5 +1,7 @@
-#include <graphics.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <event.h>
 
 void wait_for_event(uint64_t event_type) {
@@ -18,7 +20,7 @@ int main(int argc, char **argv) {
     static char cwd_buffer[100];
     static char input_buffer[200];
     while (true) {
-        get_cwd(cwd_buffer, 99);
+        getcwd(cwd_buffer, 99);
         printf("SH %s> ", cwd_buffer);
         fgets(input_buffer, 200, stdin);
         printf("\n");

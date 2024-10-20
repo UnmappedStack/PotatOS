@@ -54,19 +54,7 @@ syscall_isr:
     push r13
     push r14
     push r15
-    push rax
-    push rdi
-    push rsi
-    push rdx
-    call lock_syscall_handler
-    pop rdx
-    pop rsi
-    pop rdi
-    pop rax
     call [syscall_lookup + rax * 8]
-    push rax
-    call unlock_syscall_handler
-    pop rax
     pop r15
     pop r14
     pop r13

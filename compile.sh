@@ -1,17 +1,33 @@
+#!/bin/bash
+set -e
+
 if [ ! -d "limine" ]; then
     git clone https://github.com/limine-bootloader/limine.git --branch=v8.x-binary --depth=1
 fi
 
 # compile the bootloader & the kernel
 
+echo "Building bootloader..."
 make -C limine
 
-make || { echo "Failed to build, exiting."; exit 1; }
+echo "Building kernel..."
+make
+
+echo "Building libc..."
+make clean -C libc
+make -C libc
+nasm -felf64 -o libc/target/crt0.o libc/internal/crt0.asm
 
 # compile/assemble userspace components
-mkdir ramdiskroot/exec
-gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/exec/shell userspace/shell.c -g || { echo "Failed to build shell user application, exiting."; exit 1; }
-gcc -ffreestanding -nostdlib -fno-stack-protector -fno-stack-check -I libc -e main -o ramdiskroot/exec/helloworld userspace/helloworld.c -g
+echo "Building userspace applications..."
+mkdir -p ramdiskroot/exec
+mkdir -p obj/user
+gcc -ffreestanding -nostdlib -I libc/include -c userspace/shell.c -o obj/user/shell.o -g
+gcc -ffreestanding -nostdlib -I libc/include -c userspace/helloworld.c -o obj/user/helloworld.o -g
+
+echo "Linking user applications..."
+gcc -o ramdiskroot/exec/shell libc/target/crt0.o obj/user/shell.o libc/target/spudlibc.a -nostdlib -ffreestanding -g
+gcc -o ramdiskroot/exec/helloworld libc/target/crt0.o obj/user/helloworld.o libc/target/spudlibc.a -nostdlib -ffreestanding -g
 
 # set up the initial ramdisk
 tar --create --file=initrd --format=ustar -C ramdiskroot exec sys
